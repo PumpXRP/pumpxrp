@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PumpXRP — Launch Tokens on XRP Ledger</title>
-    <meta name="description" content="The first PumpFun-style token launchpad on XRP Ledger. Launch your token in one click.">
-    <meta property="og:title" content="PumpXRP — Token Launchpad for XRP">
-    <meta property="og:description" content="Launch your token on XRP Ledger in one click. 47M wallets. Zero launchpads. Until now.">
+    <title>PumpXRP — Token Launchpad on XRP Ledger</title>
+    <meta name="description" content="Launch and trade tokens on XRP Ledger. The first PumpFun-style launchpad for XRPL.">
+    <meta property="og:title" content="PumpXRP">
+    <meta property="og:description" content="Launch tokens on XRP Ledger in one click.">
     <meta property="og:image" content="logo.jpg">
     <meta property="og:url" content="https://pumpxrp.fun">
     <meta name="twitter:card" content="summary_large_image">
@@ -21,826 +21,665 @@
         gtag('config', 'G-LK6KEFE1LQ');
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --bg: #1a1a2e;
-            --bg-light: #16213e;
-            --bg-card: #0f3460;
-            --accent: #00e99b;
-            --accent-hover: #00ff7f;
-            --pink: #e94560;
-            --yellow: #f5c542;
-            --text: #ffffff;
-            --text-dim: #8899aa;
-            --border: #253553;
-        }
-
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Space Grotesk', monospace, sans-serif;
+            background: #0e0e0e;
+            color: #e0e0e0;
             min-height: 100vh;
         }
 
-        /* Top bar */
-        .topbar {
-            background: var(--bg-light);
-            border-bottom: 1px solid var(--border);
-            padding: 0 16px;
-            height: 56px;
+        a { color: inherit; text-decoration: none; }
+
+        /* Header */
+        .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid #1e1e1e;
+            background: #0e0e0e;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .topbar-logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .topbar-logo img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-        }
-
-        .topbar-logo span {
-            font-weight: 800;
-            font-size: 18px;
-            color: var(--accent);
-        }
-
-        .topbar-links {
-            display: flex;
-            gap: 6px;
-        }
-
-        .topbar-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 8px;
-            transition: all 0.15s;
-        }
-
-        .topbar-links a:hover {
-            color: var(--text);
-            background: rgba(255,255,255,0.05);
-        }
-
-        .btn-connect {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .btn-connect:hover {
-            background: var(--accent-hover);
-        }
-
-        /* Ticker bar */
-        .ticker {
-            background: var(--bg-light);
-            border-bottom: 1px solid var(--border);
-            padding: 8px 16px;
+        .header-left {
             display: flex;
             align-items: center;
             gap: 16px;
-            overflow-x: auto;
-            font-size: 12px;
-            scrollbar-width: none;
         }
 
-        .ticker::-webkit-scrollbar { display: none; }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-        .ticker-item {
+        .logo img { width: 28px; height: 28px; border-radius: 50%; }
+        .logo span { font-weight: 700; font-size: 16px; color: #7bff7b; }
+
+        .header-nav {
+            display: flex;
+            gap: 4px;
+        }
+
+        .header-nav a {
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #777;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .header-nav a:hover { color: #fff; background: #1a1a1a; }
+        .header-nav a.active { color: #7bff7b; background: #1a2e1a; }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-wallet {
+            background: #7bff7b;
+            color: #000;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-wallet:hover { background: #5de05d; }
+
+        /* Activity ticker */
+        .ticker {
+            border-bottom: 1px solid #1e1e1e;
+            padding: 6px 0;
+            overflow: hidden;
+            background: #0a0a0a;
+            font-size: 12px;
+        }
+
+        .ticker-track {
+            display: flex;
+            gap: 24px;
+            animation: tickerScroll 25s linear infinite;
+            width: max-content;
+        }
+
+        @keyframes tickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .tick {
             display: flex;
             align-items: center;
             gap: 6px;
             white-space: nowrap;
-            padding: 4px 10px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 6px;
-            flex-shrink: 0;
+            color: #666;
         }
 
-        .ticker-emoji { font-size: 16px; }
-        .ticker-name { font-weight: 600; color: var(--text); }
-        .ticker-action { color: var(--text-dim); }
-        .ticker-green { color: var(--accent); font-weight: 600; }
-        .ticker-red { color: var(--pink); font-weight: 600; }
+        .tick b { color: #e0e0e0; }
+        .tick .green { color: #7bff7b; }
+        .tick .red { color: #ff4d4d; }
+        .tick .emoji { font-size: 14px; }
 
-        /* Main content */
-        .main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px 16px;
-        }
-
-        /* Create token section */
-        .create-section {
-            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-light) 100%);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        .create-section h1 {
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .create-section h1 .green { color: var(--accent); }
-
-        .create-section p {
-            color: var(--text-dim);
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-
-        .create-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 12px;
-            max-width: 800px;
-            margin: 0 auto;
-            align-items: end;
-        }
-
-        .form-group {
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-dim);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px 14px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            transition: border 0.15s;
-        }
-
-        .form-group input:focus {
-            border-color: var(--accent);
-        }
-
-        .form-group input::placeholder {
-            color: #445566;
-        }
-
-        .btn-create {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 10px 28px;
-            border-radius: 8px;
-            font-weight: 800;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.15s;
-            white-space: nowrap;
-            height: 42px;
-        }
-
-        .btn-create:hover {
-            background: var(--accent-hover);
-            box-shadow: 0 0 20px rgba(0,233,155,0.3);
-        }
-
-        .coming-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            background: rgba(245,197,66,0.15);
-            border: 1px solid rgba(245,197,66,0.3);
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--yellow);
-            margin-left: 6px;
-        }
-
-        /* Filter tabs */
-        .filter-tabs {
+        /* Toolbar */
+        .toolbar {
             display: flex;
+            align-items: center;
             gap: 8px;
-            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #1e1e1e;
             flex-wrap: wrap;
         }
 
-        .filter-tab {
-            padding: 6px 14px;
-            border-radius: 8px;
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #e0e0e0;
             font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-dim);
-            transition: all 0.15s;
+            font-family: inherit;
+            outline: none;
         }
 
-        .filter-tab:hover { border-color: var(--accent); color: var(--text); }
-        .filter-tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        .search-box:focus { border-color: #7bff7b; }
+        .search-box::placeholder { color: #444; }
 
-        /* Token grid */
-        .token-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 12px;
-        }
-
-        .token-card {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .token-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-        }
-
-        .token-header {
+        .pill-group {
             display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 4px;
         }
 
-        .token-img {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
-            background: var(--bg-card);
+        .pill {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid #2a2a2a;
+            background: transparent;
+            color: #777;
+            font-family: inherit;
+            transition: all 0.1s;
+        }
+
+        .pill:hover { border-color: #555; color: #ccc; }
+        .pill.on { background: #7bff7b; color: #000; border-color: #7bff7b; }
+
+        .sort-btn {
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid #2a2a2a;
+            background: transparent;
+            color: #777;
+            font-family: inherit;
+        }
+
+        .sort-btn:hover { border-color: #555; color: #ccc; }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2px;
+            padding: 2px;
+        }
+
+        .card {
+            background: #141414;
+            padding: 12px;
+            cursor: pointer;
+            transition: background 0.1s;
+            position: relative;
+        }
+
+        .card:hover { background: #1a1a1a; }
+
+        .card-top {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            background: #222;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 28px;
             flex-shrink: 0;
+            overflow: hidden;
         }
 
-        .token-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .card-meta { flex: 1; min-width: 0; }
 
-        .token-name {
+        .card-name {
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
+            color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .token-ticker {
-            color: var(--text-dim);
+        .card-ticker {
             font-size: 12px;
-            font-weight: 500;
+            color: #7bff7b;
+            font-weight: 600;
         }
 
-        .token-creator {
+        .card-creator {
             font-size: 11px;
-            color: var(--text-dim);
-            margin-bottom: 12px;
-        }
-
-        .token-creator span { color: var(--accent); }
-
-        .token-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .token-stat {
-            background: rgba(0,0,0,0.2);
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .token-stat-label {
-            font-size: 10px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .token-stat-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .token-stat-value.red { color: var(--pink); }
-
-        .token-progress {
-            margin-top: 12px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 4px;
-            height: 6px;
-            overflow: hidden;
-        }
-
-        .token-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
-            border-radius: 4px;
-            transition: width 0.3s;
-        }
-
-        .token-progress-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            color: var(--text-dim);
-            margin-top: 4px;
-        }
-
-        .token-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 700;
-        }
-
-        .badge-new { background: rgba(0,233,155,0.15); color: var(--accent); }
-        .badge-hot { background: rgba(233,69,96,0.15); color: var(--pink); }
-        .badge-moon { background: rgba(245,197,66,0.15); color: var(--yellow); }
-
-        /* Stats section */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 24px;
-        }
-
-        .stat-item {
-            background: var(--bg-light);
-            padding: 20px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--accent);
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-dim);
-            font-weight: 500;
+            color: #555;
             margin-top: 2px;
         }
 
+        .card-creator span { color: #7bff7b; }
+
+        .card-desc {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .card-mcap {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .card-mcap small {
+            font-weight: 400;
+            color: #555;
+            font-size: 10px;
+        }
+
+        .card-change {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .card-change.up { color: #7bff7b; background: #1a2e1a; }
+        .card-change.down { color: #ff4d4d; background: #2e1a1a; }
+
+        .card-bar {
+            margin-top: 8px;
+            height: 4px;
+            background: #222;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .card-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7bff7b, #00cc66);
+            border-radius: 2px;
+        }
+
+        .card-bar-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: #444;
+            margin-top: 2px;
+        }
+
+        .card-replies {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 10px;
+            color: #555;
+        }
+
+        .card-time {
+            font-size: 10px;
+            color: #444;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        .badge-king { background: #332b00; color: #ffd700; }
+        .badge-hot { background: #2e1a1a; color: #ff4d4d; }
+        .badge-new { background: #1a2e1a; color: #7bff7b; }
+
+        /* Banner */
+        .banner {
+            background: linear-gradient(90deg, #0a1a0a 0%, #1a2e1a 50%, #0a1a0a 100%);
+            border-bottom: 1px solid #1e1e1e;
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 13px;
+            color: #7bff7b;
+        }
+
+        .banner a { text-decoration: underline; font-weight: 600; }
+
         /* Footer */
         .footer {
-            border-top: 1px solid var(--border);
-            padding: 24px;
+            border-top: 1px solid #1e1e1e;
+            padding: 16px;
             text-align: center;
-            margin-top: 48px;
+            font-size: 11px;
+            color: #333;
         }
 
-        .footer-links {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .footer-links a:hover { color: var(--accent); }
-
-        .footer p {
-            color: #445566;
-            font-size: 12px;
-        }
+        .footer a { color: #555; margin: 0 8px; }
+        .footer a:hover { color: #7bff7b; }
 
         /* Mobile */
-        @media (max-width: 768px) {
-            .topbar-links { display: none; }
-            .create-form { grid-template-columns: 1fr; }
-            .stats-bar { grid-template-columns: repeat(2, 1fr); }
-            .token-grid { grid-template-columns: 1fr; }
+        @media (max-width: 640px) {
+            .header-nav { display: none; }
+            .grid { grid-template-columns: 1fr 1fr; gap: 1px; }
+            .card-img { width: 48px; height: 48px; font-size: 22px; }
+            .toolbar { padding: 8px 10px; }
+            .card { padding: 10px; }
         }
 
-        /* Scrolling animation for ticker */
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        .ticker-inner {
-            display: flex;
-            gap: 16px;
-            animation: scroll 30s linear infinite;
+        @media (max-width: 380px) {
+            .grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- Top Bar -->
-    <div class="topbar">
-        <div class="topbar-left">
-            <a href="#" class="topbar-logo">
-                <img src="logo.jpg" alt="PumpXRP">
-                <span>PumpXRP</span>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <a href="/" class="logo">
+                <img src="logo.jpg" alt="">
+                <span>pump</span><span style="color:#e0e0e0">xrp</span>
             </a>
-            <div class="topbar-links">
-                <a href="#how">How It Works</a>
-                <a href="https://x.com/PumpXRP_fun" target="_blank">Twitter</a>
-                <a href="#">Docs</a>
+            <div class="header-nav">
+                <a href="#" class="active">board</a>
+                <a href="#">create</a>
+                <a href="#">how it works</a>
             </div>
         </div>
-        <button class="btn-connect">Connect Wallet <span class="coming-badge">Soon</span></button>
+        <div class="header-right">
+            <button class="btn-wallet">connect wallet</button>
+        </div>
     </div>
 
     <!-- Ticker -->
     <div class="ticker">
-        <div class="ticker-inner">
-            <div class="ticker-item">
-                <span class="ticker-emoji">🚀</span>
-                <span class="ticker-name">PEPE</span>
-                <span class="ticker-action">launched by</span>
-                <span class="ticker-green">rXqF...4k2m</span>
-            </div>
-            <div class="ticker-item">
-                <span class="ticker-emoji">💰</span>
-                <span class="ticker-name">MOON</span>
-                <span class="ticker-action">bought</span>
-                <span class="ticker-green">+500 XRP</span>
-            </div>
-            <div class="ticker-item">
-                <span class="ticker-emoji">🔥</span>
-                <span class="ticker-name">DOGE2</span>
-                <span class="ticker-action">reached</span>
-                <span class="ticker-green">$50K mcap</span>
-            </div>
-            <div class="ticker-item">
-                <span class="ticker-emoji">⚡</span>
-                <span class="ticker-name">XCAT</span>
-                <span class="ticker-action">launched by</span>
-                <span class="ticker-green">rH7d...9pLx</span>
-            </div>
-            <div class="ticker-item">
-                <span class="ticker-emoji">🎯</span>
-                <span class="ticker-name">PUMP</span>
-                <span class="ticker-action">sold</span>
-                <span class="ticker-red">-200 XRP</span>
-            </div>
-            <div class="ticker-item">
-                <span class="ticker-emoji">🌙</span>
-                <span class="ticker-name">WAGMI</span>
-                <span class="ticker-action">reached</span>
-                <span class="ticker-green">$100K mcap</span>
-            </div>
-            <!-- Duplicate for seamless scroll -->
-            <div class="ticker-item">
-                <span class="ticker-emoji">🚀</span>
-                <span class="ticker-name">PEPE</span>
-                <span class="ticker-action">launched by</span>
-                <span class="ticker-green">rXqF...4k2m</span>
-            </div>
-            <div class="ticker-item">
-                <span class="ticker-emoji">💰</span>
-                <span class="ticker-name">MOON</span>
-                <span class="ticker-action">bought</span>
-                <span class="ticker-green">+500 XRP</span>
-            </div>
-            <div class="ticker-item">
-                <span class="ticker-emoji">🔥</span>
-                <span class="ticker-name">DOGE2</span>
-                <span class="ticker-action">reached</span>
-                <span class="ticker-green">$50K mcap</span>
-            </div>
-            <div class="ticker-item">
-                <span class="ticker-emoji">⚡</span>
-                <span class="ticker-name">XCAT</span>
-                <span class="ticker-action">launched by</span>
-                <span class="ticker-green">rH7d...9pLx</span>
-            </div>
+        <div class="ticker-track">
+            <div class="tick"><span class="emoji">🟢</span> <b>$XFROG</b> created by <span class="green">rXqF…4k2m</span> <span class="card-time">2m ago</span></div>
+            <div class="tick"><span class="emoji">💰</span> <b>rH7d…9pLx</b> bought 500 XRP of <span class="green">$MOON</span></div>
+            <div class="tick"><span class="emoji">📈</span> <b>$XDOGE</b> hit <span class="green">$50K</span> market cap</div>
+            <div class="tick"><span class="emoji">🔴</span> <b>rM5x…2bJk</b> sold 200 XRP of <span class="red">$RCAT</span></div>
+            <div class="tick"><span class="emoji">🟢</span> <b>$WAGMI</b> created by <span class="green">rPq2…7mNk</span> <span class="card-time">5m ago</span></div>
+            <div class="tick"><span class="emoji">🚀</span> <b>$PUMP</b> bonding complete → DEX listed</div>
+            <div class="tick"><span class="emoji">💰</span> <b>rK9w…3vPm</b> bought 1.2K XRP of <span class="green">$DXRP</span></div>
+            <div class="tick"><span class="emoji">🟢</span> <b>$NEKO</b> created by <span class="green">rT3n…8qWz</span> <span class="card-time">8m ago</span></div>
+            <!-- duplicate -->
+            <div class="tick"><span class="emoji">🟢</span> <b>$XFROG</b> created by <span class="green">rXqF…4k2m</span> <span class="card-time">2m ago</span></div>
+            <div class="tick"><span class="emoji">💰</span> <b>rH7d…9pLx</b> bought 500 XRP of <span class="green">$MOON</span></div>
+            <div class="tick"><span class="emoji">📈</span> <b>$XDOGE</b> hit <span class="green">$50K</span> market cap</div>
+            <div class="tick"><span class="emoji">🔴</span> <b>rM5x…2bJk</b> sold 200 XRP of <span class="red">$RCAT</span></div>
+            <div class="tick"><span class="emoji">🟢</span> <b>$WAGMI</b> created by <span class="green">rPq2…7mNk</span> <span class="card-time">5m ago</span></div>
+            <div class="tick"><span class="emoji">🚀</span> <b>$PUMP</b> bonding complete → DEX listed</div>
+            <div class="tick"><span class="emoji">💰</span> <b>rK9w…3vPm</b> bought 1.2K XRP of <span class="green">$DXRP</span></div>
+            <div class="tick"><span class="emoji">🟢</span> <b>$NEKO</b> created by <span class="green">rT3n…8qWz</span> <span class="card-time">8m ago</span></div>
         </div>
     </div>
 
-    <div class="main">
-        <!-- Create Section -->
-        <div class="create-section">
-            <h1>Launch Your Token on <span class="green">XRP Ledger</span></h1>
-            <p>Create and launch your token in one click. Auto-listed on XRPL native DEX. Fees under $0.01.</p>
-            <div class="create-form">
-                <div class="form-group">
-                    <label>Token Name</label>
-                    <input type="text" placeholder="e.g. PumpCoin">
+    <!-- Banner -->
+    <div class="banner">
+        ⚡ PumpXRP is launching soon — the first token launchpad on XRPL. <a href="https://x.com/PumpXRP_fun" target="_blank">Follow @PumpXRP_fun</a> for updates
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <input type="text" class="search-box" placeholder="search tokens...">
+        <div class="pill-group">
+            <button class="pill on">🔥 trending</button>
+            <button class="pill">🆕 new</button>
+            <button class="pill">📈 top</button>
+            <button class="pill">✅ graduating</button>
+        </div>
+        <button class="sort-btn">↕ sort</button>
+    </div>
+
+    <!-- Token Grid -->
+    <div class="grid">
+
+        <div class="card">
+            <span class="card-replies">💬 47</span>
+            <div class="card-top">
+                <div class="card-img">🐸</div>
+                <div class="card-meta">
+                    <div class="card-name">XRPepe <span class="badge badge-king">👑 king</span></div>
+                    <div class="card-ticker">$XPEPE</div>
+                    <div class="card-creator">by <span>rXqF…4k2m</span> · 2h ago</div>
                 </div>
-                <div class="form-group">
-                    <label>Symbol</label>
-                    <input type="text" placeholder="e.g. PUMP">
-                </div>
-                <div class="form-group">
-                    <label>Total Supply</label>
-                    <input type="text" placeholder="e.g. 1,000,000">
-                </div>
-                <button class="btn-create">🚀 Launch <span class="coming-badge">Soon</span></button>
             </div>
+            <div class="card-desc">the most based frog on the XRP ledger. no utility, just vibes. ribbit ribbit 🐸</div>
+            <div class="card-row">
+                <div class="card-mcap">$67.2K <small>mcap</small></div>
+                <div class="card-change up">+142%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:89%"></div></div>
+            <div class="card-bar-text"><span>bonding 89%</span><span>67.2K / 75K</span></div>
         </div>
 
-        <!-- Stats -->
-        <div class="stats-bar">
-            <div class="stat-item">
-                <div class="stat-value">47M+</div>
-                <div class="stat-label">XRP Wallets</div>
+        <div class="card">
+            <span class="card-replies">💬 23</span>
+            <div class="card-top">
+                <div class="card-img">🌙</div>
+                <div class="card-meta">
+                    <div class="card-name">MoonXRP <span class="badge badge-hot">🔥 hot</span></div>
+                    <div class="card-ticker">$MXRP</div>
+                    <div class="card-creator">by <span>rH7d…9pLx</span> · 45m ago</div>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value">3-5s</div>
-                <div class="stat-label">TX Speed</div>
+            <div class="card-desc">to the moon with XRP. community driven, fair launch. LFG 🚀🌙</div>
+            <div class="card-row">
+                <div class="card-mcap">$23.8K <small>mcap</small></div>
+                <div class="card-change up">+89%</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value">&lt;$0.01</div>
-                <div class="stat-label">TX Fee</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">0</div>
-                <div class="stat-label">Tokens Launched</div>
-            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:52%"></div></div>
+            <div class="card-bar-text"><span>bonding 52%</span><span>23.8K / 45K</span></div>
         </div>
 
-        <!-- Filters -->
-        <div class="filter-tabs">
-            <button class="filter-tab active">🔥 Trending</button>
-            <button class="filter-tab">🆕 New</button>
-            <button class="filter-tab">🌙 Top Gainers</button>
-            <button class="filter-tab">💎 All Tokens</button>
+        <div class="card">
+            <span class="card-replies">💬 156</span>
+            <div class="card-top">
+                <div class="card-img">🐕</div>
+                <div class="card-meta">
+                    <div class="card-name">XDoge <span class="badge badge-king">👑 king</span></div>
+                    <div class="card-ticker">$XDOGE</div>
+                    <div class="card-creator">by <span>rPq2…7mNk</span> · 6h ago</div>
+                </div>
+            </div>
+            <div class="card-desc">first doge on XRPL. much wow. very fast. such cheap fees. to the moon!</div>
+            <div class="card-row">
+                <div class="card-mcap">$134.5K <small>mcap</small></div>
+                <div class="card-change up">+567%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:100%"></div></div>
+            <div class="card-bar-text"><span>✅ graduated</span><span>listed on DEX</span></div>
         </div>
 
-        <!-- Token Grid (Demo/Preview) -->
-        <div class="token-grid">
-            <div class="token-card">
-                <span class="token-badge badge-hot">🔥 HOT</span>
-                <div class="token-header">
-                    <div class="token-img">🐸</div>
-                    <div class="token-info">
-                        <div class="token-name">PumpFrog</div>
-                        <div class="token-ticker">$PFROG</div>
-                    </div>
-                </div>
-                <div class="token-creator">Created by <span>rXqF...4k2m</span></div>
-                <div class="token-stats">
-                    <div class="token-stat">
-                        <div class="token-stat-label">Market Cap</div>
-                        <div class="token-stat-value">$12.5K</div>
-                    </div>
-                    <div class="token-stat">
-                        <div class="token-stat-label">24h Volume</div>
-                        <div class="token-stat-value">$3.2K</div>
-                    </div>
-                </div>
-                <div class="token-progress">
-                    <div class="token-progress-bar" style="width: 65%"></div>
-                </div>
-                <div class="token-progress-label">
-                    <span>Bonding: 65%</span>
-                    <span>$12.5K / $20K</span>
+        <div class="card">
+            <span class="card-replies">💬 8</span>
+            <div class="card-top">
+                <div class="card-img">⚡</div>
+                <div class="card-meta">
+                    <div class="card-name">RippleCat <span class="badge badge-new">new</span></div>
+                    <div class="card-ticker">$RCAT</div>
+                    <div class="card-creator">by <span>rM5x…2bJk</span> · 12m ago</div>
                 </div>
             </div>
-
-            <div class="token-card">
-                <span class="token-badge badge-new">🆕 NEW</span>
-                <div class="token-header">
-                    <div class="token-img">🌙</div>
-                    <div class="token-info">
-                        <div class="token-name">MoonXRP</div>
-                        <div class="token-ticker">$MXRP</div>
-                    </div>
-                </div>
-                <div class="token-creator">Created by <span>rH7d...9pLx</span></div>
-                <div class="token-stats">
-                    <div class="token-stat">
-                        <div class="token-stat-label">Market Cap</div>
-                        <div class="token-stat-value">$5.8K</div>
-                    </div>
-                    <div class="token-stat">
-                        <div class="token-stat-label">24h Volume</div>
-                        <div class="token-stat-value">$1.1K</div>
-                    </div>
-                </div>
-                <div class="token-progress">
-                    <div class="token-progress-bar" style="width: 30%"></div>
-                </div>
-                <div class="token-progress-label">
-                    <span>Bonding: 30%</span>
-                    <span>$5.8K / $20K</span>
-                </div>
+            <div class="card-desc">meow on the ledger. cats > dogs. fast and furry-ous. 😸⚡</div>
+            <div class="card-row">
+                <div class="card-mcap">$4.2K <small>mcap</small></div>
+                <div class="card-change up">+34%</div>
             </div>
-
-            <div class="token-card">
-                <span class="token-badge badge-moon">🌙 MOON</span>
-                <div class="token-header">
-                    <div class="token-img">🐕</div>
-                    <div class="token-info">
-                        <div class="token-name">XDoge</div>
-                        <div class="token-ticker">$XDOGE</div>
-                    </div>
-                </div>
-                <div class="token-creator">Created by <span>rPq2...7mNk</span></div>
-                <div class="token-stats">
-                    <div class="token-stat">
-                        <div class="token-stat-label">Market Cap</div>
-                        <div class="token-stat-value">$45.2K</div>
-                    </div>
-                    <div class="token-stat">
-                        <div class="token-stat-label">24h Volume</div>
-                        <div class="token-stat-value">$8.9K</div>
-                    </div>
-                </div>
-                <div class="token-progress">
-                    <div class="token-progress-bar" style="width: 92%"></div>
-                </div>
-                <div class="token-progress-label">
-                    <span>Bonding: 92%</span>
-                    <span>$45.2K / $50K</span>
-                </div>
-            </div>
-
-            <div class="token-card">
-                <span class="token-badge badge-new">🆕 NEW</span>
-                <div class="token-header">
-                    <div class="token-img">⚡</div>
-                    <div class="token-info">
-                        <div class="token-name">RippleCat</div>
-                        <div class="token-ticker">$RCAT</div>
-                    </div>
-                </div>
-                <div class="token-creator">Created by <span>rM5x...2bJk</span></div>
-                <div class="token-stats">
-                    <div class="token-stat">
-                        <div class="token-stat-label">Market Cap</div>
-                        <div class="token-stat-value">$2.1K</div>
-                    </div>
-                    <div class="token-stat">
-                        <div class="token-stat-label">24h Volume</div>
-                        <div class="token-stat-value">$450</div>
-                    </div>
-                </div>
-                <div class="token-progress">
-                    <div class="token-progress-bar" style="width: 12%"></div>
-                </div>
-                <div class="token-progress-label">
-                    <span>Bonding: 12%</span>
-                    <span>$2.1K / $20K</span>
-                </div>
-            </div>
-
-            <div class="token-card">
-                <span class="token-badge badge-hot">🔥 HOT</span>
-                <div class="token-header">
-                    <div class="token-img">💎</div>
-                    <div class="token-info">
-                        <div class="token-name">DiamondXRP</div>
-                        <div class="token-ticker">$DXRP</div>
-                    </div>
-                </div>
-                <div class="token-creator">Created by <span>rK9w...3vPm</span></div>
-                <div class="token-stats">
-                    <div class="token-stat">
-                        <div class="token-stat-label">Market Cap</div>
-                        <div class="token-stat-value">$28.7K</div>
-                    </div>
-                    <div class="token-stat">
-                        <div class="token-stat-label">24h Volume</div>
-                        <div class="token-stat-value">$5.6K</div>
-                    </div>
-                </div>
-                <div class="token-progress">
-                    <div class="token-progress-bar" style="width: 78%"></div>
-                </div>
-                <div class="token-progress-label">
-                    <span>Bonding: 78%</span>
-                    <span>$28.7K / $37K</span>
-                </div>
-            </div>
-
-            <div class="token-card">
-                <span class="token-badge badge-new">🆕 NEW</span>
-                <div class="token-header">
-                    <div class="token-img">🎮</div>
-                    <div class="token-info">
-                        <div class="token-name">GameXRP</div>
-                        <div class="token-ticker">$GXRP</div>
-                    </div>
-                </div>
-                <div class="token-creator">Created by <span>rT3n...8qWz</span></div>
-                <div class="token-stats">
-                    <div class="token-stat">
-                        <div class="token-stat-label">Market Cap</div>
-                        <div class="token-stat-value">$890</div>
-                    </div>
-                    <div class="token-stat">
-                        <div class="token-stat-label">24h Volume</div>
-                        <div class="token-stat-value">$120</div>
-                    </div>
-                </div>
-                <div class="token-progress">
-                    <div class="token-progress-bar" style="width: 5%"></div>
-                </div>
-                <div class="token-progress-label">
-                    <span>Bonding: 5%</span>
-                    <span>$890 / $20K</span>
-                </div>
-            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:14%"></div></div>
+            <div class="card-bar-text"><span>bonding 14%</span><span>4.2K / 30K</span></div>
         </div>
 
-        <!-- How It Works -->
-        <div id="how" style="margin-top: 64px;">
-            <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 24px; text-align: center;">How It Works</h2>
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
-                <div style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center;">
-                    <div style="font-size: 32px; margin-bottom: 12px;">👛</div>
-                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">1. Connect</h3>
-                    <p style="font-size: 12px; color: var(--text-dim);">Connect your XRPL wallet (Xaman, GemWallet)</p>
-                </div>
-                <div style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center;">
-                    <div style="font-size: 32px; margin-bottom: 12px;">✏️</div>
-                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">2. Create</h3>
-                    <p style="font-size: 12px; color: var(--text-dim);">Name your token, set supply & image</p>
-                </div>
-                <div style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center;">
-                    <div style="font-size: 32px; margin-bottom: 12px;">🚀</div>
-                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">3. Launch</h3>
-                    <p style="font-size: 12px; color: var(--text-dim);">One click — token live on XRPL</p>
-                </div>
-                <div style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center;">
-                    <div style="font-size: 32px; margin-bottom: 12px;">📊</div>
-                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">4. Trade</h3>
-                    <p style="font-size: 12px; color: var(--text-dim);">Auto-listed on XRPL native DEX</p>
+        <div class="card">
+            <span class="card-replies">💬 31</span>
+            <div class="card-top">
+                <div class="card-img">💎</div>
+                <div class="card-meta">
+                    <div class="card-name">DiamondHands</div>
+                    <div class="card-ticker">$DXRP</div>
+                    <div class="card-creator">by <span>rK9w…3vPm</span> · 1h ago</div>
                 </div>
             </div>
+            <div class="card-desc">diamond hands only. no paper hands allowed. hold or get rekt 💎🙌</div>
+            <div class="card-row">
+                <div class="card-mcap">$41.3K <small>mcap</small></div>
+                <div class="card-change up">+213%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:71%"></div></div>
+            <div class="card-bar-text"><span>bonding 71%</span><span>41.3K / 58K</span></div>
         </div>
+
+        <div class="card">
+            <span class="card-replies">💬 3</span>
+            <div class="card-top">
+                <div class="card-img">🎮</div>
+                <div class="card-meta">
+                    <div class="card-name">GameXRP <span class="badge badge-new">new</span></div>
+                    <div class="card-ticker">$GXRP</div>
+                    <div class="card-creator">by <span>rT3n…8qWz</span> · 5m ago</div>
+                </div>
+            </div>
+            <div class="card-desc">gaming token for the XRP community. play to earn coming soon™</div>
+            <div class="card-row">
+                <div class="card-mcap">$890 <small>mcap</small></div>
+                <div class="card-change down">-12%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:3%"></div></div>
+            <div class="card-bar-text"><span>bonding 3%</span><span>890 / 30K</span></div>
+        </div>
+
+        <div class="card">
+            <span class="card-replies">💬 67</span>
+            <div class="card-top">
+                <div class="card-img">🦊</div>
+                <div class="card-meta">
+                    <div class="card-name">XFOX <span class="badge badge-hot">🔥 hot</span></div>
+                    <div class="card-ticker">$XFOX</div>
+                    <div class="card-creator">by <span>rL2a…5nQp</span> · 3h ago</div>
+                </div>
+            </div>
+            <div class="card-desc">the sly fox of crypto. what does the fox say? buy buy buy 🦊</div>
+            <div class="card-row">
+                <div class="card-mcap">$52.1K <small>mcap</small></div>
+                <div class="card-change up">+328%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:82%"></div></div>
+            <div class="card-bar-text"><span>bonding 82%</span><span>52.1K / 63K</span></div>
+        </div>
+
+        <div class="card">
+            <span class="card-replies">💬 12</span>
+            <div class="card-top">
+                <div class="card-img">🍜</div>
+                <div class="card-meta">
+                    <div class="card-name">RamenXRP <span class="badge badge-new">new</span></div>
+                    <div class="card-ticker">$RAMEN</div>
+                    <div class="card-creator">by <span>rW8k…1mZx</span> · 20m ago</div>
+                </div>
+            </div>
+            <div class="card-desc">we eating ramen now so we eat wagyu later. noodle gang 🍜</div>
+            <div class="card-row">
+                <div class="card-mcap">$8.4K <small>mcap</small></div>
+                <div class="card-change up">+56%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:22%"></div></div>
+            <div class="card-bar-text"><span>bonding 22%</span><span>8.4K / 38K</span></div>
+        </div>
+
+        <div class="card">
+            <span class="card-replies">💬 89</span>
+            <div class="card-top">
+                <div class="card-img">👽</div>
+                <div class="card-meta">
+                    <div class="card-name">AlienXRP</div>
+                    <div class="card-ticker">$ALIEN</div>
+                    <div class="card-creator">by <span>rJ4m…6wRt</span> · 4h ago</div>
+                </div>
+            </div>
+            <div class="card-desc">we are not alone. first contact on the XRP ledger 👽🛸</div>
+            <div class="card-row">
+                <div class="card-mcap">$38.7K <small>mcap</small></div>
+                <div class="card-change up">+178%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:65%"></div></div>
+            <div class="card-bar-text"><span>bonding 65%</span><span>38.7K / 60K</span></div>
+        </div>
+
+        <div class="card">
+            <span class="card-replies">💬 5</span>
+            <div class="card-top">
+                <div class="card-img">🔥</div>
+                <div class="card-meta">
+                    <div class="card-name">BurnXRP <span class="badge badge-new">new</span></div>
+                    <div class="card-ticker">$BURN</div>
+                    <div class="card-creator">by <span>rN6p…4kHm</span> · 8m ago</div>
+                </div>
+            </div>
+            <div class="card-desc">deflationary token on XRPL. every tx burns supply. watch it shrink 🔥</div>
+            <div class="card-row">
+                <div class="card-mcap">$2.1K <small>mcap</small></div>
+                <div class="card-change up">+15%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:7%"></div></div>
+            <div class="card-bar-text"><span>bonding 7%</span><span>2.1K / 30K</span></div>
+        </div>
+
+        <div class="card">
+            <span class="card-replies">💬 42</span>
+            <div class="card-top">
+                <div class="card-img">🐋</div>
+                <div class="card-meta">
+                    <div class="card-name">WhaleXRP <span class="badge badge-hot">🔥 hot</span></div>
+                    <div class="card-ticker">$WHALE</div>
+                    <div class="card-creator">by <span>rQ1v…8bNk</span> · 2h ago</div>
+                </div>
+            </div>
+            <div class="card-desc">only whales survive. big bags, big dreams. splash splash 🐋💦</div>
+            <div class="card-row">
+                <div class="card-mcap">$29.4K <small>mcap</small></div>
+                <div class="card-change up">+94%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:58%"></div></div>
+            <div class="card-bar-text"><span>bonding 58%</span><span>29.4K / 50K</span></div>
+        </div>
+
+        <div class="card">
+            <span class="card-replies">💬 1</span>
+            <div class="card-top">
+                <div class="card-img">🧸</div>
+                <div class="card-meta">
+                    <div class="card-name">TeddyXRP <span class="badge badge-new">new</span></div>
+                    <div class="card-ticker">$TEDDY</div>
+                    <div class="card-creator">by <span>rA3f…2cXp</span> · 1m ago</div>
+                </div>
+            </div>
+            <div class="card-desc">soft, cuddly, and going to the moon. don't sleep on teddy 🧸</div>
+            <div class="card-row">
+                <div class="card-mcap">$320 <small>mcap</small></div>
+                <div class="card-change up">+5%</div>
+            </div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:1%"></div></div>
+            <div class="card-bar-text"><span>bonding 1%</span><span>320 / 30K</span></div>
+        </div>
+
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <div class="footer-links">
-            <a href="https://x.com/PumpXRP_fun" target="_blank">𝕏 Twitter</a>
-            <a href="#">Docs</a>
-            <a href="https://pumpxrp.fun">pumpxrp.fun</a>
-        </div>
-        <p>© 2026 PumpXRP — The first token launchpad on XRP Ledger</p>
+        <a href="https://x.com/PumpXRP_fun" target="_blank">twitter</a>
+        <a href="#">docs</a>
+        <a href="#">terms</a>
+        <br><br>
+        pumpxrp.fun — the first token launchpad on XRP ledger
     </div>
+
 </body>
 </html>
