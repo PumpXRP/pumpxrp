@@ -138,11 +138,14 @@
         .btn-trade.sell:hover { background: #e03030; box-shadow: 0 0 20px rgba(255,77,77,0.2); }
         .btn-trade:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; }
 
-        /* Token selector modal */
+        /* Modals */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; align-items: center; justify-content: center; }
         .modal-overlay.show { display: flex; }
         .modal { background: #141414; border: 1px solid #2a2a2a; border-radius: 16px; padding: 20px; width: 100%; max-width: 360px; margin: 16px; }
-        .modal h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .modal-header h3 { font-size: 15px; font-weight: 700; }
+        .modal-close { background: none; border: none; color: #555; font-size: 20px; cursor: pointer; line-height: 1; }
+        .modal-close:hover { color: #fff; }
         .modal-search { width: 100%; padding: 9px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 13px; font-family: inherit; outline: none; margin-bottom: 12px; }
         .modal-search:focus { border-color: #7bff7b; }
         .token-list-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; }
@@ -151,6 +154,21 @@
         .tli-name { font-weight: 600; font-size: 13px; }
         .tli-issuer { font-size: 10px; color: #555; font-family: monospace; }
         .tli-price { margin-left: auto; font-size: 12px; color: #7bff7b; font-weight: 600; }
+
+        /* Wallet modal */
+        .wallet-option { display: flex; align-items: center; gap: 14px; padding: 13px; border: 1px solid #2a2a2a; border-radius: 10px; cursor: pointer; margin-bottom: 10px; background: #0e0e0e; transition: all 0.15s; }
+        .wallet-option:hover { border-color: #7bff7b; background: #1a1a1a; }
+        .wo-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .wo-name { font-weight: 700; font-size: 14px; }
+        .wo-desc { font-size: 11px; color: #555; margin-top: 1px; }
+        .wo-tag { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; background: #1a2e1a; color: #7bff7b; margin-left: 6px; }
+        .modal-divider { display: flex; align-items: center; gap: 10px; color: #444; font-size: 11px; margin: 10px 0; }
+        .modal-divider::before, .modal-divider::after { content: ''; flex: 1; height: 1px; background: #2a2a2a; }
+        .seed-modal-input { width: 100%; padding: 10px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 12px; font-family: monospace; outline: none; margin-bottom: 10px; }
+        .seed-modal-input:focus { border-color: #7bff7b; }
+        .seed-modal-input::placeholder { color: #333; }
+        .btn-seed-connect { width: 100%; padding: 10px; background: #7bff7b; color: #000; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
+        .btn-seed-connect:hover { background: #5de05d; }
 
         /* Status/tx msg */
         .tx-msg { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 12px; display: none; }
@@ -184,7 +202,7 @@
             <span class="dot-green"></span>
             <span class="addr" id="headerAddr">—</span>
         </div>
-        <button class="btn-wallet" id="headerWalletBtn" onclick="focusSeedInput()">connect wallet</button>
+        <button class="btn-wallet" id="headerWalletBtn" onclick="openWalletModal()">connect wallet</button>
     </div>
 </div>
 
@@ -248,12 +266,12 @@
 
     <!-- RIGHT -->
     <div class="right">
-        <!-- Connect wallet -->
-        <div class="connect-panel" id="connectPanel">
-            <h4>⚡ Connect Wallet to Trade</h4>
-            <input type="password" class="seed-input" id="tradeSeed" placeholder="Seed phrase (testnet)">
-            <button class="btn-connect" onclick="connectTradeWallet()">Connect</button>
-            <p style="font-size:10px;color:#333;margin-top:8px;text-align:center;">Xaman wallet connect coming soon</p>
+        <!-- Connect wallet prompt -->
+        <div class="connect-panel" id="connectPanel" style="padding:20px 16px;border-bottom:1px solid #1e1e1e;text-align:center;">
+            <div style="font-size:28px;margin-bottom:10px;">👛</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px;">Connect Wallet to Trade</div>
+            <div style="font-size:11px;color:#555;margin-bottom:14px;">Access your balance and place orders on XRPL DEX</div>
+            <button class="btn-connect" onclick="openWalletModal()" style="width:100%;padding:10px;background:#7bff7b;color:#000;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">Connect Wallet</button>
         </div>
 
         <!-- Balance -->
@@ -295,6 +313,34 @@
                 <div class="tx-msg" id="txMsg"></div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Wallet modal -->
+<div class="modal-overlay" id="walletModal" onclick="if(event.target===this)closeWalletModal()">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Connect Wallet</h3>
+            <button class="modal-close" onclick="closeWalletModal()">×</button>
+        </div>
+        <div class="wallet-option" onclick="alert('Xaman integration coming soon with mainnet launch! Use Seed Phrase for testnet.')">
+            <div class="wo-icon" style="background:#1a1f3a;">🔷</div>
+            <div>
+                <div class="wo-name">Xaman <span class="wo-tag">Popular</span></div>
+                <div class="wo-desc">Scan QR with Xaman app</div>
+            </div>
+        </div>
+        <div class="wallet-option" onclick="connectGemTrade()">
+            <div class="wo-icon" style="background:#1a2e1a;">💎</div>
+            <div>
+                <div class="wo-name">GemWallet</div>
+                <div class="wo-desc">Browser extension wallet</div>
+            </div>
+        </div>
+        <div class="modal-divider">or</div>
+        <p style="font-size:11px;color:#ff4d4d;background:#2e1a1a;padding:8px 10px;border-radius:6px;margin-bottom:10px;">⚠️ Testnet only — never enter mainnet seed</p>
+        <input type="password" class="seed-modal-input" id="tradeSeedModal" placeholder="sXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+        <button class="btn-seed-connect" onclick="connectWithSeedTrade()">Connect with Seed</button>
     </div>
 </div>
 
@@ -432,41 +478,61 @@ function selectToken(symbol) {
     renderTrades();
 }
 
-// ===== WALLET =====
-function focusSeedInput() {
-    document.getElementById('tradeSeed').focus();
-    document.getElementById('tradeSeed').scrollIntoView({ behavior: 'smooth' });
+// ===== WALLET MODAL =====
+function openWalletModal() {
+    document.getElementById('walletModal').classList.add('show');
+}
+function closeWalletModal() {
+    document.getElementById('walletModal').classList.remove('show');
 }
 
-async function connectTradeWallet() {
-    const seed = document.getElementById('tradeSeed').value.trim();
-    if (!seed) return alert('Enter seed phrase');
-    try {
-        wallet = xrpl.Wallet.fromSeed(seed);
-        if (!client) {
-            client = new xrpl.Client(TESTNET_URL);
-            await client.connect();
-        }
-        let xrpBal = '0';
-        try {
-            const info = await client.request({ command: 'account_info', account: wallet.address, ledger_index: 'validated' });
-            xrpBal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(4);
-        } catch(e) {}
-
-        document.getElementById('connectPanel').style.display = 'none';
-        document.getElementById('balancePanel').classList.add('show');
-        document.getElementById('xrpBalance').textContent = xrpBal + ' XRP';
-        document.getElementById('tradeAddr').textContent = wallet.address.slice(0,8) + '...' + wallet.address.slice(-4);
-
-        document.getElementById('walletBar').classList.add('show');
-        document.getElementById('headerAddr').textContent = wallet.address.slice(0,6) + '...' + wallet.address.slice(-4);
-        document.getElementById('headerWalletBtn').style.display = 'none';
-
-        document.getElementById('tradeBtn').disabled = false;
-        updateTradeBtn();
-    } catch(e) {
-        alert('Invalid seed: ' + e.message);
+async function connectGemTrade() {
+    if (typeof window.gemWallet === 'undefined') {
+        alert('GemWallet not found! Install at gemwallet.app');
+        return;
     }
+    try {
+        const result = await window.gemWallet.getAddress();
+        if (result?.result?.address) {
+            await setupConnected(result.result.address, null);
+        }
+    } catch(e) { alert('GemWallet error: ' + e.message); }
+}
+
+async function connectWithSeedTrade() {
+    const seed = document.getElementById('tradeSeedModal').value.trim();
+    if (!seed) return;
+    try {
+        const w = xrpl.Wallet.fromSeed(seed);
+        wallet = w;
+        await setupConnected(w.address, w);
+        closeWalletModal();
+    } catch(e) { alert('Invalid seed: ' + e.message); }
+}
+
+async function setupConnected(address, w) {
+    if (!client) {
+        client = new xrpl.Client(TESTNET_URL);
+        await client.connect();
+    }
+    let xrpBal = '0';
+    try {
+        const info = await client.request({ command: 'account_info', account: address, ledger_index: 'validated' });
+        xrpBal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(4);
+    } catch(e) {}
+
+    if (w) wallet = w;
+
+    document.getElementById('connectPanel').style.display = 'none';
+    document.getElementById('balancePanel').classList.add('show');
+    document.getElementById('xrpBalance').textContent = xrpBal + ' XRP';
+    document.getElementById('tradeAddr').textContent = address.slice(0,8) + '...' + address.slice(-4);
+    document.getElementById('walletBar').classList.add('show');
+    document.getElementById('headerAddr').textContent = address.slice(0,6) + '...' + address.slice(-4);
+    document.getElementById('headerWalletBtn').style.display = 'none';
+    document.getElementById('tradeBtn').disabled = false;
+    closeWalletModal();
+    updateTradeBtn();
 }
 
 // ===== TRADE =====
