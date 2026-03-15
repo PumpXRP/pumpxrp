@@ -504,34 +504,13 @@
                 </div>
             </div>
 
-            <div class="modal-divider">or</div>
-
-            <div class="wallet-option" onclick="showSeedModal()">
-                <div class="wallet-option-icon seed-icon">🔑</div>
-                <div class="wallet-option-info">
-                    <div class="wallet-option-name">Seed Phrase</div>
-                    <div class="wallet-option-desc">Enter secret key directly (testnet only)</div>
-                </div>
-            </div>
-
             <p style="font-size:11px;color:#444;text-align:center;margin-top:14px;">
-                By connecting, you agree to our Terms of Service
+                More wallets coming soon
             </p>
         </div>
     </div>
 
-    <!-- Seed Modal -->
-    <div class="modal-overlay" id="seedModal" onclick="closeModalOnBg(event)">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>🔑 Enter Seed Phrase</h3>
-                <button class="modal-close" onclick="closeSeedModal()">×</button>
-            </div>
-            <p style="font-size:12px;color:#ff4d4d;margin-bottom:14px;background:#2e1a1a;padding:10px;border-radius:8px;">⚠️ Only use on testnet. Never enter your mainnet seed on any website.</p>
-            <input type="password" id="seedInputMain" placeholder="sXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" style="width:100%;padding:10px 12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;color:#e0e0e0;font-size:13px;font-family:monospace;outline:none;margin-bottom:12px;">
-            <button onclick="connectWithSeedMain()" style="width:100%;padding:11px;background:#7bff7b;color:#000;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">Connect</button>
-        </div>
-    </div>
+
 
     <!-- Ticker -->
     <div class="ticker">
