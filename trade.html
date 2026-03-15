@@ -180,8 +180,14 @@
         /* Mobile */
         @media (max-width: 768px) {
             .layout { grid-template-columns: 1fr; height: auto; }
-            .left { height: 500px; }
-            .header-nav { display: none; }
+            .left { height: auto; }
+            .chart-area { min-height: 140px; }
+            .orderbook { height: 180px; }
+            .trades { max-height: 200px; }
+            .right { border-left: none; border-top: 1px solid #1e1e1e; }
+            .header-nav a { padding: 6px 8px; font-size: 12px; }
+            .token-header { gap: 10px; padding: 10px 12px; }
+            .stat-mini { display: none; }
         }
     </style>
 </head>
