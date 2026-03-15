@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Token — PumpXRP</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LK6KEFE1LQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-LK6KEFE1LQ');
+    </script>
+    <!-- XRPL.js -->
+    <script src="https://unpkg.com/xrpl@3.0.0/build/xrpl-latest-min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Space Grotesk', monospace, sans-serif; background: #0e0e0e; color: #e0e0e0; min-height: 100vh; }
+        a { color: inherit; text-decoration: none; }
+
+        .header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 16px; border-bottom: 1px solid #1e1e1e;
+            background: #0e0e0e; position: sticky; top: 0; z-index: 100;
+        }
+        .logo { display: flex; align-items: center; gap: 6px; }
+        .logo img { width: 28px; height: 28px; border-radius: 50%; }
+        .logo span { font-weight: 700; font-size: 16px; color: #7bff7b; }
+        .header-nav { display: flex; gap: 4px; }
+        .header-nav a { padding: 6px 12px; font-size: 13px; color: #777; border-radius: 6px; font-weight: 500; }
+        .header-nav a:hover { color: #fff; background: #1a1a1a; }
+        .header-nav a.active { color: #7bff7b; background: #1a2e1a; }
+
+        .main { max-width: 600px; margin: 40px auto; padding: 0 16px 60px; }
+
+        h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .subtitle { color: #666; font-size: 13px; margin-bottom: 32px; }
+
+        .network-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 10px; background: #1a2e1a; border: 1px solid #2a4a2a;
+            border-radius: 4px; font-size: 11px; font-weight: 600; color: #7bff7b;
+            margin-bottom: 24px;
+        }
+        .dot { width: 6px; height: 6px; background: #7bff7b; border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        /* Wallet Section */
+        .wallet-section {
+            background: #141414; border: 1px solid #2a2a2a; border-radius: 12px;
+            padding: 20px; margin-bottom: 20px;
+        }
+        .wallet-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #aaa; }
+
+        .wallet-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .wallet-btn {
+            padding: 12px; border: 1px solid #2a2a2a; border-radius: 8px; background: #1a1a1a;
+            color: #e0e0e0; font-size: 13px; font-weight: 600; cursor: pointer;
+            font-family: inherit; transition: all 0.15s; display: flex; align-items: center; gap: 8px;
+        }
+        .wallet-btn:hover { border-color: #7bff7b; color: #7bff7b; }
+        .wallet-btn img { width: 20px; height: 20px; border-radius: 4px; }
+
+        .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: #444; font-size: 12px; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #2a2a2a; }
+
+        .seed-input-wrap { position: relative; }
+        .seed-input {
+            width: 100%; padding: 10px 40px 10px 12px; background: #0a0a0a; border: 1px solid #2a2a2a;
+            border-radius: 8px; color: #e0e0e0; font-size: 13px; font-family: monospace; outline: none;
+        }
+        .seed-input:focus { border-color: #7bff7b; }
+        .seed-input::placeholder { color: #333; }
+        .seed-toggle {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: #555; cursor: pointer; font-size: 14px;
+        }
+
+        .btn-connect-wallet {
+            width: 100%; padding: 11px; background: #7bff7b; color: #000;
+            border: none; border-radius: 8px; font-weight: 700; font-size: 14px;
+            cursor: pointer; font-family: inherit; margin-top: 12px; transition: all 0.15s;
+        }
+        .btn-connect-wallet:hover { background: #5de05d; }
+        .btn-connect-wallet:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
+
+        .wallet-connected {
+            display: none; align-items: center; justify-content: space-between;
+            background: #1a2e1a; border: 1px solid #2a4a2a; border-radius: 8px; padding: 12px;
+        }
+        .wallet-address { font-size: 13px; font-family: monospace; color: #7bff7b; }
+        .wallet-balance { font-size: 12px; color: #aaa; }
+        .btn-disconnect { font-size: 11px; color: #666; cursor: pointer; background: none; border: none; font-family: inherit; }
+        .btn-disconnect:hover { color: #ff4d4d; }
+
+        /* Form */
+        .form-section {
+            background: #141414; border: 1px solid #2a2a2a; border-radius: 12px;
+            padding: 20px; margin-bottom: 20px; opacity: 0.4; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .form-section.enabled { opacity: 1; pointer-events: all; }
+        .form-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 16px; color: #aaa; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 11px; font-weight: 600; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px 12px; background: #0a0a0a; border: 1px solid #2a2a2a;
+            border-radius: 8px; color: #e0e0e0; font-size: 14px; font-family: inherit; outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: #7bff7b; }
+        .form-group input::placeholder, .form-group textarea::placeholder { color: #333; }
+        .form-group textarea { resize: none; height: 70px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .hint { font-size: 11px; color: #444; margin-top: 4px; }
+
+        .cost-info {
+            background: #0a0a0a; border: 1px solid #1a2e1a; border-radius: 8px;
+            padding: 12px; margin-bottom: 16px; font-size: 12px;
+        }
+        .cost-row { display: flex; justify-content: space-between; padding: 3px 0; }
+        .cost-row .label { color: #666; }
+        .cost-row .value { color: #e0e0e0; font-weight: 600; }
+        .cost-row.total .value { color: #7bff7b; }
+        .cost-divider { height: 1px; background: #1e1e1e; margin: 6px 0; }
+
+        .btn-launch {
+            width: 100%; padding: 14px; background: #7bff7b; color: #000;
+            border: none; border-radius: 8px; font-weight: 800; font-size: 16px;
+            cursor: pointer; font-family: inherit; transition: all 0.15s;
+        }
+        .btn-launch:hover { background: #5de05d; box-shadow: 0 0 20px rgba(123,255,123,0.3); }
+        .btn-launch:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; }
+
+        /* Status */
+        .status-box {
+            display: none; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px;
+            padding: 16px; margin-top: 16px; font-size: 13px;
+        }
+        .status-box.show { display: block; }
+        .status-line { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; color: #aaa; }
+        .status-line.done { color: #7bff7b; }
+        .status-line.error { color: #ff4d4d; }
+        .status-line .icon { font-size: 14px; width: 16px; }
+        .spinner { width: 14px; height: 14px; border: 2px solid #333; border-top-color: #7bff7b; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Success */
+        .success-card {
+            display: none; background: #0a1a0a; border: 1px solid #2a4a2a; border-radius: 12px;
+            padding: 24px; margin-top: 20px; text-align: center;
+        }
+        .success-card.show { display: block; }
+        .success-icon { font-size: 48px; margin-bottom: 12px; }
+        .success-card h2 { font-size: 20px; font-weight: 700; color: #7bff7b; margin-bottom: 6px; }
+        .success-card p { color: #666; font-size: 13px; margin-bottom: 16px; }
+        .token-detail { background: #141414; border-radius: 8px; padding: 12px; text-align: left; margin-bottom: 16px; }
+        .token-detail-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
+        .token-detail-row .k { color: #666; }
+        .token-detail-row .v { color: #e0e0e0; font-family: monospace; font-weight: 600; }
+        .btn-view { display: inline-block; padding: 8px 20px; background: #1a2e1a; color: #7bff7b; border-radius: 6px; font-size: 13px; font-weight: 600; margin: 4px; }
+        .btn-view:hover { background: #2a4a2a; }
+
+        @media (max-width: 640px) {
+            .wallet-options { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <a href="/" class="logo">
+        <img src="logo.jpg" alt="">
+        <span>pump</span><span style="color:#e0e0e0">xrp</span>
+    </a>
+    <div class="header-nav">
+        <a href="/">board</a>
+        <a href="create.html" class="active">create</a>
+        <a href="#">how it works</a>
+    </div>
+</div>
+
+<div class="main">
+    <div class="network-badge">
+        <span class="dot"></span>
+        XRPL Testnet
+    </div>
+
+    <h1>Create a Token</h1>
+    <p class="subtitle">Launch your token on XRP Ledger in one click. Auto-listed on XRPL DEX.</p>
+
+    <!-- Step 1: Connect Wallet -->
+    <div class="wallet-section">
+        <h3>Step 1 — Connect Wallet</h3>
+
+        <div class="wallet-options">
+            <button class="wallet-btn" onclick="connectGemWallet()">
+                💎 GemWallet
+            </button>
+            <button class="wallet-btn" onclick="showSeedInput()">
+                🔑 Seed Phrase
+            </button>
+        </div>
+
+        <div id="seedInputArea" style="display:none">
+            <div class="divider">or enter seed phrase / secret key</div>
+            <div class="seed-input-wrap">
+                <input type="password" id="seedInput" class="seed-input" placeholder="sXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+                <button class="seed-toggle" onclick="toggleSeed()">👁</button>
+            </div>
+            <button class="btn-connect-wallet" onclick="connectWithSeed()">Connect</button>
+        </div>
+
+        <div id="walletConnected" class="wallet-connected">
+            <div>
+                <div class="wallet-address" id="walletAddr">—</div>
+                <div class="wallet-balance" id="walletBal">— XRP</div>
+            </div>
+            <button class="btn-disconnect" onclick="disconnect()">disconnect</button>
+        </div>
+    </div>
+
+    <!-- Step 2: Token Details -->
+    <div class="form-section" id="formSection">
+        <h3>Step 2 — Token Details</h3>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Token Name</label>
+                <input type="text" id="tokenName" placeholder="e.g. MoonCoin" maxlength="40">
+            </div>
+            <div class="form-group">
+                <label>Symbol (Ticker)</label>
+                <input type="text" id="tokenSymbol" placeholder="e.g. MOON" maxlength="3" oninput="this.value=this.value.toUpperCase()">
+                <div class="hint">Max 3 characters</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Total Supply</label>
+            <input type="number" id="tokenSupply" placeholder="e.g. 1000000000" value="1000000000">
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea id="tokenDesc" placeholder="Tell people about your token..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Image URL (optional)</label>
+            <input type="url" id="tokenImage" placeholder="https://...">
+            <div class="hint">Link to your token image (IPFS or direct URL)</div>
+        </div>
+
+        <!-- Cost Breakdown -->
+        <div class="cost-info">
+            <div class="cost-row">
+                <span class="label">Issuer account reserve</span>
+                <span class="value">2 XRP</span>
+            </div>
+            <div class="cost-row">
+                <span class="label">Trust line reserve</span>
+                <span class="value">2 XRP</span>
+            </div>
+            <div class="cost-row">
+                <span class="label">Transaction fees (~3 txns)</span>
+                <span class="value">~0.001 XRP</span>
+            </div>
+            <div class="cost-divider"></div>
+            <div class="cost-row total">
+                <span class="label">Total cost</span>
+                <span class="value">~4 XRP</span>
+            </div>
+        </div>
+
+        <button class="btn-launch" id="launchBtn" onclick="launchToken()" disabled>🚀 Launch Token</button>
+
+        <div class="status-box" id="statusBox"></div>
+    </div>
+
+    <!-- Success Card -->
+    <div class="success-card" id="successCard">
+        <div class="success-icon">🎉</div>
+        <h2>Token Launched!</h2>
+        <p>Your token is live on XRP Ledger Testnet</p>
+        <div class="token-detail" id="tokenDetails"></div>
+        <div>
+            <a href="#" id="explorerLink" class="btn-view" target="_blank">View on Explorer</a>
+            <a href="/" class="btn-view">Back to Board</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const TESTNET = 'wss://s.altnet.rippletest.net:51233';
+let client = null;
+let issuerWallet = null;
+let holderWallet = null;
+let connected = false;
+
+// ====== WALLET CONNECTION ======
+
+function showSeedInput() {
+    document.getElementById('seedInputArea').style.display = 'block';
+}
+
+function toggleSeed() {
+    const input = document.getElementById('seedInput');
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+async function connectGemWallet() {
+    if (typeof window.gemWallet === 'undefined') {
+        alert('GemWallet extension not found!\n\nInstall GemWallet at gemwallet.app then refresh this page.\n\nOr use "Seed Phrase" option to connect directly.');
+        return;
+    }
+    try {
+        const result = await window.gemWallet.getAddress();
+        if (result && result.result && result.result.address) {
+            await setupWalletFromAddress(result.result.address);
+        }
+    } catch (e) {
+        alert('GemWallet connection failed: ' + e.message);
+    }
+}
+
+async function connectWithSeed() {
+    const seed = document.getElementById('seedInput').value.trim();
+    if (!seed) return alert('Enter your seed phrase or secret key');
+    
+    try {
+        const wallet = xrpl.Wallet.fromSeed(seed);
+        issuerWallet = wallet;
+        await setupWalletFromAddress(wallet.address, wallet);
+    } catch (e) {
+        alert('Invalid seed: ' + e.message);
+    }
+}
+
+async function setupWalletFromAddress(address, wallet = null) {
+    try {
+        if (!client) {
+            client = new xrpl.Client(TESTNET);
+            await client.connect();
+        }
+
+        let balance = '?';
+        try {
+            const info = await client.request({ command: 'account_info', account: address, ledger_index: 'validated' });
+            balance = (parseFloat(info.result.account_data.Balance) / 1_000_000).toFixed(2);
+        } catch (e) {
+            balance = '0 (unfunded)';
+        }
+
+        document.getElementById('walletAddr').textContent = address.slice(0,6) + '...' + address.slice(-4);
+        document.getElementById('walletBal').textContent = balance + ' XRP';
+        document.getElementById('walletConnected').style.display = 'flex';
+        document.getElementById('seedInputArea').style.display = 'none';
+        document.getElementById('formSection').classList.add('enabled');
+        document.getElementById('launchBtn').disabled = false;
+        connected = true;
+        if (wallet) issuerWallet = wallet;
+
+    } catch (e) {
+        alert('Connection error: ' + e.message);
+    }
+}
+
+function disconnect() {
+    connected = false;
+    issuerWallet = null;
+    document.getElementById('walletConnected').style.display = 'none';
+    document.getElementById('formSection').classList.remove('enabled');
+    document.getElementById('launchBtn').disabled = true;
+    document.getElementById('seedInput').value = '';
+}
+
+// ====== TOKEN LAUNCH ======
+
+function setStatus(lines) {
+    const box = document.getElementById('statusBox');
+    box.classList.add('show');
+    box.innerHTML = lines.map(l => `
+        <div class="status-line ${l.type || ''}">
+            <span class="icon">${l.type === 'done' ? '✅' : l.type === 'error' ? '❌' : l.type === 'loading' ? '<span class="spinner"></span>' : '⏳'}</span>
+            <span>${l.text}</span>
+        </div>
+    `).join('');
+}
+
+async function launchToken() {
+    const name = document.getElementById('tokenName').value.trim();
+    const symbol = document.getElementById('tokenSymbol').value.trim().toUpperCase();
+    const supply = parseFloat(document.getElementById('tokenSupply').value);
+    const desc = document.getElementById('tokenDesc').value.trim();
+    const imageUrl = document.getElementById('tokenImage').value.trim();
+
+    if (!name) return alert('Enter token name');
+    if (!symbol || symbol.length > 3) return alert('Enter symbol (max 3 chars)');
+    if (!supply || supply <= 0) return alert('Enter valid supply');
+    if (!issuerWallet) return alert('Connect wallet first with seed phrase');
+
+    document.getElementById('launchBtn').disabled = true;
+
+    try {
+        // Connect
+        setStatus([{ text: 'Connecting to XRPL Testnet...', type: 'loading' }]);
+        if (!client || !client.isConnected()) {
+            client = new xrpl.Client(TESTNET);
+            await client.connect();
+        }
+
+        // Create cold (issuer) wallet — this is the issuerWallet from seed
+        const coldWallet = issuerWallet;
+
+        // Create hot wallet (holder/distributor)
+        setStatus([
+            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Creating distributor wallet...', type: 'loading' }
+        ]);
+
+        const hotWallet = xrpl.Wallet.generate();
+
+        // Fund hot wallet from testnet faucet
+        await client.fundWallet(hotWallet);
+
+        setStatus([
+            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Distributor wallet created', type: 'done' },
+            { text: 'Setting issuer account flags...', type: 'loading' }
+        ]);
+
+        // Set cold wallet settings (DefaultRipple = true)
+        const coldSettings = {
+            TransactionType: 'AccountSet',
+            Account: coldWallet.address,
+            SetFlag: xrpl.AccountSetAsfFlags.asfDefaultRipple,
+        };
+        await client.submitAndWait(coldSettings, { wallet: coldWallet });
+
+        setStatus([
+            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Distributor wallet created', type: 'done' },
+            { text: 'Issuer account configured', type: 'done' },
+            { text: 'Creating trust line...', type: 'loading' }
+        ]);
+
+        // Hot wallet creates trust line to cold wallet
+        const trustSet = {
+            TransactionType: 'TrustSet',
+            Account: hotWallet.address,
+            LimitAmount: {
+                currency: symbol,
+                issuer: coldWallet.address,
+                value: supply.toString(),
+            },
+        };
+        await client.submitAndWait(trustSet, { wallet: hotWallet });
+
+        setStatus([
+            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Distributor wallet created', type: 'done' },
+            { text: 'Issuer account configured', type: 'done' },
+            { text: 'Trust line created', type: 'done' },
+            { text: 'Issuing tokens...', type: 'loading' }
+        ]);
+
+        // Cold wallet sends tokens to hot wallet
+        const payment = {
+            TransactionType: 'Payment',
+            Account: coldWallet.address,
+            Amount: {
+                currency: symbol,
+                value: supply.toString(),
+                issuer: coldWallet.address,
+            },
+            Destination: hotWallet.address,
+        };
+        const result = await client.submitAndWait(payment, { wallet: coldWallet });
+
+        setStatus([
+            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Distributor wallet created', type: 'done' },
+            { text: 'Issuer account configured', type: 'done' },
+            { text: 'Trust line created', type: 'done' },
+            { text: 'Tokens issued successfully!', type: 'done' }
+        ]);
+
+        // Show success
+        setTimeout(() => {
+            document.getElementById('tokenDetails').innerHTML = `
+                <div class="token-detail-row"><span class="k">Token Name</span><span class="v">${name}</span></div>
+                <div class="token-detail-row"><span class="k">Symbol</span><span class="v">${symbol}</span></div>
+                <div class="token-detail-row"><span class="k">Supply</span><span class="v">${supply.toLocaleString()}</span></div>
+                <div class="token-detail-row"><span class="k">Issuer</span><span class="v">${coldWallet.address.slice(0,8)}...${coldWallet.address.slice(-6)}</span></div>
+                <div class="token-detail-row"><span class="k">TX Hash</span><span class="v">${result.result.hash.slice(0,12)}...</span></div>
+                <div class="token-detail-row"><span class="k">Network</span><span class="v">XRPL Testnet ✅</span></div>
+            `;
+            document.getElementById('explorerLink').href = `https://testnet.xrpl.org/accounts/${coldWallet.address}`;
+            document.getElementById('successCard').classList.add('show');
+            document.getElementById('statusBox').classList.remove('show');
+        }, 500);
+
+    } catch (e) {
+        setStatus([{ text: 'Error: ' + e.message, type: 'error' }]);
+        document.getElementById('launchBtn').disabled = false;
+    }
+}
+</script>
+</body>
+</html>
