@@ -216,6 +216,7 @@
 
         <div id="seedInputArea" style="display:none">
             <div class="divider">or enter seed phrase / secret key</div>
+            <button onclick="generateNewWallet()" style="width:100%;padding:9px;background:transparent;border:1px dashed #2a4a2a;border-radius:8px;color:#7bff7b;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;">✨ Generate New Testnet Wallet</button>
             <div class="seed-input-wrap">
                 <input type="password" id="seedInput" class="seed-input" placeholder="sXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
                 <button class="seed-toggle" onclick="toggleSeed()">👁</button>
@@ -338,6 +339,20 @@ async function connectGemWallet() {
     } catch (e) {
         alert('GemWallet connection failed: ' + e.message);
     }
+}
+
+function generateNewWallet() {
+    const newWallet = xrpl.Wallet.generate();
+    document.getElementById('seedInput').value = newWallet.seed;
+    document.getElementById('seedInput').type = 'text';
+    // Show warning
+    const warn = document.createElement('div');
+    warn.style.cssText = 'background:#2e1a00;border:1px solid #663300;border-radius:6px;padding:10px;font-size:11px;color:#ffaa00;margin-bottom:8px;';
+    warn.innerHTML = `⚠️ <strong>Save your seed phrase!</strong><br><code style="font-family:monospace;color:#fff;word-break:break-all;">${newWallet.seed}</code><br><br>Address: <code style="color:#7bff7b;">${newWallet.address}</code><br><br>Now get testnet XRP: <a href="https://faucet.altnet.rippletest.net/accounts" target="_blank" style="color:#ffaa00;text-decoration:underline;">faucet.altnet.rippletest.net</a> — paste address di sana`;
+    const existing = document.getElementById('walletWarn');
+    if (existing) existing.remove();
+    warn.id = 'walletWarn';
+    document.getElementById('seedInput').parentNode.before(warn);
 }
 
 async function connectWithSeed() {
