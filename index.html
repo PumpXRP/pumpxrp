@@ -824,11 +824,10 @@
             return;
         }
         grid.innerHTML = data.map(t => {
-            const emoji = t.image_url ? '' : '🪙';
-            const img = t.image_url ? `<img src="${t.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : emoji;
+            const img = t.image_url ? `<img src="${t.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : '🪙';
             const ago = timeAgo(t.created_at);
-            return `<div class="card">
-                <span class="token-badge badge-new">🆕 new</span>
+            return `<div class="card" onclick="window.location.href='token.html?id=${t.id}'">
+                <span class="card-replies badge badge-new">🆕 new</span>
                 <div class="card-top">
                     <div class="card-img">${img}</div>
                     <div class="card-meta">

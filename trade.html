@@ -387,62 +387,64 @@ const tokens = [
     { emoji: '⚡', name: 'RippleCat', symbol: 'RCAT', issuer: 'rM5x2bJkExampleIssuer6666666666666', price: '0.0000156', change: '-12%', up: false },
 ];
 
-// ===== ORDERBOOK =====
-function renderOrderBook() {
-    const basePrice = parseFloat(currentToken.price || '0.0000842');
+// ===== REAL ORDERBOOK FROM XRPL =====
+async function renderOrderBook() {
     const asksEl = document.getElementById('asks');
     const bidsEl = document.getElementById('bids');
-    asksEl.innerHTML = '';
+    asksEl.innerHTML = '<div style="padding:12px 16px;color:#444;font-size:12px;">Loading...</div>';
     bidsEl.innerHTML = '';
 
-    // 5 asks (sell orders — above price)
-    for (let i = 4; i >= 0; i--) {
-        const p = (basePrice * (1 + (i+1) * 0.003)).toFixed(7);
-        const amt = Math.floor(Math.random() * 50000 + 5000);
-        const total = (p * amt).toFixed(4);
-        const pct = Math.random() * 80 + 10;
-        asksEl.innerHTML += `<div class="ob-row ask" onclick="setPrice('${p}')">
-            <span class="price">${p}</span>
-            <span style="text-align:right">${amt.toLocaleString()}</span>
-            <span style="text-align:right">${total}</span>
-            <div class="ob-bar" style="width:${pct}%"></div>
-        </div>`;
-    }
+    try {
+        if (!client) { client = new xrpl.Client(TESTNET_URL); await client.connect(); }
 
-    document.getElementById('spreadInfo').textContent = `Spread: ${(basePrice * 0.003).toFixed(7)} XRP`;
+        const sym = currentToken.symbol;
+        const currency = sym.length > 3 ? xrpl.convertStringToHex(sym).padEnd(40,'0').toUpperCase() : sym.toUpperCase();
 
-    // 5 bids (buy orders — below price)
-    for (let i = 0; i < 5; i++) {
-        const p = (basePrice * (1 - (i+1) * 0.003)).toFixed(7);
-        const amt = Math.floor(Math.random() * 50000 + 5000);
-        const total = (p * amt).toFixed(4);
-        const pct = Math.random() * 80 + 10;
-        bidsEl.innerHTML += `<div class="ob-row bid" onclick="setPrice('${p}')">
-            <span class="price">${p}</span>
-            <span style="text-align:right">${amt.toLocaleString()}</span>
-            <span style="text-align:right">${total}</span>
-            <div class="ob-bar" style="width:${pct}%"></div>
-        </div>`;
+        const [asksRes, bidsRes] = await Promise.all([
+            client.request({ command:'book_offers', taker_pays:{currency:'XRP'}, taker_gets:{currency, issuer:currentToken.issuer}, limit:6 }),
+            client.request({ command:'book_offers', taker_pays:{currency, issuer:currentToken.issuer}, taker_gets:{currency:'XRP'}, limit:6 })
+        ]);
+
+        const asks = asksRes.result.offers || [];
+        const bids = bidsRes.result.offers || [];
+
+        asksEl.innerHTML = asks.length === 0 ? '<div style="padding:8px 16px;color:#444;font-size:12px;">No sell orders</div>' :
+            asks.slice(0,5).map(o => {
+                const xrpAmt = parseFloat(xrpl.dropsToXrp(typeof o.TakerPays==='string' ? o.TakerPays : '0'));
+                const tkAmt = parseFloat(typeof o.TakerGets==='object' ? o.TakerGets.value : '0');
+                const p = tkAmt > 0 ? (xrpAmt/tkAmt).toFixed(7) : '—';
+                return `<div class="ob-row ask" onclick="setPrice('${p}')">
+                    <span class="price">${p}</span>
+                    <span style="text-align:right">${Math.floor(tkAmt).toLocaleString()}</span>
+                    <span style="text-align:right">${xrpAmt.toFixed(4)}</span>
+                    <div class="ob-bar" style="width:55%"></div>
+                </div>`;
+            }).join('');
+
+        bidsEl.innerHTML = bids.length === 0 ? '<div style="padding:8px 16px;color:#444;font-size:12px;">No buy orders</div>' :
+            bids.slice(0,5).map(o => {
+                const xrpAmt = parseFloat(xrpl.dropsToXrp(typeof o.TakerGets==='string' ? o.TakerGets : '0'));
+                const tkAmt = parseFloat(typeof o.TakerPays==='object' ? o.TakerPays.value : '0');
+                const p = tkAmt > 0 ? (xrpAmt/tkAmt).toFixed(7) : '—';
+                return `<div class="ob-row bid" onclick="setPrice('${p}')">
+                    <span class="price">${p}</span>
+                    <span style="text-align:right">${Math.floor(tkAmt).toLocaleString()}</span>
+                    <span style="text-align:right">${xrpAmt.toFixed(4)}</span>
+                    <div class="ob-bar" style="width:55%"></div>
+                </div>`;
+            }).join('');
+
+        document.getElementById('spreadInfo').textContent = asks.length && bids.length ? '✅ Live XRPL DEX data' : 'No active market yet for this token';
+    } catch(e) {
+        asksEl.innerHTML = '<div style="padding:8px 16px;color:#555;font-size:12px;">Connect to XRPL...</div>';
+        document.getElementById('spreadInfo').textContent = 'Could not load orderbook';
     }
 }
 
 function renderTrades() {
-    const basePrice = parseFloat(currentToken.price || '0.0000842');
+    // Placeholder — real trade history needs account_tx per token
     const el = document.getElementById('recentTrades');
-    el.innerHTML = '';
-    const now = new Date();
-    for (let i = 0; i < 20; i++) {
-        const isBuy = Math.random() > 0.45;
-        const p = (basePrice * (1 + (Math.random() - 0.5) * 0.01)).toFixed(7);
-        const amt = Math.floor(Math.random() * 20000 + 500);
-        const t = new Date(now - i * Math.random() * 60000);
-        const timeStr = t.toTimeString().slice(0,8);
-        el.innerHTML += `<div class="trade-row">
-            <span class="${isBuy ? 'buy' : 'sell'}">${p}</span>
-            <span style="text-align:right;color:#aaa">${amt.toLocaleString()}</span>
-            <span class="time" style="text-align:right">${timeStr}</span>
-        </div>`;
-    }
+    el.innerHTML = '<div style="padding:12px 16px;color:#444;font-size:12px;">Select a token to see trade history</div>';
 }
 
 // ===== TOKEN MODAL =====
@@ -663,10 +665,10 @@ function showTxMsg(text, type) {
 // Init
 renderOrderBook();
 renderTrades();
-document.getElementById('tradePrice').placeholder = currentToken.price;
+document.getElementById('tradePrice').placeholder = currentToken.price || '0.00001';
 
-// Refresh orderbook every 10s
-setInterval(() => { renderOrderBook(); renderTrades(); }, 10000);
+// Refresh orderbook every 15s
+setInterval(() => renderOrderBook(), 15000);
 </script>
 
 </body>

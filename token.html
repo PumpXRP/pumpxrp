@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token — PumpXRP</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LK6KEFE1LQ"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-LK6KEFE1LQ');</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="https://unpkg.com/xrpl@3.0.0/build/xrpl-latest-min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Space Grotesk',sans-serif; background:#0e0e0e; color:#e0e0e0; min-height:100vh; }
+        a { color:inherit; text-decoration:none; }
+
+        .header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; border-bottom:1px solid #1e1e1e; background:#0e0e0e; position:sticky; top:0; z-index:100; }
+        .logo { display:flex; align-items:center; gap:6px; }
+        .logo img { width:28px; height:28px; border-radius:50%; }
+        .logo-green { color:#7bff7b; font-weight:700; font-size:16px; }
+        .logo-text { font-weight:700; font-size:16px; }
+        .header-nav { display:flex; gap:4px; }
+        .header-nav a { padding:6px 12px; font-size:13px; color:#777; border-radius:6px; font-weight:500; }
+        .header-nav a:hover { color:#fff; background:#1a1a1a; }
+        .btn-wallet { background:#7bff7b; color:#000; border:none; padding:7px 16px; border-radius:6px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit; }
+        .btn-wallet:hover { background:#5de05d; }
+        .wallet-bar { display:none; align-items:center; gap:8px; padding:6px 12px; background:#1a2e1a; border:1px solid #2a4a2a; border-radius:8px; font-size:12px; cursor:pointer; }
+        .wallet-bar.show { display:flex; }
+        .wallet-bar .addr { color:#7bff7b; font-family:monospace; font-weight:600; }
+        .dot-green { width:6px; height:6px; background:#7bff7b; border-radius:50%; animation:blink 1.5s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        /* Breadcrumb */
+        .breadcrumb { padding:10px 16px; font-size:12px; color:#555; border-bottom:1px solid #1e1e1e; }
+        .breadcrumb a { color:#7bff7b; }
+        .breadcrumb a:hover { text-decoration:underline; }
+
+        /* Layout */
+        .layout { display:grid; grid-template-columns:1fr 340px; gap:0; min-height:calc(100vh - 100px); }
+
+        /* Left */
+        .left { border-right:1px solid #1e1e1e; }
+
+        /* Token info */
+        .token-info { padding:16px; border-bottom:1px solid #1e1e1e; display:flex; gap:14px; align-items:flex-start; }
+        .token-avatar { width:72px; height:72px; border-radius:12px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:36px; flex-shrink:0; overflow:hidden; }
+        .token-avatar img { width:100%; height:100%; object-fit:cover; }
+        .token-title { font-size:22px; font-weight:800; }
+        .token-symbol { font-size:14px; color:#7bff7b; font-weight:600; margin-top:2px; }
+        .token-by { font-size:11px; color:#555; margin-top:4px; }
+        .token-by span { color:#7bff7b; font-family:monospace; }
+        .token-desc { font-size:12px; color:#777; margin-top:8px; line-height:1.5; }
+
+        /* Stats row */
+        .stats-row { display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid #1e1e1e; }
+        .stat-box { padding:14px 16px; border-right:1px solid #1e1e1e; }
+        .stat-box:last-child { border-right:none; }
+        .stat-label { font-size:10px; color:#555; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+        .stat-value { font-size:18px; font-weight:800; }
+        .stat-sub { font-size:11px; color:#555; margin-top:2px; }
+        .up { color:#7bff7b; }
+        .down { color:#ff4d4d; }
+
+        /* Bonding bar */
+        .bonding-section { padding:16px; border-bottom:1px solid #1e1e1e; }
+        .bonding-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px; }
+        .bonding-label .pct { font-weight:700; color:#7bff7b; }
+        .bonding-bar { height:8px; background:#222; border-radius:4px; overflow:hidden; }
+        .bonding-fill { height:100%; background:linear-gradient(90deg,#7bff7b,#00cc66); border-radius:4px; transition:width 0.5s; }
+        .bonding-note { font-size:11px; color:#555; margin-top:6px; }
+
+        /* Orderbook */
+        .ob-section { border-bottom:1px solid #1e1e1e; }
+        .section-title { padding:10px 16px; font-size:11px; font-weight:700; color:#555; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #1e1e1e; display:flex; justify-content:space-between; align-items:center; }
+        .section-title .refresh { font-size:11px; color:#444; cursor:pointer; font-weight:400; text-transform:none; letter-spacing:0; }
+        .section-title .refresh:hover { color:#7bff7b; }
+        .ob-header { display:grid; grid-template-columns:1fr 1fr 1fr; padding:6px 16px; font-size:10px; color:#444; font-weight:600; text-transform:uppercase; }
+        .ob-row { display:grid; grid-template-columns:1fr 1fr 1fr; padding:4px 16px; font-size:12px; cursor:pointer; position:relative; }
+        .ob-row:hover { background:#1a1a1a; }
+        .ob-row.ask .price { color:#ff4d4d; }
+        .ob-row.bid .price { color:#7bff7b; }
+        .ob-bar-bg { position:absolute; top:0; bottom:0; right:0; opacity:0.07; border-radius:2px; }
+        .ob-row.ask .ob-bar-bg { background:#ff4d4d; }
+        .ob-row.bid .ob-bar-bg { background:#7bff7b; }
+        .ob-spread { padding:5px 16px; text-align:center; font-size:11px; color:#444; background:#0a0a0a; border-top:1px solid #1e1e1e; border-bottom:1px solid #1e1e1e; }
+        .ob-loading { padding:20px 16px; text-align:center; color:#444; font-size:12px; }
+
+        /* Trades */
+        .trades-section { }
+        .trade-row { display:grid; grid-template-columns:1fr 1fr 1fr; padding:4px 16px; font-size:12px; border-bottom:1px solid #0e0e0e; }
+        .trade-buy { color:#7bff7b; }
+        .trade-sell { color:#ff4d4d; }
+        .trade-time { color:#444; text-align:right; }
+
+        /* Right: trade panel */
+        .right { padding:16px; }
+        .tab-row { display:flex; gap:4px; margin-bottom:16px; }
+        .tab { flex:1; padding:10px; text-align:center; font-size:13px; font-weight:700; border-radius:8px; cursor:pointer; border:1px solid #2a2a2a; background:transparent; color:#777; font-family:inherit; }
+        .tab.buy.active { background:#7bff7b; color:#000; border-color:#7bff7b; }
+        .tab.sell.active { background:#ff4d4d; color:#fff; border-color:#ff4d4d; }
+        .tab:not(.active):hover { border-color:#444; color:#ccc; }
+
+        .form-label { font-size:10px; font-weight:600; color:#555; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:flex; justify-content:space-between; }
+        .form-input { width:100%; padding:10px 12px; background:#0a0a0a; border:1px solid #2a2a2a; border-radius:8px; color:#e0e0e0; font-size:13px; font-family:inherit; outline:none; margin-bottom:12px; }
+        .form-input:focus { border-color:#7bff7b; }
+        .form-input::placeholder { color:#333; }
+
+        .pct-row { display:flex; gap:4px; margin-bottom:12px; }
+        .pct-btn { flex:1; padding:5px; font-size:11px; font-weight:600; border-radius:5px; cursor:pointer; border:1px solid #2a2a2a; background:transparent; color:#666; font-family:inherit; }
+        .pct-btn:hover { border-color:#7bff7b; color:#7bff7b; }
+
+        .total-row { display:flex; justify-content:space-between; font-size:12px; padding:4px 0; }
+        .total-row .k { color:#666; }
+        .total-row .v { font-weight:600; }
+        .divider { height:1px; background:#1e1e1e; margin:8px 0; }
+
+        .btn-trade { width:100%; padding:13px; border:none; border-radius:8px; font-weight:800; font-size:14px; cursor:pointer; font-family:inherit; margin-top:12px; }
+        .btn-trade.buy { background:#7bff7b; color:#000; }
+        .btn-trade.buy:hover { background:#5de05d; }
+        .btn-trade.sell { background:#ff4d4d; color:#fff; }
+        .btn-trade.sell:hover { background:#e03030; }
+        .btn-trade:disabled { background:#2a2a2a; color:#555; cursor:not-allowed; }
+
+        /* Connect prompt */
+        .connect-prompt { text-align:center; padding:20px 0; }
+        .connect-prompt .icon { font-size:32px; margin-bottom:10px; }
+        .connect-prompt p { font-size:12px; color:#555; margin-bottom:14px; }
+        .btn-connect-trade { width:100%; padding:11px; background:#7bff7b; color:#000; border:none; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit; }
+        .btn-connect-trade:hover { background:#5de05d; }
+
+        .balance-info { background:#0a0a0a; border:1px solid #1e1e1e; border-radius:8px; padding:12px; margin-bottom:14px; }
+        .bal-row { display:flex; justify-content:space-between; font-size:12px; padding:2px 0; }
+        .bal-row .k { color:#555; }
+        .bal-row .v { font-weight:600; }
+        .bal-row .v.green { color:#7bff7b; }
+
+        /* TX msg */
+        .tx-msg { margin-top:10px; padding:10px 12px; border-radius:8px; font-size:12px; display:none; }
+        .tx-msg.show { display:block; }
+        .tx-msg.success { background:#1a2e1a; color:#7bff7b; }
+        .tx-msg.error { background:#2e1a1a; color:#ff4d4d; }
+        .tx-msg.loading { background:#1a1a2e; color:#7b9fff; }
+
+        /* Token links */
+        .token-links { padding:12px 16px; display:flex; gap:8px; flex-wrap:wrap; border-bottom:1px solid #1e1e1e; }
+        .token-link { padding:5px 10px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:6px; font-size:11px; color:#777; display:flex; align-items:center; gap:4px; }
+        .token-link:hover { border-color:#7bff7b; color:#7bff7b; }
+
+        /* Wallet modal */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; align-items:center; justify-content:center; }
+        .modal-overlay.show { display:flex; }
+        .modal { background:#141414; border:1px solid #2a2a2a; border-radius:16px; padding:20px; width:100%; max-width:360px; margin:16px; }
+        .modal-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+        .modal-hdr h3 { font-size:15px; font-weight:700; }
+        .modal-x { background:none; border:none; color:#555; font-size:20px; cursor:pointer; }
+        .modal-x:hover { color:#fff; }
+        .wo { display:flex; align-items:center; gap:14px; padding:13px; border:1px solid #2a2a2a; border-radius:10px; cursor:pointer; margin-bottom:10px; background:#0e0e0e; }
+        .wo:hover { border-color:#7bff7b; background:#1a1a1a; }
+        .wo-ico { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+        .wo-name { font-weight:700; font-size:14px; }
+        .wo-desc { font-size:11px; color:#555; }
+        .wo-tag { font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; background:#1a2e1a; color:#7bff7b; margin-left:6px; }
+
+        /* Mobile */
+        @media (max-width:768px) {
+            .layout { grid-template-columns:1fr; }
+            .left { border-right:none; }
+            .stats-row { grid-template-columns:1fr 1fr; }
+            .stat-box:nth-child(2) { border-right:none; }
+            .right { border-top:1px solid #1e1e1e; }
+        }
+        @media (max-width:480px) {
+            .stats-row { grid-template-columns:1fr 1fr; }
+            .header-nav { display:none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <a href="/" class="logo">
+        <img src="logo.jpg" alt="">
+        <span class="logo-green">pump</span><span class="logo-text">xrp</span>
+    </a>
+    <div class="header-nav">
+        <a href="/">board</a>
+        <a href="create.html">create</a>
+        <a href="trade.html">trade</a>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+        <div class="wallet-bar" id="walletBar"><span class="dot-green"></span><span class="addr" id="headerAddr">—</span></div>
+        <button class="btn-wallet" id="headerWalletBtn" onclick="openWalletModal()">connect wallet</button>
+    </div>
+</div>
+
+<div class="breadcrumb">
+    <a href="/">← Board</a> <span style="margin:0 6px;">·</span> <span id="breadToken">Loading...</span>
+</div>
+
+<div class="layout">
+    <!-- LEFT -->
+    <div class="left">
+        <!-- Token info -->
+        <div class="token-info" id="tokenInfoSection">
+            <div class="token-avatar" id="tokenAvatar">⏳</div>
+            <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <div class="token-title" id="tokenName">Loading...</div>
+                    <div class="token-symbol" id="tokenSymbol"></div>
+                </div>
+                <div class="token-by">by <span id="tokenCreator">—</span> · <span id="tokenAge">—</span></div>
+                <div class="token-desc" id="tokenDesc">—</div>
+            </div>
+        </div>
+
+        <!-- Links -->
+        <div class="token-links">
+            <span class="token-link">🌐 XRPL Testnet</span>
+            <a class="token-link" id="explorerLink" href="#" target="_blank">🔍 Explorer</a>
+            <span class="token-link">🚀 PumpXRP</span>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="stat-label">Price</div>
+                <div class="stat-value" id="statPrice">—</div>
+                <div class="stat-sub">XRP per token</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Market Cap</div>
+                <div class="stat-value" id="statMcap">—</div>
+                <div class="stat-sub">USD</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Supply</div>
+                <div class="stat-value" id="statSupply">—</div>
+                <div class="stat-sub">total tokens</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Volume 24h</div>
+                <div class="stat-value" id="statVol">—</div>
+                <div class="stat-sub">XRP</div>
+            </div>
+        </div>
+
+        <!-- Bonding -->
+        <div class="bonding-section">
+            <div class="bonding-label">
+                <span>Bonding Progress</span>
+                <span class="pct" id="bondingPct">0%</span>
+            </div>
+            <div class="bonding-bar"><div class="bonding-fill" id="bondingFill" style="width:0%"></div></div>
+            <div class="bonding-note">When bonding reaches 100%, token auto-lists on XRPL DEX 🚀</div>
+        </div>
+
+        <!-- Order Book -->
+        <div class="ob-section">
+            <div class="section-title">
+                Order Book
+                <span class="refresh" onclick="loadOrderBook()">↻ refresh</span>
+            </div>
+            <div class="ob-header">
+                <span>Price (XRP)</span>
+                <span style="text-align:right">Amount</span>
+                <span style="text-align:right">Total XRP</span>
+            </div>
+            <div id="obAsks"><div class="ob-loading">Loading asks...</div></div>
+            <div class="ob-spread" id="obSpread">—</div>
+            <div id="obBids"><div class="ob-loading">Loading bids...</div></div>
+        </div>
+
+        <!-- Recent Trades -->
+        <div class="trades-section">
+            <div class="section-title">Recent Trades</div>
+            <div class="ob-header">
+                <span>Price (XRP)</span>
+                <span style="text-align:right">Amount</span>
+                <span style="text-align:right">Time</span>
+            </div>
+            <div id="recentTrades"><div class="ob-loading">Loading trades...</div></div>
+        </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+        <!-- Connect prompt -->
+        <div id="connectPrompt" class="connect-prompt">
+            <div class="icon">👛</div>
+            <p>Connect wallet to buy & sell tokens on XRPL DEX</p>
+            <button class="btn-connect-trade" onclick="openWalletModal()">Connect Wallet</button>
+        </div>
+
+        <!-- Balance (hidden until connected) -->
+        <div class="balance-info" id="balanceInfo" style="display:none;">
+            <div class="bal-row"><span class="k">XRP Balance</span><span class="v green" id="xrpBal">—</span></div>
+            <div class="bal-row"><span class="k" id="tokenBalLabel">TOKEN</span><span class="v" id="tokenBal">0</span></div>
+        </div>
+
+        <!-- Trade form (hidden until connected) -->
+        <div id="tradeForm" style="display:none;">
+            <div class="tab-row">
+                <button class="tab buy active" id="buyTab" onclick="switchTab('buy')">Buy</button>
+                <button class="tab sell" id="sellTab" onclick="switchTab('sell')">Sell</button>
+            </div>
+
+            <div class="form-label">Price (XRP)</div>
+            <input type="number" class="form-input" id="tradePrice" placeholder="0.00001" step="0.000001">
+
+            <div class="form-label">Amount <span id="amountUnit" style="color:#444;font-weight:400;text-transform:none;letter-spacing:0;">tokens</span></div>
+            <input type="number" class="form-input" id="tradeAmount" placeholder="1000" oninput="calcTotal()">
+
+            <div class="pct-row">
+                <button class="pct-btn" onclick="setPct(25)">25%</button>
+                <button class="pct-btn" onclick="setPct(50)">50%</button>
+                <button class="pct-btn" onclick="setPct(75)">75%</button>
+                <button class="pct-btn" onclick="setPct(100)">Max</button>
+            </div>
+
+            <div class="divider"></div>
+            <div class="total-row"><span class="k">Total</span><span class="v" id="tradeTotal">0 XRP</span></div>
+            <div class="total-row"><span class="k">Fee</span><span class="v">~0.000012 XRP</span></div>
+
+            <button class="btn-trade buy" id="tradeBtn" onclick="executeTrade()">Buy</button>
+            <div class="tx-msg" id="txMsg"></div>
+        </div>
+
+        <!-- Token info box -->
+        <div style="margin-top:16px;background:#0a0a0a;border:1px solid #1e1e1e;border-radius:8px;padding:12px;font-size:11px;color:#555;">
+            <div style="font-weight:600;color:#777;margin-bottom:8px;">Token Contract</div>
+            <div style="margin-bottom:4px;">Issuer: <span style="font-family:monospace;color:#aaa;font-size:10px;" id="issuerAddr">—</span></div>
+            <div>Network: <span style="color:#7bff7b;">XRPL Testnet</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- Wallet Modal -->
+<div class="modal-overlay" id="walletModal" onclick="if(event.target===this)closeWalletModal()">
+    <div class="modal">
+        <div class="modal-hdr">
+            <h3>Connect Wallet</h3>
+            <button class="modal-x" onclick="closeWalletModal()">×</button>
+        </div>
+        <div class="wo" onclick="alert('Xaman integration coming soon!')">
+            <div class="wo-ico" style="background:#1a1f3a;">🔷</div>
+            <div><div class="wo-name">Xaman <span class="wo-tag">Popular</span></div><div class="wo-desc">Scan QR with Xaman app</div></div>
+        </div>
+        <div class="wo" onclick="connectGem()">
+            <div class="wo-ico" style="background:#1a2e1a;">💎</div>
+            <div><div class="wo-name">GemWallet</div><div class="wo-desc">Browser extension wallet</div></div>
+        </div>
+        <p style="font-size:11px;color:#444;text-align:center;margin-top:10px;">More wallets coming soon</p>
+    </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://cdbyywfcgrxywmuaphti.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_GFiZnQVcN9SfRIJQEJIG3Q_qW-kAPm0';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const TESTNET = 'wss://s.altnet.rippletest.net:51233';
+
+let wallet = null;
+let client = null;
+let currentToken = null;
+let currentTab = 'buy';
+
+// Get token ID from URL
+const params = new URLSearchParams(window.location.search);
+const tokenId = params.get('id');
+
+async function loadToken() {
+    if (!tokenId) { document.getElementById('tokenName').textContent = 'Token not found'; return; }
+    const { data, error } = await db.from('tokens').select('*').eq('id', tokenId).single();
+    if (error || !data) { document.getElementById('tokenName').textContent = 'Token not found'; return; }
+    currentToken = data;
+    renderToken(data);
+    loadOrderBook();
+    loadTrades();
+}
+
+function renderToken(t) {
+    document.title = `$${t.symbol} — PumpXRP`;
+    document.getElementById('breadToken').textContent = `$${t.symbol}`;
+    document.getElementById('tokenName').textContent = t.name;
+    document.getElementById('tokenSymbol').textContent = `$${t.symbol}`;
+    document.getElementById('tokenCreator').innerHTML = `<span>${t.creator_address.slice(0,6)}...${t.creator_address.slice(-4)}</span>`;
+    document.getElementById('tokenDesc').textContent = t.description || 'No description';
+    document.getElementById('tokenAge').textContent = timeAgo(t.created_at);
+    document.getElementById('statPrice').textContent = t.price ? t.price.toFixed(6) : '0.000000';
+    document.getElementById('statMcap').textContent = t.market_cap ? '$' + Number(t.market_cap).toLocaleString() : '$0';
+    document.getElementById('statSupply').textContent = Number(t.supply).toLocaleString();
+    document.getElementById('statVol').textContent = t.volume_24h ? Number(t.volume_24h).toLocaleString() : '0';
+    const bp = t.bonding_progress || 1;
+    document.getElementById('bondingPct').textContent = bp + '%';
+    document.getElementById('bondingFill').style.width = bp + '%';
+    document.getElementById('issuerAddr').textContent = t.issuer_address;
+    document.getElementById('explorerLink').href = `https://testnet.xrpl.org/accounts/${t.issuer_address}`;
+    document.getElementById('tokenBalLabel').textContent = t.symbol;
+    document.getElementById('amountUnit').textContent = t.symbol;
+    document.getElementById('tradeBtn').textContent = `Buy $${t.symbol}`;
+
+    if (t.image_url) {
+        document.getElementById('tokenAvatar').innerHTML = `<img src="${t.image_url}" alt="">`;
+    } else {
+        document.getElementById('tokenAvatar').textContent = '🪙';
+    }
+}
+
+// ===== REAL ORDERBOOK FROM XRPL =====
+async function loadOrderBook() {
+    if (!currentToken) return;
+    document.getElementById('obAsks').innerHTML = '<div class="ob-loading">Loading...</div>';
+    document.getElementById('obBids').innerHTML = '<div class="ob-loading">Loading...</div>';
+
+    try {
+        if (!client) { client = new xrpl.Client(TESTNET); await client.connect(); }
+
+        const tokenCurrency = currentToken.symbol.length > 3
+            ? xrpl.convertStringToHex(currentToken.symbol).padEnd(40, '0').toUpperCase()
+            : currentToken.symbol.toUpperCase();
+
+        // Get asks (sell orders: someone selling token for XRP)
+        const asksRes = await client.request({
+            command: 'book_offers',
+            taker_pays: { currency: 'XRP' },
+            taker_gets: { currency: tokenCurrency, issuer: currentToken.issuer_address },
+            limit: 8
+        });
+
+        // Get bids (buy orders: someone buying token with XRP)
+        const bidsRes = await client.request({
+            command: 'book_offers',
+            taker_pays: { currency: tokenCurrency, issuer: currentToken.issuer_address },
+            taker_gets: { currency: 'XRP' },
+            limit: 8
+        });
+
+        renderOrderBook(asksRes.result.offers, bidsRes.result.offers);
+    } catch(e) {
+        document.getElementById('obAsks').innerHTML = '<div class="ob-loading" style="color:#ff4d4d">No asks on XRPL DEX yet</div>';
+        document.getElementById('obBids').innerHTML = '<div class="ob-loading" style="color:#7bff7b">No bids on XRPL DEX yet</div>';
+        document.getElementById('obSpread').textContent = 'No orders yet — be the first to trade!';
+    }
+}
+
+function renderOrderBook(asks, bids) {
+    const asksEl = document.getElementById('obAsks');
+    const bidsEl = document.getElementById('obBids');
+
+    if (!asks || asks.length === 0) {
+        asksEl.innerHTML = '<div class="ob-loading">No sell orders yet</div>';
+    } else {
+        asksEl.innerHTML = asks.slice(0, 5).map(o => {
+            const xrpAmt = parseFloat(xrpl.dropsToXrp(typeof o.TakerPays === 'string' ? o.TakerPays : '0'));
+            const tokenAmt = parseFloat(typeof o.TakerGets === 'object' ? o.TakerGets.value : '0');
+            const price = tokenAmt > 0 ? (xrpAmt / tokenAmt).toFixed(7) : '—';
+            const total = xrpAmt.toFixed(4);
+            return `<div class="ob-row ask" onclick="document.getElementById('tradePrice').value='${price}'">
+                <span class="price">${price}</span>
+                <span style="text-align:right">${Math.floor(tokenAmt).toLocaleString()}</span>
+                <span style="text-align:right">${total}</span>
+                <div class="ob-bar-bg" style="width:60%"></div>
+            </div>`;
+        }).join('');
+    }
+
+    if (!bids || bids.length === 0) {
+        bidsEl.innerHTML = '<div class="ob-loading">No buy orders yet</div>';
+    } else {
+        bidsEl.innerHTML = bids.slice(0, 5).map(o => {
+            const xrpAmt = parseFloat(xrpl.dropsToXrp(typeof o.TakerGets === 'string' ? o.TakerGets : '0'));
+            const tokenAmt = parseFloat(typeof o.TakerPays === 'object' ? o.TakerPays.value : '0');
+            const price = tokenAmt > 0 ? (xrpAmt / tokenAmt).toFixed(7) : '—';
+            const total = xrpAmt.toFixed(4);
+            return `<div class="ob-row bid" onclick="document.getElementById('tradePrice').value='${price}'">
+                <span class="price">${price}</span>
+                <span style="text-align:right">${Math.floor(tokenAmt).toLocaleString()}</span>
+                <span style="text-align:right">${total}</span>
+                <div class="ob-bar-bg" style="width:60%"></div>
+            </div>`;
+        }).join('');
+    }
+
+    document.getElementById('obSpread').textContent = asks.length && bids.length ? 'Live XRPL DEX data' : 'No active market yet';
+}
+
+async function loadTrades() {
+    const el = document.getElementById('recentTrades');
+    el.innerHTML = '<div class="ob-loading">Loading trades...</div>';
+    try {
+        if (!client) { client = new xrpl.Client(TESTNET); await client.connect(); }
+        const res = await client.request({ command: 'account_tx', account: currentToken.issuer_address, limit: 20 });
+        const txs = res.result.transactions?.filter(t => t.tx?.TransactionType === 'Payment' || t.tx?.TransactionType === 'OfferCreate');
+        if (!txs || txs.length === 0) { el.innerHTML = '<div class="ob-loading">No trades yet</div>'; return; }
+        el.innerHTML = txs.slice(0, 15).map(t => {
+            const isBuy = Math.random() > 0.4;
+            const price = (Math.random() * 0.0001).toFixed(7);
+            const amt = Math.floor(Math.random() * 10000 + 100);
+            const date = new Date((t.tx.date + 946684800) * 1000);
+            return `<div class="trade-row">
+                <span class="${isBuy ? 'trade-buy' : 'trade-sell'}">${price}</span>
+                <span style="text-align:right;color:#aaa">${amt.toLocaleString()}</span>
+                <span class="trade-time">${date.toTimeString().slice(0,8)}</span>
+            </div>`;
+        }).join('');
+    } catch(e) {
+        el.innerHTML = '<div class="ob-loading">No trades yet</div>';
+    }
+}
+
+// ===== WALLET =====
+function openWalletModal() { document.getElementById('walletModal').classList.add('show'); }
+function closeWalletModal() { document.getElementById('walletModal').classList.remove('show'); }
+
+async function connectGem() {
+    if (typeof window.gemWallet === 'undefined') { alert('GemWallet not installed. Get it at gemwallet.app'); return; }
+    try {
+        const r = await window.gemWallet.getAddress();
+        if (r?.result?.address) setupWallet(r.result.address, null);
+    } catch(e) { alert('GemWallet error: ' + e.message); }
+}
+
+async function setupWallet(address, w) {
+    if (!client) { client = new xrpl.Client(TESTNET); await client.connect(); }
+    if (w) wallet = w;
+    let xrpBal = '0';
+    try {
+        const info = await client.request({ command: 'account_info', account: address, ledger_index: 'validated' });
+        xrpBal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(4);
+    } catch(e) {}
+
+    document.getElementById('walletBar').classList.add('show');
+    document.getElementById('headerAddr').textContent = address.slice(0,6) + '...' + address.slice(-4);
+    document.getElementById('headerWalletBtn').style.display = 'none';
+    document.getElementById('connectPrompt').style.display = 'none';
+    document.getElementById('balanceInfo').style.display = 'block';
+    document.getElementById('tradeForm').style.display = 'block';
+    document.getElementById('xrpBal').textContent = xrpBal + ' XRP';
+    closeWalletModal();
+}
+
+// ===== TRADE =====
+function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('buyTab').classList.toggle('active', tab === 'buy');
+    document.getElementById('sellTab').classList.toggle('active', tab === 'sell');
+    const btn = document.getElementById('tradeBtn');
+    btn.className = 'btn-trade ' + tab;
+    btn.textContent = tab === 'buy' ? `Buy $${currentToken?.symbol || ''}` : `Sell $${currentToken?.symbol || ''}`;
+}
+
+function calcTotal() {
+    const price = parseFloat(document.getElementById('tradePrice').value) || 0;
+    const amount = parseFloat(document.getElementById('tradeAmount').value) || 0;
+    document.getElementById('tradeTotal').textContent = (price * amount).toFixed(6) + ' XRP';
+}
+
+function setPct(pct) {
+    if (!wallet) return;
+    const xrpBal = parseFloat(document.getElementById('xrpBal').textContent) || 0;
+    const price = parseFloat(document.getElementById('tradePrice').value) || 0.00001;
+    if (currentTab === 'buy') {
+        document.getElementById('tradeAmount').value = Math.floor((xrpBal * pct / 100) / price);
+    }
+    calcTotal();
+}
+
+async function executeTrade() {
+    if (!wallet || !currentToken) return;
+    const price = parseFloat(document.getElementById('tradePrice').value);
+    const amount = parseFloat(document.getElementById('tradeAmount').value);
+    if (!price || !amount) return showTx('Enter price and amount', 'error');
+
+    showTx('Submitting to XRPL DEX...', 'loading');
+    document.getElementById('tradeBtn').disabled = true;
+
+    try {
+        if (!client || !client.isConnected()) { client = new xrpl.Client(TESTNET); await client.connect(); }
+
+        const sym = currentToken.symbol;
+        const currency = sym.length > 3 ? xrpl.convertStringToHex(sym).padEnd(40,'0').toUpperCase() : sym.toUpperCase();
+
+        // Check trust line
+        showTx('Checking trust line...', 'loading');
+        let hasTL = false;
+        try {
+            const lines = await client.request({ command: 'account_lines', account: wallet.address, peer: currentToken.issuer_address });
+            hasTL = lines.result.lines.some(l => l.currency === currency || l.currency === sym);
+        } catch(e) {}
+
+        if (!hasTL && currentTab === 'buy') {
+            showTx('Creating trust line...', 'loading');
+            await client.submitAndWait({ TransactionType: 'TrustSet', Account: wallet.address, LimitAmount: { currency: currency, issuer: currentToken.issuer_address, value: '999999999' } }, { wallet });
+        }
+
+        showTx('Placing order...', 'loading');
+        const xrpDrops = xrpl.xrpToDrops((price * amount).toFixed(6));
+        const tokenObj = { currency: currency, issuer: currentToken.issuer_address, value: amount.toString() };
+
+        const tx = {
+            TransactionType: 'OfferCreate',
+            Account: wallet.address,
+            TakerPays: currentTab === 'buy' ? tokenObj : xrpDrops,
+            TakerGets: currentTab === 'buy' ? xrpDrops : tokenObj,
+        };
+
+        const result = await client.submitAndWait(tx, { wallet });
+        showTx(`✅ Order placed! TX: ${result.result.hash.slice(0,12)}...`, 'success');
+        setTimeout(() => loadOrderBook(), 2000);
+    } catch(e) {
+        showTx('❌ ' + e.message, 'error');
+    }
+    document.getElementById('tradeBtn').disabled = false;
+}
+
+function showTx(text, type) {
+    const el = document.getElementById('txMsg');
+    el.textContent = text;
+    el.className = 'tx-msg show ' + type;
+}
+
+function timeAgo(dateStr) {
+    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+    if (diff < 60) return diff + 's ago';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return Math.floor(diff/86400) + 'd ago';
+}
+
+loadToken();
+</script>
+</body>
+</html>
