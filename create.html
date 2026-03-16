@@ -13,8 +13,9 @@
         gtag('js', new Date());
         gtag('config', 'G-LK6KEFE1LQ');
     </script>
-    <!-- XRPL.js -->
+    <!-- XRPL.js + Supabase -->
     <script src="https://unpkg.com/xrpl@3.0.0/build/xrpl-latest-min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -301,6 +302,9 @@
 
 <script>
 const TESTNET = 'wss://s.altnet.rippletest.net:51233';
+const SUPABASE_URL = 'https://cdbyywfcgrxywmuaphti.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_GFiZnQVcN9SfRIJQEJIG3Q_qW-kAPm0';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let client = null;
 let issuerWallet = null;
 let holderWallet = null;
@@ -493,6 +497,23 @@ async function launchToken() {
             { text: 'Trust line created', type: 'done' },
             { text: 'Tokens issued successfully!', type: 'done' }
         ]);
+
+        // Save to Supabase
+        try {
+            await db.from('tokens').insert({
+                name: name,
+                symbol: symbol,
+                description: desc,
+                image_url: imageUrl || null,
+                supply: supply,
+                issuer_address: coldWallet.address,
+                creator_address: coldWallet.address,
+                tx_hash: result.result.hash,
+                price: 0,
+                market_cap: 0,
+                bonding_progress: 0
+            });
+        } catch(e) { console.log('Supabase save error:', e); }
 
         // Show success
         setTimeout(() => {
