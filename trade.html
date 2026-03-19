@@ -41,29 +41,27 @@
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
         /* Layout */
-        .layout { display: grid; grid-template-columns: 1fr 320px; gap: 2px; height: calc(100vh - 57px); }
+        .layout { display: grid; grid-template-columns: 1fr 340px; gap: 2px; height: calc(100vh - 57px); }
 
-        /* Left: chart + orderbook */
-        .left { display: flex; flex-direction: column; overflow: hidden; }
-
-        /* Mobile override */
         @media (max-width: 768px) {
             .layout { grid-template-columns: 1fr !important; height: auto !important; display: flex !important; flex-direction: column !important; }
             .left { height: auto !important; overflow: visible !important; }
             .right { border-left: none !important; border-top: 1px solid #1e1e1e; overflow: visible !important; }
             .chart-area { min-height: 120px !important; }
             .orderbook { height: 160px !important; }
-            .trades { max-height: 180px !important; overflow-y: auto !important; }
             .stat-mini { display: none !important; }
             .header-nav a { padding: 5px 8px !important; font-size: 11px !important; }
             .token-header { padding: 8px 12px !important; }
             .price-big { font-size: 18px !important; }
         }
 
+        /* Left: chart + panels */
+        .left { display: flex; flex-direction: column; overflow: hidden; }
+
         /* Token header */
-        .token-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #1e1e1e; background: #0e0e0e; flex-wrap: wrap; gap: 16px; }
-        .token-selector { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; border: 1px solid #2a2a2a; border-radius: 8px; }
-        .token-selector:hover { border-color: #444; }
+        .token-header { display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #1e1e1e; background: #0e0e0e; flex-wrap: wrap; }
+        .token-selector { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; border: 1px solid #2a2a2a; border-radius: 8px; transition: all 0.15s; }
+        .token-selector:hover { border-color: #7bff7b; }
         .token-emoji { font-size: 20px; }
         .token-name { font-weight: 700; font-size: 15px; }
         .token-ticker { font-size: 11px; color: #666; }
@@ -71,16 +69,113 @@
         .price-change { font-size: 13px; font-weight: 600; padding: 3px 8px; border-radius: 4px; }
         .price-change.up { color: #7bff7b; background: #1a2e1a; }
         .price-change.down { color: #ff4d4d; background: #2e1a1a; }
-        .stat-mini { font-size: 11px; color: #555; }
-        .stat-mini span { color: #aaa; font-weight: 600; }
+        .stat-mini { font-size: 11px; color: #555; line-height: 1.4; }
+        .stat-mini span { color: #aaa; font-weight: 600; display: block; }
 
         /* Chart area */
-        .chart-area { flex: 1; background: #0a0a0a; border-bottom: 1px solid #1e1e1e; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; min-height: 200px; }
-        .chart-placeholder { color: #333; font-size: 13px; text-align: center; }
-        .chart-placeholder .big { font-size: 32px; margin-bottom: 8px; }
+        .chart-area { flex: 1; background: #0a0a0a; border-bottom: 1px solid #1e1e1e; display: flex; flex-direction: column; min-height: 200px; position: relative; }
+
+        /* Bonding curve progress ring */
+        .bonding-overlay {
+            position: absolute; top: 12px; right: 12px;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            background: rgba(10,10,10,0.9); border: 1px solid #1e1e1e;
+            border-radius: 12px; padding: 12px 14px;
+            z-index: 10;
+        }
+
+        .ring-wrap {
+            position: relative; width: 80px; height: 80px;
+        }
+
+        .ring-wrap svg {
+            transform: rotate(-90deg);
+        }
+
+        .ring-bg {
+            fill: none;
+            stroke: #222;
+            stroke-width: 8;
+        }
+
+        .ring-fill {
+            fill: none;
+            stroke: #7bff7b;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 220;
+            stroke-dashoffset: 220;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .ring-fill.graduated {
+            stroke: #ffd700;
+        }
+
+        .ring-center {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .ring-pct {
+            font-size: 16px; font-weight: 800; line-height: 1;
+        }
+
+        .ring-label {
+            font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 0.5px;
+            margin-top: 1px;
+        }
+
+        .bonding-title {
+            font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;
+        }
+
+        .bonding-detail {
+            font-size: 10px; color: #666; text-align: center;
+        }
+
+        .bonding-detail strong { color: #e0e0e0; }
+
+        /* Holder distribution */
+        .holder-section {
+            border-bottom: 1px solid #1e1e1e;
+            padding: 12px 16px;
+            background: #0a0a0a;
+        }
+
+        .holder-header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 10px;
+        }
+
+        .holder-count {
+            color: #7bff7b; font-size: 14px; font-weight: 800;
+        }
+
+        .holder-bar-row {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
+        }
+
+        .holder-addr {
+            font-size: 10px; font-family: monospace; color: #555; width: 80px; flex-shrink: 0;
+        }
+
+        .holder-bar-wrap {
+            flex: 1; height: 8px; background: #1a1a1a; border-radius: 4px; overflow: hidden;
+        }
+
+        .holder-bar-fill {
+            height: 100%; border-radius: 4px;
+            background: linear-gradient(90deg, #7bff7b, #00cc66);
+        }
+
+        .holder-pct {
+            font-size: 10px; color: #aaa; font-weight: 600; width: 36px; text-align: right; flex-shrink: 0;
+        }
 
         /* Order book */
-        .orderbook { height: 220px; overflow: hidden; border-bottom: 1px solid #1e1e1e; }
+        .orderbook { height: 200px; overflow: hidden; border-bottom: 1px solid #1e1e1e; }
         .ob-header { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 8px 16px; font-size: 10px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1e1e1e; }
         .ob-row { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 3px 16px; font-size: 12px; cursor: pointer; position: relative; }
         .ob-row:hover { background: #1a1a1a; }
@@ -91,59 +186,106 @@
         .ob-row.bid .price { color: #7bff7b; }
         .ob-spread { padding: 6px 16px; font-size: 11px; color: #555; border-top: 1px solid #1e1e1e; border-bottom: 1px solid #1e1e1e; background: #0a0a0a; text-align: center; }
 
-        /* Trades */
-        .trades { flex: 1; overflow-y: auto; }
-        .trades::-webkit-scrollbar { width: 3px; }
-        .trades::-webkit-scrollbar-thumb { background: #2a2a2a; }
-        .trade-header { padding: 8px 16px; font-size: 11px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1e1e1e; display: grid; grid-template-columns: 1fr 1fr 1fr; }
-        .trade-row { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 4px 16px; font-size: 12px; border-bottom: 1px solid #111; }
-        .trade-row .buy { color: #7bff7b; }
-        .trade-row .sell { color: #ff4d4d; }
-        .trade-row .time { color: #444; }
+        /* Recent trades */
+        .trades-section { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .trades-header-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 16px; border-bottom: 1px solid #1e1e1e;
+        }
+        .trades-title { font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+        .live-badge {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 10px; color: #7bff7b; font-weight: 600;
+        }
+        .live-dot { width: 5px; height: 5px; background: #7bff7b; border-radius: 50%; animation: blink 1s infinite; }
+
+        .trade-cols { display: grid; grid-template-columns: 1fr 1fr 1fr 80px; padding: 4px 16px; font-size: 10px; font-weight: 600; color: #444; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #111; }
+        .trades-list { overflow-y: auto; flex: 1; }
+        .trades-list::-webkit-scrollbar { width: 3px; }
+        .trades-list::-webkit-scrollbar-thumb { background: #2a2a2a; }
+
+        .trade-row {
+            display: grid; grid-template-columns: 1fr 1fr 1fr 80px;
+            padding: 5px 16px; font-size: 12px;
+            border-bottom: 1px solid #0f0f0f;
+            transition: background 0.2s;
+            animation: tradeIn 0.3s ease;
+        }
+
+        @keyframes tradeIn {
+            from { background: rgba(123,255,123,0.08); }
+            to { background: transparent; }
+        }
+
+        .trade-row.sell-row { animation-name: tradeSellIn; }
+        @keyframes tradeSellIn {
+            from { background: rgba(255,77,77,0.08); }
+            to { background: transparent; }
+        }
+
+        .trade-row:hover { background: #111; }
+        .tr-buy { color: #7bff7b; }
+        .tr-sell { color: #ff4d4d; }
+        .tr-time { color: #333; font-size: 11px; }
+        .tr-addr { color: #444; font-size: 11px; font-family: monospace; }
 
         /* Right: trade panel */
         .right { background: #0e0e0e; border-left: 1px solid #1e1e1e; overflow-y: auto; }
         .right::-webkit-scrollbar { width: 3px; }
         .right::-webkit-scrollbar-thumb { background: #2a2a2a; }
 
-        /* Wallet connect panel */
-        .connect-panel { padding: 20px 16px; border-bottom: 1px solid #1e1e1e; }
-        .connect-panel h4 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #aaa; }
-        .seed-input { width: 100%; padding: 9px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 12px; font-family: monospace; outline: none; margin-bottom: 8px; }
-        .seed-input:focus { border-color: #7bff7b; }
-        .seed-input::placeholder { color: #333; }
-        .btn-connect { width: 100%; padding: 9px; background: #7bff7b; color: #000; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
-        .btn-connect:hover { background: #5de05d; }
+        /* Connect panel */
+        .connect-panel { padding: 20px 16px; border-bottom: 1px solid #1e1e1e; text-align: center; }
+        .connect-panel h4 { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .connect-panel p { font-size: 11px; color: #555; margin-bottom: 14px; }
+        .btn-connect-panel { width: 100%; padding: 10px; background: #7bff7b; color: #000; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
+        .btn-connect-panel:hover { background: #5de05d; }
 
-        .balance-panel { padding: 16px; border-bottom: 1px solid #1e1e1e; display: none; }
+        /* Balance */
+        .balance-panel { padding: 14px 16px; border-bottom: 1px solid #1e1e1e; display: none; }
         .balance-panel.show { display: block; }
+        .bal-title { font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
         .bal-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
         .bal-row .k { color: #666; }
         .bal-row .v { font-weight: 600; }
         .bal-row .v.green { color: #7bff7b; }
 
         /* Trade form */
-        .trade-panel { padding: 16px; }
+        .trade-panel { padding: 14px 16px; }
         .tab-row { display: flex; gap: 4px; margin-bottom: 14px; }
-        .tab { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; border: 1px solid #2a2a2a; background: transparent; color: #777; font-family: inherit; }
+        .tab { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; border: 1px solid #2a2a2a; background: transparent; color: #777; font-family: inherit; transition: all 0.15s; }
         .tab.buy.active { background: #7bff7b; color: #000; border-color: #7bff7b; }
         .tab.sell.active { background: #ff4d4d; color: #fff; border-color: #ff4d4d; }
         .tab:not(.active):hover { border-color: #444; color: #ccc; }
 
-        .form-label { font-size: 10px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; display: flex; justify-content: space-between; }
-        .form-label span { color: #444; font-weight: 400; text-transform: none; letter-spacing: 0; }
-        .form-input { width: 100%; padding: 9px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 13px; font-family: inherit; outline: none; margin-bottom: 12px; }
+        .form-label { font-size: 10px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .form-label span { color: #444; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 10px; }
+        .form-input { width: 100%; padding: 9px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 13px; font-family: inherit; outline: none; margin-bottom: 10px; transition: border-color 0.15s; }
         .form-input:focus { border-color: #7bff7b; }
         .form-input::placeholder { color: #333; }
 
-        .pct-row { display: flex; gap: 4px; margin-bottom: 12px; }
-        .pct-btn { flex: 1; padding: 5px; font-size: 11px; font-weight: 600; border-radius: 5px; cursor: pointer; border: 1px solid #2a2a2a; background: transparent; color: #666; font-family: inherit; }
+        .pct-row { display: flex; gap: 4px; margin-bottom: 10px; }
+        .pct-btn { flex: 1; padding: 5px; font-size: 11px; font-weight: 600; border-radius: 5px; cursor: pointer; border: 1px solid #2a2a2a; background: transparent; color: #666; font-family: inherit; transition: all 0.1s; }
         .pct-btn:hover { border-color: #7bff7b; color: #7bff7b; }
 
-        .total-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; }
+        /* Slippage */
+        .slippage-row {
+            display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+        }
+        .slippage-label { font-size: 10px; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+        .slippage-opts { display: flex; gap: 3px; }
+        .slippage-opt {
+            padding: 3px 7px; font-size: 11px; font-weight: 600; border-radius: 4px;
+            cursor: pointer; border: 1px solid #2a2a2a; background: transparent; color: #555; font-family: inherit;
+        }
+        .slippage-opt.active { background: #1a2e1a; border-color: #2a4a2a; color: #7bff7b; }
+        .slippage-custom { padding: 3px 7px; width: 56px; font-size: 11px; border-radius: 4px; border: 1px solid #2a2a2a; background: #0a0a0a; color: #e0e0e0; font-family: inherit; outline: none; }
+        .slippage-custom:focus { border-color: #7bff7b; }
+
+        .divider-line { height: 1px; background: #1e1e1e; margin: 8px 0; }
+        .total-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
         .total-row .k { color: #666; }
         .total-row .v { font-weight: 600; }
-        .divider-line { height: 1px; background: #1e1e1e; margin: 8px 0; }
 
         .btn-trade { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; font-family: inherit; margin-top: 12px; transition: all 0.15s; }
         .btn-trade.buy { background: #7bff7b; color: #000; }
@@ -162,7 +304,7 @@
         .modal-close:hover { color: #fff; }
         .modal-search { width: 100%; padding: 9px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 13px; font-family: inherit; outline: none; margin-bottom: 12px; }
         .modal-search:focus { border-color: #7bff7b; }
-        .token-list-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .token-list-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.1s; }
         .token-list-item:hover { background: #1a1a1a; }
         .tli-icon { width: 36px; height: 36px; border-radius: 8px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .tli-name { font-weight: 600; font-size: 13px; }
@@ -176,33 +318,13 @@
         .wo-name { font-weight: 700; font-size: 14px; }
         .wo-desc { font-size: 11px; color: #555; margin-top: 1px; }
         .wo-tag { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; background: #1a2e1a; color: #7bff7b; margin-left: 6px; }
-        .modal-divider { display: flex; align-items: center; gap: 10px; color: #444; font-size: 11px; margin: 10px 0; }
-        .modal-divider::before, .modal-divider::after { content: ''; flex: 1; height: 1px; background: #2a2a2a; }
-        .seed-modal-input { width: 100%; padding: 10px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 12px; font-family: monospace; outline: none; margin-bottom: 10px; }
-        .seed-modal-input:focus { border-color: #7bff7b; }
-        .seed-modal-input::placeholder { color: #333; }
-        .btn-seed-connect { width: 100%; padding: 10px; background: #7bff7b; color: #000; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
-        .btn-seed-connect:hover { background: #5de05d; }
 
-        /* Status/tx msg */
+        /* TX msg */
         .tx-msg { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 12px; display: none; }
         .tx-msg.show { display: block; }
         .tx-msg.success { background: #1a2e1a; color: #7bff7b; }
         .tx-msg.error { background: #2e1a1a; color: #ff4d4d; }
         .tx-msg.loading { background: #1a1a2e; color: #7b9fff; }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            .layout { grid-template-columns: 1fr; height: auto; }
-            .left { height: auto; }
-            .chart-area { min-height: 140px; }
-            .orderbook { height: 180px; }
-            .trades { max-height: 200px; }
-            .right { border-left: none; border-top: 1px solid #1e1e1e; }
-            .header-nav a { padding: 6px 8px; font-size: 12px; }
-            .token-header { gap: 10px; padding: 10px 12px; }
-            .stat-mini { display: none; }
-        }
     </style>
 </head>
 <body>
@@ -252,12 +374,43 @@
             <div class="stat-mini">Mcap<br><span id="mcap">$67.2K</span></div>
         </div>
 
-        <!-- Chart -->
+        <!-- Chart + Bonding Ring -->
         <div class="chart-area">
-            <div class="chart-placeholder">
-                <div class="big">📊</div>
-                <div>Price chart coming soon</div>
-                <div style="font-size:11px;color:#333;margin-top:4px;">Connect wallet & start trading to generate chart data</div>
+            <!-- Bonding Curve Progress Ring (top right) -->
+            <div class="bonding-overlay">
+                <div class="bonding-title">Bonding Curve</div>
+                <div class="ring-wrap">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <circle class="ring-bg" cx="40" cy="40" r="34"/>
+                        <circle class="ring-fill" id="bondingRingFill" cx="40" cy="40" r="34"/>
+                    </svg>
+                    <div class="ring-center">
+                        <div class="ring-pct" id="bondingPct" style="color:#7bff7b">89%</div>
+                        <div class="ring-label">bonded</div>
+                    </div>
+                </div>
+                <div class="bonding-detail">
+                    <strong id="bondingFilled">$67.2K</strong> / <span id="bondingTarget">$75K</span>
+                </div>
+                <div class="bonding-detail" style="margin-top:2px;color:#555;">to DEX listing</div>
+            </div>
+
+            <!-- Chart placeholder -->
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#2a2a2a;">
+                <div style="font-size:32px;">📊</div>
+                <div style="font-size:13px;">Price chart coming soon</div>
+                <div style="font-size:11px;color:#222;">Connect wallet &amp; start trading to generate chart data</div>
+            </div>
+        </div>
+
+        <!-- Holder Distribution -->
+        <div class="holder-section">
+            <div class="holder-header">
+                <span>Holders Distribution</span>
+                <span class="holder-count" id="holderCount">284 holders</span>
+            </div>
+            <div id="holderBars">
+                <!-- rendered by JS -->
             </div>
         </div>
 
@@ -269,37 +422,42 @@
                 <span style="text-align:right;">Total</span>
             </div>
             <div id="asks"></div>
-            <div class="ob-spread" id="spreadInfo">Spread: 0.0000002 XRP</div>
+            <div class="ob-spread" id="spreadInfo">Loading orderbook...</div>
             <div id="bids"></div>
         </div>
 
-        <!-- Recent Trades -->
-        <div class="trades">
-            <div class="trade-header">
-                <span>Price (XRP)</span>
-                <span style="text-align:right;">Amount</span>
-                <span style="text-align:right;">Time</span>
+        <!-- Recent Trades (animated) -->
+        <div class="trades-section">
+            <div class="trades-header-row">
+                <span class="trades-title">Recent Trades</span>
+                <span class="live-badge"><span class="live-dot"></span> Live</span>
             </div>
-            <div id="recentTrades"></div>
+            <div class="trade-cols">
+                <span>Type</span>
+                <span>Price (XRP)</span>
+                <span>Amount</span>
+                <span>Wallet</span>
+            </div>
+            <div class="trades-list" id="tradesList"></div>
         </div>
     </div>
 
     <!-- RIGHT -->
     <div class="right">
         <!-- Connect wallet prompt -->
-        <div class="connect-panel" id="connectPanel" style="padding:20px 16px;border-bottom:1px solid #1e1e1e;text-align:center;">
+        <div class="connect-panel" id="connectPanel">
             <div style="font-size:28px;margin-bottom:10px;">👛</div>
-            <div style="font-size:13px;font-weight:600;margin-bottom:6px;">Connect Wallet to Trade</div>
-            <div style="font-size:11px;color:#555;margin-bottom:14px;">Access your balance and place orders on XRPL DEX</div>
-            <button class="btn-connect" onclick="openWalletModal()" style="width:100%;padding:10px;background:#7bff7b;color:#000;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">Connect Wallet</button>
+            <h4>Connect Wallet to Trade</h4>
+            <p>Access your balance and place orders on XRPL DEX</p>
+            <button class="btn-connect-panel" onclick="openWalletModal()">Connect Wallet</button>
         </div>
 
         <!-- Balance -->
         <div class="balance-panel" id="balancePanel">
-            <div style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Balances</div>
+            <div class="bal-title">Balances</div>
             <div class="bal-row"><span class="k">XRP</span><span class="v green" id="xrpBalance">—</span></div>
             <div class="bal-row"><span class="k" id="tokenBalLabel">TOKEN</span><span class="v" id="tokenBalance">0</span></div>
-            <div style="margin-top:10px;padding-top:10px;border-top:1px solid #1e1e1e;">
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid #1e1e1e;">
                 <div class="bal-row"><span class="k">Address</span><span class="v" style="font-family:monospace;font-size:10px;" id="tradeAddr">—</span></div>
             </div>
         </div>
@@ -311,27 +469,39 @@
                 <button class="tab sell" id="sellTab" onclick="switchTab('sell')">Sell</button>
             </div>
 
-            <div>
-                <div class="form-label">Price (XRP) <span id="priceHint">≈ market price</span></div>
-                <input type="number" class="form-input" id="tradePrice" placeholder="0.0000842" step="0.0000001">
+            <div class="form-label">Price (XRP) <span id="priceHint">≈ market price</span></div>
+            <input type="number" class="form-input" id="tradePrice" placeholder="0.0000842" step="0.0000001" oninput="calcTotal()">
 
-                <div class="form-label">Amount <span id="amountHint"></span></div>
-                <input type="number" class="form-input" id="tradeAmount" placeholder="1000" oninput="calcTotal()">
+            <div class="form-label">Amount <span id="amountHint"></span></div>
+            <input type="number" class="form-input" id="tradeAmount" placeholder="1000" oninput="calcTotal()">
 
-                <div class="pct-row">
-                    <button class="pct-btn" onclick="setPct(25)">25%</button>
-                    <button class="pct-btn" onclick="setPct(50)">50%</button>
-                    <button class="pct-btn" onclick="setPct(75)">75%</button>
-                    <button class="pct-btn" onclick="setPct(100)">Max</button>
-                </div>
-
-                <div class="divider-line"></div>
-                <div class="total-row"><span class="k">Total</span><span class="v" id="tradeTotal">0 XRP</span></div>
-                <div class="total-row"><span class="k">Fee</span><span class="v">~0.000012 XRP</span></div>
-
-                <button class="btn-trade buy" id="tradeBtn" onclick="executeTrade()" disabled>Connect Wallet</button>
-                <div class="tx-msg" id="txMsg"></div>
+            <div class="pct-row">
+                <button class="pct-btn" onclick="setPct(25)">25%</button>
+                <button class="pct-btn" onclick="setPct(50)">50%</button>
+                <button class="pct-btn" onclick="setPct(75)">75%</button>
+                <button class="pct-btn" onclick="setPct(100)">Max</button>
             </div>
+
+            <!-- Slippage setting -->
+            <div class="slippage-row">
+                <span class="slippage-label">Slippage</span>
+                <div class="slippage-opts">
+                    <button class="slippage-opt" onclick="setSlippage(0.5, this)">0.5%</button>
+                    <button class="slippage-opt active" onclick="setSlippage(1, this)">1%</button>
+                    <button class="slippage-opt" onclick="setSlippage(2, this)">2%</button>
+                    <button class="slippage-opt" onclick="setSlippage(5, this)">5%</button>
+                </div>
+                <input type="number" class="slippage-custom" id="slippageCustom" placeholder="%" min="0.1" max="50" step="0.1" oninput="setSlippageCustom(this.value)">
+            </div>
+
+            <div class="divider-line"></div>
+            <div class="total-row"><span class="k">Total</span><span class="v" id="tradeTotal">0 XRP</span></div>
+            <div class="total-row"><span class="k">Fee</span><span class="v">~0.000012 XRP</span></div>
+            <div class="total-row"><span class="k">Slippage</span><span class="v" id="slippageDisplay" style="color:#ffd700;">1%</span></div>
+            <div class="total-row"><span class="k">Min received</span><span class="v" id="minReceived" style="color:#aaa;">—</span></div>
+
+            <button class="btn-trade buy" id="tradeBtn" onclick="executeTrade()" disabled>Connect Wallet</button>
+            <div class="tx-msg" id="txMsg"></div>
         </div>
     </div>
 </div>
@@ -362,10 +532,13 @@
 </div>
 
 <!-- Token selector modal -->
-<div class="modal-overlay" id="tokenModal" onclick="closeTokenModal(event)">
+<div class="modal-overlay" id="tokenModal" onclick="if(event.target===this)closeTokenModal()">
     <div class="modal">
-        <h3>Select Token</h3>
-        <input type="text" class="modal-search" placeholder="Search token name or issuer..." oninput="filterTokens(this.value)">
+        <div class="modal-header">
+            <h3>Select Token</h3>
+            <button class="modal-close" onclick="closeTokenModal()">×</button>
+        </div>
+        <input type="text" class="modal-search" placeholder="Search token name or ticker..." oninput="filterTokens(this.value)">
         <div id="tokenListModal"></div>
     </div>
 </div>
@@ -375,23 +548,133 @@ const TESTNET_URL = 'wss://s.altnet.rippletest.net:51233';
 let client = null;
 let wallet = null;
 let currentTab = 'buy';
-let currentToken = { emoji: '🐸', name: 'XRPepe', symbol: 'XPEPE', issuer: 'rXqF4k2mExampleIssuer1111111111111' };
+let currentSlippage = 1;
+let currentToken = { emoji: '🐸', name: 'XRPepe', symbol: 'XPEPE', issuer: 'rXqF4k2mExampleIssuer1111111111111', price: '0.0000842', change: '+14.2%', up: true, bonding: 89, mcap: '$67.2K' };
 
 // Demo tokens list
 const tokens = [
-    { emoji: '🐸', name: 'XRPepe', symbol: 'XPEPE', issuer: 'rXqF4k2mExampleIssuer1111111111111', price: '0.0000842', change: '+14.2%', up: true },
-    { emoji: '🌙', name: 'MoonXRP', symbol: 'MXRP', issuer: 'rH7d9pLxExampleIssuer2222222222222', price: '0.0000341', change: '+89.1%', up: true },
-    { emoji: '🐕', name: 'XDoge', symbol: 'XDOGE', issuer: 'rPq27mNkExampleIssuer3333333333333', price: '0.0001205', change: '+567%', up: true },
-    { emoji: '💎', name: 'DiamondHands', symbol: 'DXRP', issuer: 'rK9w3vPmExampleIssuer4444444444444', price: '0.0000678', change: '+213%', up: true },
-    { emoji: '🦊', name: 'XFOX', symbol: 'XFOX', issuer: 'rL2a5nQpExampleIssuer5555555555555', price: '0.0000923', change: '+328%', up: true },
-    { emoji: '⚡', name: 'RippleCat', symbol: 'RCAT', issuer: 'rM5x2bJkExampleIssuer6666666666666', price: '0.0000156', change: '-12%', up: false },
+    { emoji: '🐸', name: 'XRPepe', symbol: 'XPEPE', issuer: 'rXqF4k2mExampleIssuer1111111111111', price: '0.0000842', change: '+14.2%', up: true, bonding: 89, mcap: '$67.2K', holders: 284 },
+    { emoji: '🌙', name: 'MoonXRP', symbol: 'MXRP', issuer: 'rH7d9pLxExampleIssuer2222222222222', price: '0.0000341', change: '+89.1%', up: true, bonding: 52, mcap: '$23.8K', holders: 117 },
+    { emoji: '🐕', name: 'XDoge', symbol: 'XDOGE', issuer: 'rPq27mNkExampleIssuer3333333333333', price: '0.0001205', change: '+567%', up: true, bonding: 100, mcap: '$134.5K', holders: 891 },
+    { emoji: '💎', name: 'DiamondHands', symbol: 'DXRP', issuer: 'rK9w3vPmExampleIssuer4444444444444', price: '0.0000678', change: '+213%', up: true, bonding: 71, mcap: '$41.3K', holders: 203 },
+    { emoji: '🦊', name: 'XFOX', symbol: 'XFOX', issuer: 'rL2a5nQpExampleIssuer5555555555555', price: '0.0000923', change: '+328%', up: true, bonding: 82, mcap: '$52.1K', holders: 342 },
+    { emoji: '⚡', name: 'RippleCat', symbol: 'RCAT', issuer: 'rM5x2bJkExampleIssuer6666666666666', price: '0.0000156', change: '-12%', up: false, bonding: 14, mcap: '$4.2K', holders: 38 },
 ];
+
+// Mock trade data generator
+function makeAddress() {
+    const chars = 'rABCDEFGHJKLMNPQRSTUVWXYZ123456789';
+    let s = 'r';
+    for (let i = 0; i < 3; i++) s += chars[Math.floor(Math.random() * chars.length)];
+    s += '…';
+    for (let i = 0; i < 4; i++) s += chars[Math.floor(Math.random() * chars.length)];
+    return s;
+}
+
+const mockTrades = [
+    { type:'buy', price:0.0000851, amount:12400, addr:makeAddress(), ago:5 },
+    { type:'sell', price:0.0000838, amount:5000, addr:makeAddress(), ago:18 },
+    { type:'buy', price:0.0000842, amount:50000, addr:makeAddress(), ago:32 },
+    { type:'buy', price:0.0000835, amount:8800, addr:makeAddress(), ago:47 },
+    { type:'sell', price:0.0000820, amount:3200, addr:makeAddress(), ago:62 },
+    { type:'buy', price:0.0000844, amount:22100, addr:makeAddress(), ago:88 },
+    { type:'sell', price:0.0000830, amount:9900, addr:makeAddress(), ago:105 },
+    { type:'buy', price:0.0000860, amount:15500, addr:makeAddress(), ago:130 },
+    { type:'sell', price:0.0000845, amount:4100, addr:makeAddress(), ago:152 },
+    { type:'buy', price:0.0000839, amount:33000, addr:makeAddress(), ago:170 },
+];
+
+// Holder distribution mock data
+const mockHolders = [
+    { addr: 'rDevF…1234', pct: 28.4 },
+    { addr: 'rBond…5678', pct: 15.1 },
+    { addr: 'rFund…9abc', pct: 10.3 },
+    { addr: 'rWhale…def', pct: 8.7 },
+    { addr: 'rLP…0000', pct: 7.2 },
+    { addr: 'others', pct: 30.3 },
+];
+
+const HOLDER_COLORS = ['#7bff7b','#4de04d','#00cc66','#3399ff','#aa66ff','#555'];
+
+function renderHolders(holders) {
+    const count = currentToken.holders || Math.floor(Math.random() * 400 + 50);
+    document.getElementById('holderCount').textContent = count.toLocaleString() + ' holders';
+    document.getElementById('holderBars').innerHTML = mockHolders.map((h, i) => `
+        <div class="holder-bar-row">
+            <span class="holder-addr">${h.addr}</span>
+            <div class="holder-bar-wrap">
+                <div class="holder-bar-fill" style="width:${h.pct}%;background:${HOLDER_COLORS[i] || '#7bff7b'};"></div>
+            </div>
+            <span class="holder-pct">${h.pct}%</span>
+        </div>
+    `).join('');
+}
+
+function renderTrades(initial = false) {
+    const list = document.getElementById('tradesList');
+    if (initial) {
+        list.innerHTML = mockTrades.map(t => tradeRowHtml(t)).join('');
+        return;
+    }
+    // Inject a new trade at the top
+    const newTrade = {
+        type: Math.random() > 0.45 ? 'buy' : 'sell',
+        price: parseFloat(currentToken.price) * (0.97 + Math.random() * 0.06),
+        amount: Math.floor(Math.random() * 60000 + 1000),
+        addr: makeAddress(),
+        ago: 0,
+    };
+    const row = document.createElement('div');
+    row.innerHTML = tradeRowHtml(newTrade);
+    const el = row.firstChild;
+    el.style.animation = 'none';
+    list.insertBefore(el, list.firstChild);
+    void el.offsetWidth;
+    el.style.animation = '';
+    // Remove oldest if too many
+    while (list.children.length > 20) list.removeChild(list.lastChild);
+}
+
+function tradeRowHtml(t) {
+    const isBuy = t.type === 'buy';
+    const timeStr = t.ago === 0 ? 'now' : t.ago + 's';
+    return `<div class="trade-row ${isBuy ? '' : 'sell-row'}">
+        <span class="${isBuy ? 'tr-buy' : 'tr-sell'}">${isBuy ? '▲ Buy' : '▼ Sell'}</span>
+        <span style="color:${isBuy ? '#7bff7b' : '#ff4d4d'}">${t.price.toFixed(7)}</span>
+        <span style="color:#aaa">${Math.floor(t.amount).toLocaleString()}</span>
+        <span class="tr-addr">${t.addr}</span>
+    </div>`;
+}
+
+// Bonding curve ring
+function updateBondingRing(pct) {
+    const circumference = 2 * Math.PI * 34; // r=34 → ~213.6
+    const fill = document.getElementById('bondingRingFill');
+    const pctEl = document.getElementById('bondingPct');
+
+    pct = Math.min(100, Math.max(0, pct));
+    const offset = circumference - (pct / 100) * circumference;
+    fill.style.strokeDasharray = circumference;
+    fill.style.strokeDashoffset = circumference; // start at 0
+
+    setTimeout(() => {
+        fill.style.strokeDashoffset = offset;
+    }, 100);
+
+    pctEl.textContent = pct + '%';
+
+    if (pct >= 100) {
+        fill.classList.add('graduated');
+        pctEl.style.color = '#ffd700';
+        document.getElementById('bondingFilled').textContent = '✅ DEX';
+    }
+}
 
 // ===== REAL ORDERBOOK FROM XRPL =====
 async function renderOrderBook() {
     const asksEl = document.getElementById('asks');
     const bidsEl = document.getElementById('bids');
-    asksEl.innerHTML = '<div style="padding:12px 16px;color:#444;font-size:12px;">Loading...</div>';
+    asksEl.innerHTML = '<div style="padding:8px 16px;color:#333;font-size:12px;">Loading...</div>';
     bidsEl.innerHTML = '';
 
     try {
@@ -408,76 +691,66 @@ async function renderOrderBook() {
         const asks = asksRes.result.offers || [];
         const bids = bidsRes.result.offers || [];
 
-        asksEl.innerHTML = asks.length === 0 ? '<div style="padding:8px 16px;color:#444;font-size:12px;">No sell orders</div>' :
-            asks.slice(0,5).map(o => {
+        asksEl.innerHTML = asks.length === 0 ? '<div style="padding:8px 16px;color:#333;font-size:12px;">No sell orders</div>' :
+            asks.slice(0,4).map(o => {
                 const xrpAmt = parseFloat(xrpl.dropsToXrp(typeof o.TakerPays==='string' ? o.TakerPays : '0'));
                 const tkAmt = parseFloat(typeof o.TakerGets==='object' ? o.TakerGets.value : '0');
                 const p = tkAmt > 0 ? (xrpAmt/tkAmt).toFixed(7) : '—';
+                const barW = Math.min(80, Math.floor(tkAmt/1000)) + '%';
                 return `<div class="ob-row ask" onclick="setPrice('${p}')">
                     <span class="price">${p}</span>
                     <span style="text-align:right">${Math.floor(tkAmt).toLocaleString()}</span>
                     <span style="text-align:right">${xrpAmt.toFixed(4)}</span>
-                    <div class="ob-bar" style="width:55%"></div>
+                    <div class="ob-bar" style="width:${barW}"></div>
                 </div>`;
             }).join('');
 
-        bidsEl.innerHTML = bids.length === 0 ? '<div style="padding:8px 16px;color:#444;font-size:12px;">No buy orders</div>' :
-            bids.slice(0,5).map(o => {
+        bidsEl.innerHTML = bids.length === 0 ? '<div style="padding:8px 16px;color:#333;font-size:12px;">No buy orders</div>' :
+            bids.slice(0,4).map(o => {
                 const xrpAmt = parseFloat(xrpl.dropsToXrp(typeof o.TakerGets==='string' ? o.TakerGets : '0'));
                 const tkAmt = parseFloat(typeof o.TakerPays==='object' ? o.TakerPays.value : '0');
                 const p = tkAmt > 0 ? (xrpAmt/tkAmt).toFixed(7) : '—';
+                const barW = Math.min(80, Math.floor(tkAmt/1000)) + '%';
                 return `<div class="ob-row bid" onclick="setPrice('${p}')">
                     <span class="price">${p}</span>
                     <span style="text-align:right">${Math.floor(tkAmt).toLocaleString()}</span>
                     <span style="text-align:right">${xrpAmt.toFixed(4)}</span>
-                    <div class="ob-bar" style="width:55%"></div>
+                    <div class="ob-bar" style="width:${barW}"></div>
                 </div>`;
             }).join('');
 
-        document.getElementById('spreadInfo').textContent = asks.length && bids.length ? '✅ Live XRPL DEX data' : 'No active market yet for this token';
+        document.getElementById('spreadInfo').textContent = asks.length && bids.length ? '✅ Live XRPL DEX data' : 'No active market yet — be the first!';
     } catch(e) {
-        asksEl.innerHTML = '<div style="padding:8px 16px;color:#555;font-size:12px;">Connect to XRPL...</div>';
+        asksEl.innerHTML = '<div style="padding:8px 16px;color:#333;font-size:12px;">Connecting to XRPL...</div>';
         document.getElementById('spreadInfo').textContent = 'Could not load orderbook';
     }
 }
 
-function renderTrades() {
-    // Placeholder — real trade history needs account_tx per token
-    const el = document.getElementById('recentTrades');
-    el.innerHTML = '<div style="padding:12px 16px;color:#444;font-size:12px;">Select a token to see trade history</div>';
-}
-
 // ===== TOKEN MODAL =====
 function openTokenModal() {
-    document.getElementById('tokenListModal').innerHTML = tokens.map(t => `
+    renderTokenList(tokens);
+    document.getElementById('tokenModal').classList.add('show');
+}
+function closeTokenModal() {
+    document.getElementById('tokenModal').classList.remove('show');
+}
+
+function renderTokenList(list) {
+    document.getElementById('tokenListModal').innerHTML = list.map(t => `
         <div class="token-list-item" onclick="selectToken('${t.symbol}')">
             <div class="tli-icon">${t.emoji}</div>
             <div>
                 <div class="tli-name">${t.name} <span style="color:#555;font-size:10px">${t.symbol}</span></div>
                 <div class="tli-issuer">${t.issuer.slice(0,16)}...</div>
             </div>
-            <span class="tli-price ${t.up ? '' : 'red'}" style="${t.up ? '' : 'color:#ff4d4d'}">${t.price}</span>
+            <span class="tli-price" style="color:${t.up?'#7bff7b':'#ff4d4d'}">${t.price}</span>
         </div>
     `).join('');
-    document.getElementById('tokenModal').classList.add('show');
-}
-
-function closeTokenModal(e) {
-    if (e.target === e.currentTarget) e.currentTarget.classList.remove('show');
 }
 
 function filterTokens(q) {
     const filtered = tokens.filter(t => t.name.toLowerCase().includes(q.toLowerCase()) || t.symbol.toLowerCase().includes(q.toLowerCase()));
-    document.getElementById('tokenListModal').innerHTML = filtered.map(t => `
-        <div class="token-list-item" onclick="selectToken('${t.symbol}')">
-            <div class="tli-icon">${t.emoji}</div>
-            <div>
-                <div class="tli-name">${t.name} <span style="color:#555;font-size:10px">${t.symbol}</span></div>
-                <div class="tli-issuer">${t.issuer.slice(0,16)}...</div>
-            </div>
-            <span class="tli-price">${t.price}</span>
-        </div>
-    `).join('');
+    renderTokenList(filtered);
 }
 
 function selectToken(symbol) {
@@ -493,8 +766,13 @@ function selectToken(symbol) {
     document.getElementById('tradePrice').placeholder = t.price;
     document.getElementById('tokenBalLabel').textContent = t.symbol;
     document.getElementById('tokenModal').classList.remove('show');
+    document.getElementById('bondingFilled').textContent = t.mcap;
+    // Update bonding ring
+    updateBondingRing(t.bonding);
     renderOrderBook();
-    renderTrades();
+    renderTrades(true);
+    renderHolders();
+    updateTradeBtn();
 }
 
 // ===== WALLET MODAL =====
@@ -516,17 +794,6 @@ async function connectGemTrade() {
             await setupConnected(result.result.address, null);
         }
     } catch(e) { alert('GemWallet error: ' + e.message); }
-}
-
-async function connectWithSeedTrade() {
-    const seed = document.getElementById('tradeSeedModal').value.trim();
-    if (!seed) return;
-    try {
-        const w = xrpl.Wallet.fromSeed(seed);
-        wallet = w;
-        await setupConnected(w.address, w);
-        closeWalletModal();
-    } catch(e) { alert('Invalid seed: ' + e.message); }
 }
 
 async function setupConnected(address, w) {
@@ -554,6 +821,28 @@ async function setupConnected(address, w) {
     updateTradeBtn();
 }
 
+// ===== SLIPPAGE =====
+let slippageVal = 1;
+
+function setSlippage(val, btn) {
+    slippageVal = val;
+    document.querySelectorAll('.slippage-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('slippageCustom').value = '';
+    document.getElementById('slippageDisplay').textContent = val + '%';
+    calcTotal();
+}
+
+function setSlippageCustom(val) {
+    const n = parseFloat(val);
+    if (!isNaN(n) && n > 0) {
+        slippageVal = n;
+        document.querySelectorAll('.slippage-opt').forEach(b => b.classList.remove('active'));
+        document.getElementById('slippageDisplay').textContent = n + '%';
+        calcTotal();
+    }
+}
+
 // ===== TRADE =====
 function switchTab(tab) {
     currentTab = tab;
@@ -577,7 +866,15 @@ function setPrice(p) {
 function calcTotal() {
     const price = parseFloat(document.getElementById('tradePrice').value) || parseFloat(currentToken.price) || 0;
     const amount = parseFloat(document.getElementById('tradeAmount').value) || 0;
-    document.getElementById('tradeTotal').textContent = (price * amount).toFixed(6) + ' XRP';
+    const total = price * amount;
+    document.getElementById('tradeTotal').textContent = total.toFixed(6) + ' XRP';
+    // Min received with slippage
+    if (amount > 0) {
+        const minAmt = amount * (1 - slippageVal / 100);
+        document.getElementById('minReceived').textContent = Math.floor(minAmt).toLocaleString() + ' ' + currentToken.symbol;
+    } else {
+        document.getElementById('minReceived').textContent = '—';
+    }
 }
 
 function setPct(pct) {
@@ -609,7 +906,6 @@ async function executeTrade() {
             await client.connect();
         }
 
-        // Check/create trust line first
         showTxMsg('Checking trust line...', 'loading');
         let hasTrustLine = false;
         try {
@@ -627,7 +923,6 @@ async function executeTrade() {
             await client.submitAndWait(trustTx, { wallet });
         }
 
-        // Place offer
         showTxMsg('Placing order on XRPL DEX...', 'loading');
         let tx;
         if (currentTab === 'buy') {
@@ -648,6 +943,8 @@ async function executeTrade() {
 
         const result = await client.submitAndWait(tx, { wallet });
         showTxMsg(`✅ Order placed! TX: ${result.result.hash.slice(0,12)}...`, 'success');
+        // Inject fake trade into recent trades
+        renderTrades(false);
 
     } catch(e) {
         showTxMsg('❌ Error: ' + e.message, 'error');
@@ -662,13 +959,31 @@ function showTxMsg(text, type) {
     el.className = `tx-msg show ${type}`;
 }
 
-// Init
+// ===== INIT =====
+// Init bonding ring
+updateBondingRing(currentToken.bonding || 89);
+document.getElementById('bondingFilled').textContent = currentToken.mcap;
+
+// Init trades and holders
+renderTrades(true);
+renderHolders();
+
+// Init orderbook
 renderOrderBook();
-renderTrades();
 document.getElementById('tradePrice').placeholder = currentToken.price || '0.00001';
 
 // Refresh orderbook every 15s
 setInterval(() => renderOrderBook(), 15000);
+
+// Simulate live trades every 4-10s
+function scheduleTrade() {
+    const delay = 4000 + Math.random() * 6000;
+    setTimeout(() => {
+        renderTrades(false);
+        scheduleTrade();
+    }, delay);
+}
+scheduleTrade();
 </script>
 
 </body>
