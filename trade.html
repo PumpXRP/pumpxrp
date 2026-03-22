@@ -27,17 +27,17 @@
         .logo { display: flex; align-items: center; gap: 6px; }
         .logo img { width: 28px; height: 28px; border-radius: 50%; }
         .logo-text { font-weight: 700; font-size: 16px; }
-        .logo-green { color: #7bff7b; }
+        .logo-green { color: #ffffff; }
         .header-nav { display: flex; gap: 4px; }
         .header-nav a { padding: 6px 12px; font-size: 13px; color: #777; border-radius: 6px; font-weight: 500; }
         .header-nav a:hover { color: #fff; background: #1a1a1a; }
-        .header-nav a.active { color: #7bff7b; background: #1a2e1a; }
-        .btn-wallet { background: #7bff7b; color: #000; border: none; padding: 7px 16px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
-        .btn-wallet:hover { background: #5de05d; }
-        .wallet-bar { display: none; align-items: center; gap: 8px; padding: 6px 12px; background: #1a2e1a; border: 1px solid #2a4a2a; border-radius: 8px; font-size: 12px; cursor: pointer; }
+        .header-nav a.active { color: #ffffff; background: #1a1a1a; }
+        .btn-wallet { background: #ffffff; color: #000; border: none; padding: 7px 16px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
+        .btn-wallet:hover { background: #cccccc; }
+        .wallet-bar { display: none; align-items: center; gap: 8px; padding: 6px 12px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; font-size: 12px; cursor: pointer; }
         .wallet-bar.show { display: flex; }
-        .wallet-bar .addr { color: #7bff7b; font-family: monospace; font-weight: 600; }
-        .dot-green { width: 6px; height: 6px; background: #7bff7b; border-radius: 50%; animation: blink 1.5s infinite; }
+        .wallet-bar .addr { color: #ffffff; font-family: monospace; font-weight: 600; }
+        .dot-green { width: 6px; height: 6px; background: #ffffff; border-radius: 50%; animation: blink 1.5s infinite; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
         /* Layout */
@@ -61,13 +61,13 @@
         /* Token header */
         .token-header { display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #1e1e1e; background: #0e0e0e; flex-wrap: wrap; }
         .token-selector { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; border: 1px solid #2a2a2a; border-radius: 8px; transition: all 0.15s; }
-        .token-selector:hover { border-color: #7bff7b; }
+        .token-selector:hover { border-color: #ffffff; }
         .token-emoji { font-size: 20px; }
         .token-name { font-weight: 700; font-size: 15px; }
         .token-ticker { font-size: 11px; color: #666; }
         .price-big { font-size: 22px; font-weight: 800; }
         .price-change { font-size: 13px; font-weight: 600; padding: 3px 8px; border-radius: 4px; }
-        .price-change.up { color: #7bff7b; background: #1a2e1a; }
+        .price-change.up { color: #ffffff; background: #1a1a1a; }
         .price-change.down { color: #ff4d4d; background: #2e1a1a; }
         .stat-mini { font-size: 11px; color: #555; line-height: 1.4; }
         .stat-mini span { color: #aaa; font-weight: 600; display: block; }
@@ -100,7 +100,7 @@
 
         .ring-fill {
             fill: none;
-            stroke: #7bff7b;
+            stroke: #ffffff;
             stroke-width: 8;
             stroke-linecap: round;
             stroke-dasharray: 220;
@@ -150,7 +150,7 @@
         }
 
         .holder-count {
-            color: #7bff7b; font-size: 14px; font-weight: 800;
+            color: #ffffff; font-size: 14px; font-weight: 800;
         }
 
         .holder-bar-row {
@@ -167,7 +167,7 @@
 
         .holder-bar-fill {
             height: 100%; border-radius: 4px;
-            background: linear-gradient(90deg, #7bff7b, #00cc66);
+            background: linear-gradient(90deg, #ffffff, #00cc66);
         }
 
         .holder-pct {
@@ -181,9 +181,9 @@
         .ob-row:hover { background: #1a1a1a; }
         .ob-bar { position: absolute; top: 0; bottom: 0; right: 0; opacity: 0.08; }
         .ob-row.ask .ob-bar { background: #ff4d4d; }
-        .ob-row.bid .ob-bar { background: #7bff7b; }
+        .ob-row.bid .ob-bar { background: #ffffff; }
         .ob-row.ask .price { color: #ff4d4d; }
-        .ob-row.bid .price { color: #7bff7b; }
+        .ob-row.bid .price { color: #ffffff; }
         .ob-spread { padding: 6px 16px; font-size: 11px; color: #555; border-top: 1px solid #1e1e1e; border-bottom: 1px solid #1e1e1e; background: #0a0a0a; text-align: center; }
 
         /* Recent trades */
@@ -195,9 +195,9 @@
         .trades-title { font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
         .live-badge {
             display: flex; align-items: center; gap: 4px;
-            font-size: 10px; color: #7bff7b; font-weight: 600;
+            font-size: 10px; color: #ffffff; font-weight: 600;
         }
-        .live-dot { width: 5px; height: 5px; background: #7bff7b; border-radius: 50%; animation: blink 1s infinite; }
+        .live-dot { width: 5px; height: 5px; background: #ffffff; border-radius: 50%; animation: blink 1s infinite; }
 
         .trade-cols { display: grid; grid-template-columns: 1fr 1fr 1fr 80px; padding: 4px 16px; font-size: 10px; font-weight: 600; color: #444; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #111; }
         .trades-list { overflow-y: auto; flex: 1; }
@@ -213,7 +213,7 @@
         }
 
         @keyframes tradeIn {
-            from { background: rgba(123,255,123,0.08); }
+            from { background: rgba(255,255,255,0.06); }
             to { background: transparent; }
         }
 
@@ -224,7 +224,7 @@
         }
 
         .trade-row:hover { background: #111; }
-        .tr-buy { color: #7bff7b; }
+        .tr-buy { color: #ffffff; }
         .tr-sell { color: #ff4d4d; }
         .tr-time { color: #333; font-size: 11px; }
         .tr-addr { color: #444; font-size: 11px; font-family: monospace; }
@@ -238,8 +238,8 @@
         .connect-panel { padding: 20px 16px; border-bottom: 1px solid #1e1e1e; text-align: center; }
         .connect-panel h4 { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
         .connect-panel p { font-size: 11px; color: #555; margin-bottom: 14px; }
-        .btn-connect-panel { width: 100%; padding: 10px; background: #7bff7b; color: #000; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
-        .btn-connect-panel:hover { background: #5de05d; }
+        .btn-connect-panel { width: 100%; padding: 10px; background: #ffffff; color: #000; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
+        .btn-connect-panel:hover { background: #cccccc; }
 
         /* Balance */
         .balance-panel { padding: 14px 16px; border-bottom: 1px solid #1e1e1e; display: none; }
@@ -248,25 +248,25 @@
         .bal-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
         .bal-row .k { color: #666; }
         .bal-row .v { font-weight: 600; }
-        .bal-row .v.green { color: #7bff7b; }
+        .bal-row .v.green { color: #ffffff; }
 
         /* Trade form */
         .trade-panel { padding: 14px 16px; }
         .tab-row { display: flex; gap: 4px; margin-bottom: 14px; }
         .tab { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; border: 1px solid #2a2a2a; background: transparent; color: #777; font-family: inherit; transition: all 0.15s; }
-        .tab.buy.active { background: #7bff7b; color: #000; border-color: #7bff7b; }
+        .tab.buy.active { background: #ffffff; color: #000; border-color: #ffffff; }
         .tab.sell.active { background: #ff4d4d; color: #fff; border-color: #ff4d4d; }
         .tab:not(.active):hover { border-color: #444; color: #ccc; }
 
         .form-label { font-size: 10px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
         .form-label span { color: #444; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 10px; }
         .form-input { width: 100%; padding: 9px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 13px; font-family: inherit; outline: none; margin-bottom: 10px; transition: border-color 0.15s; }
-        .form-input:focus { border-color: #7bff7b; }
+        .form-input:focus { border-color: #ffffff; }
         .form-input::placeholder { color: #333; }
 
         .pct-row { display: flex; gap: 4px; margin-bottom: 10px; }
         .pct-btn { flex: 1; padding: 5px; font-size: 11px; font-weight: 600; border-radius: 5px; cursor: pointer; border: 1px solid #2a2a2a; background: transparent; color: #666; font-family: inherit; transition: all 0.1s; }
-        .pct-btn:hover { border-color: #7bff7b; color: #7bff7b; }
+        .pct-btn:hover { border-color: #ffffff; color: #ffffff; }
 
         /* Slippage */
         .slippage-row {
@@ -278,9 +278,9 @@
             padding: 3px 7px; font-size: 11px; font-weight: 600; border-radius: 4px;
             cursor: pointer; border: 1px solid #2a2a2a; background: transparent; color: #555; font-family: inherit;
         }
-        .slippage-opt.active { background: #1a2e1a; border-color: #2a4a2a; color: #7bff7b; }
+        .slippage-opt.active { background: #1a1a1a; border-color: #2a2a2a; color: #ffffff; }
         .slippage-custom { padding: 3px 7px; width: 56px; font-size: 11px; border-radius: 4px; border: 1px solid #2a2a2a; background: #0a0a0a; color: #e0e0e0; font-family: inherit; outline: none; }
-        .slippage-custom:focus { border-color: #7bff7b; }
+        .slippage-custom:focus { border-color: #ffffff; }
 
         .divider-line { height: 1px; background: #1e1e1e; margin: 8px 0; }
         .total-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
@@ -288,8 +288,8 @@
         .total-row .v { font-weight: 600; }
 
         .btn-trade { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; font-family: inherit; margin-top: 12px; transition: all 0.15s; }
-        .btn-trade.buy { background: #7bff7b; color: #000; }
-        .btn-trade.buy:hover { background: #5de05d; box-shadow: 0 0 20px rgba(123,255,123,0.2); }
+        .btn-trade.buy { background: #ffffff; color: #000; }
+        .btn-trade.buy:hover { background: #cccccc; box-shadow: 0 0 20px rgba(255,255,255,0.12); }
         .btn-trade.sell { background: #ff4d4d; color: #fff; }
         .btn-trade.sell:hover { background: #e03030; box-shadow: 0 0 20px rgba(255,77,77,0.2); }
         .btn-trade:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; }
@@ -303,28 +303,28 @@
         .modal-close { background: none; border: none; color: #555; font-size: 20px; cursor: pointer; line-height: 1; }
         .modal-close:hover { color: #fff; }
         .modal-search { width: 100%; padding: 9px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 13px; font-family: inherit; outline: none; margin-bottom: 12px; }
-        .modal-search:focus { border-color: #7bff7b; }
+        .modal-search:focus { border-color: #ffffff; }
         .token-list-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.1s; }
         .token-list-item:hover { background: #1a1a1a; }
         .tli-icon { width: 36px; height: 36px; border-radius: 8px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .tli-name { font-weight: 600; font-size: 13px; }
         .tli-issuer { font-size: 10px; color: #555; font-family: monospace; }
-        .tli-price { margin-left: auto; font-size: 12px; color: #7bff7b; font-weight: 600; }
+        .tli-price { margin-left: auto; font-size: 12px; color: #ffffff; font-weight: 600; }
 
         /* Wallet modal */
         .wallet-option { display: flex; align-items: center; gap: 14px; padding: 13px; border: 1px solid #2a2a2a; border-radius: 10px; cursor: pointer; margin-bottom: 10px; background: #0e0e0e; transition: all 0.15s; }
-        .wallet-option:hover { border-color: #7bff7b; background: #1a1a1a; }
+        .wallet-option:hover { border-color: #ffffff; background: #1a1a1a; }
         .wo-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
         .wo-name { font-weight: 700; font-size: 14px; }
         .wo-desc { font-size: 11px; color: #555; margin-top: 1px; }
-        .wo-tag { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; background: #1a2e1a; color: #7bff7b; margin-left: 6px; }
+        .wo-tag { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; background: #1a1a1a; color: #ffffff; margin-left: 6px; }
 
         /* TX msg */
         .tx-msg { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 12px; display: none; }
         .tx-msg.show { display: block; }
-        .tx-msg.success { background: #1a2e1a; color: #7bff7b; }
+        .tx-msg.success { background: #1a1a1a; color: #ffffff; }
         .tx-msg.error { background: #2e1a1a; color: #ff4d4d; }
-        .tx-msg.loading { background: #1a1a2e; color: #7b9fff; }
+        .tx-msg.loading { background: #1a1a1a; color: #aaaaaa; }
     </style>
 </head>
 <body>
@@ -385,7 +385,7 @@
                         <circle class="ring-fill" id="bondingRingFill" cx="40" cy="40" r="34"/>
                     </svg>
                     <div class="ring-center">
-                        <div class="ring-pct" id="bondingPct" style="color:#7bff7b">89%</div>
+                        <div class="ring-pct" id="bondingPct" style="color:#ffffff">89%</div>
                         <div class="ring-label">bonded</div>
                     </div>
                 </div>
@@ -514,14 +514,14 @@
             <button class="modal-close" onclick="closeWalletModal()">×</button>
         </div>
         <div class="wallet-option" onclick="alert('Xaman integration coming soon with mainnet launch! Use Seed Phrase for testnet.')">
-            <div class="wo-icon" style="background:#1a1f3a;">🔷</div>
+            <div class="wo-icon" style="background:#141414;">🔷</div>
             <div>
                 <div class="wo-name">Xaman <span class="wo-tag">Popular</span></div>
                 <div class="wo-desc">Scan QR with Xaman app</div>
             </div>
         </div>
         <div class="wallet-option" onclick="connectGemTrade()">
-            <div class="wo-icon" style="background:#1a2e1a;">💎</div>
+            <div class="wo-icon" style="background:#1a1a1a;">💎</div>
             <div>
                 <div class="wo-name">GemWallet</div>
                 <div class="wo-desc">Browser extension wallet</div>
@@ -594,7 +594,7 @@ const mockHolders = [
     { addr: 'others', pct: 30.3 },
 ];
 
-const HOLDER_COLORS = ['#7bff7b','#4de04d','#00cc66','#3399ff','#aa66ff','#555'];
+const HOLDER_COLORS = ['#ffffff','#4de04d','#00cc66','#3399ff','#aa66ff','#555'];
 
 function renderHolders(holders) {
     const count = currentToken.holders || Math.floor(Math.random() * 400 + 50);
@@ -603,7 +603,7 @@ function renderHolders(holders) {
         <div class="holder-bar-row">
             <span class="holder-addr">${h.addr}</span>
             <div class="holder-bar-wrap">
-                <div class="holder-bar-fill" style="width:${h.pct}%;background:${HOLDER_COLORS[i] || '#7bff7b'};"></div>
+                <div class="holder-bar-fill" style="width:${h.pct}%;background:${HOLDER_COLORS[i] || '#ffffff'};"></div>
             </div>
             <span class="holder-pct">${h.pct}%</span>
         </div>
@@ -640,7 +640,7 @@ function tradeRowHtml(t) {
     const timeStr = t.ago === 0 ? 'now' : t.ago + 's';
     return `<div class="trade-row ${isBuy ? '' : 'sell-row'}">
         <span class="${isBuy ? 'tr-buy' : 'tr-sell'}">${isBuy ? '▲ Buy' : '▼ Sell'}</span>
-        <span style="color:${isBuy ? '#7bff7b' : '#ff4d4d'}">${t.price.toFixed(7)}</span>
+        <span style="color:${isBuy ? '#ffffff' : '#ff4d4d'}">${t.price.toFixed(7)}</span>
         <span style="color:#aaa">${Math.floor(t.amount).toLocaleString()}</span>
         <span class="tr-addr">${t.addr}</span>
     </div>`;
@@ -743,7 +743,7 @@ function renderTokenList(list) {
                 <div class="tli-name">${t.name} <span style="color:#555;font-size:10px">${t.symbol}</span></div>
                 <div class="tli-issuer">${t.issuer.slice(0,16)}...</div>
             </div>
-            <span class="tli-price" style="color:${t.up?'#7bff7b':'#ff4d4d'}">${t.price}</span>
+            <span class="tli-price" style="color:${t.up?'#ffffff':'#ff4d4d'}">${t.price}</span>
         </div>
     `).join('');
 }

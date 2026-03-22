@@ -29,11 +29,11 @@
         }
         .logo { display: flex; align-items: center; gap: 6px; }
         .logo img { width: 28px; height: 28px; border-radius: 50%; }
-        .logo span { font-weight: 700; font-size: 16px; color: #7bff7b; }
+        .logo span { font-weight: 700; font-size: 16px; color: #ffffff; }
         .header-nav { display: flex; gap: 4px; }
         .header-nav a { padding: 6px 12px; font-size: 13px; color: #777; border-radius: 6px; font-weight: 500; }
         .header-nav a:hover { color: #fff; background: #1a1a1a; }
-        .header-nav a.active { color: #7bff7b; background: #1a2e1a; }
+        .header-nav a.active { color: #ffffff; background: #1a1a1a; }
 
         /* Page Layout */
         .page-layout {
@@ -85,15 +85,15 @@
         }
 
         .step.active .step-num {
-            border-color: #7bff7b;
-            background: #7bff7b;
+            border-color: #ffffff;
+            background: #ffffff;
             color: #000;
         }
 
         .step.done .step-num {
-            border-color: #7bff7b;
-            background: #1a2e1a;
-            color: #7bff7b;
+            border-color: #ffffff;
+            background: #1a1a1a;
+            color: #ffffff;
         }
 
         .step-label {
@@ -102,7 +102,7 @@
             color: #444;
         }
 
-        .step.active .step-label { color: #7bff7b; }
+        .step.active .step-label { color: #ffffff; }
         .step.done .step-label { color: #555; }
 
         .step-line {
@@ -113,7 +113,7 @@
         }
 
         .step.done ~ .step-line, .step.active ~ .step-line {
-            background: #2a4a2a;
+            background: #2a2a2a;
         }
 
         h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
@@ -121,11 +121,11 @@
 
         .network-badge {
             display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 10px; background: #1a2e1a; border: 1px solid #2a4a2a;
-            border-radius: 4px; font-size: 11px; font-weight: 600; color: #7bff7b;
+            padding: 4px 10px; background: #1a1a1a; border: 1px solid #2a2a2a;
+            border-radius: 4px; font-size: 11px; font-weight: 600; color: #ffffff;
             margin-bottom: 20px;
         }
-        .dot { width: 6px; height: 6px; background: #7bff7b; border-radius: 50%; animation: blink 1.5s infinite; }
+        .dot { width: 6px; height: 6px; background: #ffffff; border-radius: 50%; animation: blink 1.5s infinite; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
         /* Wallet Section */
@@ -139,7 +139,7 @@
         }
         .section-title .step-badge {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 20px; height: 20px; border-radius: 50%; background: #7bff7b;
+            width: 20px; height: 20px; border-radius: 50%; background: #ffffff;
             color: #000; font-size: 11px; font-weight: 800;
         }
 
@@ -150,7 +150,7 @@
             font-family: inherit; transition: all 0.15s; display: flex; align-items: center; gap: 8px;
             justify-content: center;
         }
-        .wallet-btn:hover { border-color: #7bff7b; color: #7bff7b; }
+        .wallet-btn:hover { border-color: #ffffff; color: #ffffff; }
 
         .divider { display: flex; align-items: center; gap: 12px; margin: 14px 0; color: #444; font-size: 12px; }
         .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #2a2a2a; }
@@ -160,7 +160,7 @@
             width: 100%; padding: 10px 40px 10px 12px; background: #0a0a0a; border: 1px solid #2a2a2a;
             border-radius: 8px; color: #e0e0e0; font-size: 13px; font-family: monospace; outline: none;
         }
-        .seed-input:focus { border-color: #7bff7b; }
+        .seed-input:focus { border-color: #ffffff; }
         .seed-input::placeholder { color: #333; }
         .seed-toggle {
             position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
@@ -168,18 +168,18 @@
         }
 
         .btn-connect-wallet {
-            width: 100%; padding: 11px; background: #7bff7b; color: #000;
+            width: 100%; padding: 11px; background: #ffffff; color: #000;
             border: none; border-radius: 8px; font-weight: 700; font-size: 14px;
             cursor: pointer; font-family: inherit; margin-top: 12px; transition: all 0.15s;
         }
-        .btn-connect-wallet:hover { background: #5de05d; }
+        .btn-connect-wallet:hover { background: #cccccc; }
         .btn-connect-wallet:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
 
         .wallet-connected {
             display: none; align-items: center; justify-content: space-between;
-            background: #1a2e1a; border: 1px solid #2a4a2a; border-radius: 8px; padding: 12px;
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 12px;
         }
-        .wallet-address { font-size: 13px; font-family: monospace; color: #7bff7b; }
+        .wallet-address { font-size: 13px; font-family: monospace; color: #ffffff; }
         .wallet-balance { font-size: 12px; color: #aaa; }
         .btn-disconnect { font-size: 11px; color: #666; cursor: pointer; background: none; border: none; font-family: inherit; }
         .btn-disconnect:hover { color: #ff4d4d; }
@@ -202,9 +202,9 @@
             border-radius: 8px; color: #e0e0e0; font-size: 14px; font-family: inherit; outline: none;
             transition: border-color 0.15s;
         }
-        .form-group input:focus, .form-group textarea:focus { border-color: #7bff7b; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #ffffff; }
         .form-group input.error { border-color: #ff4d4d !important; }
-        .form-group input.valid { border-color: #7bff7b !important; }
+        .form-group input.valid { border-color: #ffffff !important; }
         .form-group input::placeholder, .form-group textarea::placeholder { color: #333; }
         .form-group textarea { resize: none; height: 70px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -229,8 +229,8 @@
             position: relative;
             overflow: hidden;
         }
-        .image-upload-area:hover { border-color: #7bff7b; background: #0a0a0a; }
-        .image-upload-area.has-image { border-color: #7bff7b; background: #0a1a0a; }
+        .image-upload-area:hover { border-color: #ffffff; background: #0a0a0a; }
+        .image-upload-area.has-image { border-color: #ffffff; background: #0a0a0a; }
         .image-upload-area input[type=file] {
             position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
         }
@@ -251,7 +251,7 @@
             color: #555; font-size: 12px; cursor: pointer; padding: 4px 12px;
             font-family: inherit;
         }
-        .emoji-fallback-toggle button:hover { border-color: #7bff7b; color: #7bff7b; }
+        .emoji-fallback-toggle button:hover { border-color: #ffffff; color: #ffffff; }
 
         .emoji-picker-wrap {
             display: none;
@@ -275,11 +275,11 @@
             aspect-ratio: 1;
         }
         .emoji-grid button:hover { background: #1a1a1a; transform: scale(1.2); }
-        .emoji-grid button.selected { background: #1a2e1a; outline: 1px solid #7bff7b; }
+        .emoji-grid button.selected { background: #1a1a1a; outline: 1px solid #ffffff; }
 
         /* Cost breakdown */
         .cost-info {
-            background: #0a0a0a; border: 1px solid #1a2e1a; border-radius: 10px;
+            background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 10px;
             padding: 14px; margin-bottom: 16px; font-size: 12px;
         }
         .cost-title {
@@ -289,16 +289,16 @@
         .cost-row { display: flex; justify-content: space-between; padding: 4px 0; align-items: center; }
         .cost-row .label { color: #666; }
         .cost-row .value { color: #e0e0e0; font-weight: 600; }
-        .cost-row.total .value { color: #7bff7b; font-size: 14px; }
+        .cost-row.total .value { color: #ffffff; font-size: 14px; }
         .cost-divider { height: 1px; background: #1e1e1e; margin: 8px 0; }
         .cost-note { font-size: 10px; color: #444; margin-top: 8px; }
 
         .btn-launch {
-            width: 100%; padding: 14px; background: #7bff7b; color: #000;
+            width: 100%; padding: 14px; background: #ffffff; color: #000;
             border: none; border-radius: 10px; font-weight: 800; font-size: 16px;
             cursor: pointer; font-family: inherit; transition: all 0.15s;
         }
-        .btn-launch:hover { background: #5de05d; box-shadow: 0 0 24px rgba(123,255,123,0.3); }
+        .btn-launch:hover { background: #cccccc; box-shadow: 0 0 24px rgba(255,255,255,0.15); }
         .btn-launch:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; }
 
         /* Status */
@@ -309,27 +309,27 @@
         .status-box.show { display: block; }
         .status-line { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #aaa; }
         .status-line:last-child { margin-bottom: 0; }
-        .status-line.done { color: #7bff7b; }
+        .status-line.done { color: #ffffff; }
         .status-line.error { color: #ff4d4d; }
         .status-line .icon { font-size: 14px; width: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-        .spinner { width: 14px; height: 14px; border: 2px solid #333; border-top-color: #7bff7b; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .spinner { width: 14px; height: 14px; border: 2px solid #333; border-top-color: #ffffff; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Success */
         .success-card {
-            display: none; background: #0a1a0a; border: 1px solid #2a4a2a; border-radius: 12px;
+            display: none; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 12px;
             padding: 24px; margin-top: 20px; text-align: center;
         }
         .success-card.show { display: block; }
         .success-icon { font-size: 48px; margin-bottom: 12px; }
-        .success-card h2 { font-size: 20px; font-weight: 700; color: #7bff7b; margin-bottom: 6px; }
+        .success-card h2 { font-size: 20px; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
         .success-card p { color: #666; font-size: 13px; margin-bottom: 16px; }
         .token-detail { background: #141414; border-radius: 8px; padding: 12px; text-align: left; margin-bottom: 16px; }
         .token-detail-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
         .token-detail-row .k { color: #666; }
         .token-detail-row .v { color: #e0e0e0; font-family: monospace; font-weight: 600; }
-        .btn-view { display: inline-block; padding: 8px 20px; background: #1a2e1a; color: #7bff7b; border-radius: 6px; font-size: 13px; font-weight: 600; margin: 4px; }
-        .btn-view:hover { background: #2a4a2a; }
+        .btn-view { display: inline-block; padding: 8px 20px; background: #1a1a1a; color: #ffffff; border-radius: 6px; font-size: 13px; font-weight: 600; margin: 4px; }
+        .btn-view:hover { background: #2a2a2a; }
 
         /* ====== PREVIEW PANEL ====== */
         .preview-col {
@@ -352,8 +352,8 @@
         }
 
         .preview-card.live {
-            border-color: #2a4a2a;
-            box-shadow: 0 0 20px rgba(123,255,123,0.05);
+            border-color: #2a2a2a;
+            box-shadow: 0 0 20px rgba(255,255,255,0.04);
         }
 
         .pc-top { display: flex; gap: 12px; margin-bottom: 12px; }
@@ -365,14 +365,14 @@
         .pc-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 9px; }
         .pc-meta { flex: 1; min-width: 0; }
         .pc-name { font-weight: 700; font-size: 15px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 20px; }
-        .pc-ticker { font-size: 12px; color: #7bff7b; font-weight: 600; min-height: 16px; }
+        .pc-ticker { font-size: 12px; color: #ffffff; font-weight: 600; min-height: 16px; }
         .pc-creator { font-size: 11px; color: #555; margin-top: 2px; }
-        .pc-creator span { color: #7bff7b; }
+        .pc-creator span { color: #ffffff; }
         .pc-desc { font-size: 12px; color: #666; margin-top: 6px; min-height: 32px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .pc-bar { height: 4px; background: #222; border-radius: 2px; overflow: hidden; margin-top: 12px; }
-        .pc-bar-fill { height: 100%; background: linear-gradient(90deg, #7bff7b, #00cc66); border-radius: 2px; transition: width 0.5s; }
+        .pc-bar-fill { height: 100%; background: linear-gradient(90deg, #ffffff, #00cc66); border-radius: 2px; transition: width 0.5s; }
         .pc-stats { display: flex; justify-content: space-between; font-size: 10px; color: #444; margin-top: 4px; }
-        .pc-badge { display: inline-block; padding: 1px 6px; background: #1a2e1a; border-radius: 3px; font-size: 9px; font-weight: 700; color: #7bff7b; margin-top: 6px; }
+        .pc-badge { display: inline-block; padding: 1px 6px; background: #1a1a1a; border-radius: 3px; font-size: 9px; font-weight: 700; color: #ffffff; margin-top: 6px; }
 
         .preview-placeholder {
             text-align: center; padding: 30px 10px; color: #333; font-size: 12px;
@@ -461,7 +461,7 @@
 
             <div id="seedInputArea" style="display:none">
                 <div class="divider">or use seed phrase / testnet wallet</div>
-                <button onclick="generateNewWallet()" style="width:100%;padding:9px;background:transparent;border:1px dashed #2a4a2a;border-radius:8px;color:#7bff7b;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;">✨ Generate New Testnet Wallet</button>
+                <button onclick="generateNewWallet()" style="width:100%;padding:9px;background:transparent;border:1px dashed #2a2a2a;border-radius:8px;color:#ffffff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;">✨ Generate New Testnet Wallet</button>
                 <div class="seed-input-wrap">
                     <input type="password" id="seedInput" class="seed-input" placeholder="sXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
                     <button class="seed-toggle" onclick="toggleSeed()">👁</button>
@@ -565,7 +565,7 @@
                     <span class="label" style="font-weight:700;">Total</span>
                     <span class="value">~4 XRP + 0.001 XRP fees</span>
                 </div>
-                <div class="cost-note">⚡ On testnet, XRP is free. <a href="https://faucet.altnet.rippletest.net/accounts" target="_blank" style="color:#7bff7b;">Get testnet XRP →</a></div>
+                <div class="cost-note">⚡ On testnet, XRP is free. <a href="https://faucet.altnet.rippletest.net/accounts" target="_blank" style="color:#ffffff;">Get testnet XRP →</a></div>
             </div>
 
             <button class="btn-launch" id="launchBtn" onclick="launchToken()" disabled>🚀 Launch Token</button>
@@ -817,7 +817,7 @@ function generateNewWallet() {
     if (existing) existing.remove();
     const warn = document.createElement('div');
     warn.style.cssText = 'background:#2e1a00;border:1px solid #663300;border-radius:8px;padding:12px;font-size:11px;color:#ffaa00;margin-bottom:8px;';
-    warn.innerHTML = `⚠️ <strong>Save your seed phrase!</strong><br><code style="font-family:monospace;color:#fff;word-break:break-all;font-size:10px;">${newWallet.seed}</code><br><br>Address: <code style="color:#7bff7b;font-size:10px;">${newWallet.address}</code><br><br>Get testnet XRP: <a href="https://faucet.altnet.rippletest.net/accounts" target="_blank" style="color:#ffaa00;text-decoration:underline;">faucet.altnet.rippletest.net</a>`;
+    warn.innerHTML = `⚠️ <strong>Save your seed phrase!</strong><br><code style="font-family:monospace;color:#fff;word-break:break-all;font-size:10px;">${newWallet.seed}</code><br><br>Address: <code style="color:#ffffff;font-size:10px;">${newWallet.address}</code><br><br>Get testnet XRP: <a href="https://faucet.altnet.rippletest.net/accounts" target="_blank" style="color:#ffaa00;text-decoration:underline;">faucet.altnet.rippletest.net</a>`;
     warn.id = 'walletWarn';
     document.getElementById('seedInput').parentNode.before(warn);
 }

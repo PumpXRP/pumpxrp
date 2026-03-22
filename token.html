@@ -18,22 +18,22 @@
         .header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; border-bottom:1px solid #1e1e1e; background:#0e0e0e; position:sticky; top:0; z-index:100; }
         .logo { display:flex; align-items:center; gap:6px; }
         .logo img { width:28px; height:28px; border-radius:50%; }
-        .logo-green { color:#7bff7b; font-weight:700; font-size:16px; }
+        .logo-green { color:#ffffff; font-weight:700; font-size:16px; }
         .logo-text { font-weight:700; font-size:16px; }
         .header-nav { display:flex; gap:4px; }
         .header-nav a { padding:6px 12px; font-size:13px; color:#777; border-radius:6px; font-weight:500; }
         .header-nav a:hover { color:#fff; background:#1a1a1a; }
-        .btn-wallet { background:#7bff7b; color:#000; border:none; padding:7px 16px; border-radius:6px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit; }
-        .btn-wallet:hover { background:#5de05d; }
-        .wallet-bar { display:none; align-items:center; gap:8px; padding:6px 12px; background:#1a2e1a; border:1px solid #2a4a2a; border-radius:8px; font-size:12px; cursor:pointer; }
+        .btn-wallet { background:#ffffff; color:#000; border:none; padding:7px 16px; border-radius:6px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit; }
+        .btn-wallet:hover { background:#cccccc; }
+        .wallet-bar { display:none; align-items:center; gap:8px; padding:6px 12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:8px; font-size:12px; cursor:pointer; }
         .wallet-bar.show { display:flex; }
-        .wallet-bar .addr { color:#7bff7b; font-family:monospace; font-weight:600; }
-        .dot-green { width:6px; height:6px; background:#7bff7b; border-radius:50%; animation:blink 1.5s infinite; }
+        .wallet-bar .addr { color:#ffffff; font-family:monospace; font-weight:600; }
+        .dot-green { width:6px; height:6px; background:#ffffff; border-radius:50%; animation:blink 1.5s infinite; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
         /* Breadcrumb */
         .breadcrumb { padding:10px 16px; font-size:12px; color:#555; border-bottom:1px solid #1e1e1e; }
-        .breadcrumb a { color:#7bff7b; }
+        .breadcrumb a { color:#ffffff; }
         .breadcrumb a:hover { text-decoration:underline; }
 
         /* Layout */
@@ -47,9 +47,9 @@
         .token-avatar { width:72px; height:72px; border-radius:12px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:36px; flex-shrink:0; overflow:hidden; }
         .token-avatar img { width:100%; height:100%; object-fit:cover; }
         .token-title { font-size:22px; font-weight:800; }
-        .token-symbol { font-size:14px; color:#7bff7b; font-weight:600; margin-top:2px; }
+        .token-symbol { font-size:14px; color:#ffffff; font-weight:600; margin-top:2px; }
         .token-by { font-size:11px; color:#555; margin-top:4px; }
-        .token-by span { color:#7bff7b; font-family:monospace; }
+        .token-by span { color:#ffffff; font-family:monospace; }
         .token-desc { font-size:12px; color:#777; margin-top:8px; line-height:1.5; }
 
         /* Stats row */
@@ -59,37 +59,37 @@
         .stat-label { font-size:10px; color:#555; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
         .stat-value { font-size:18px; font-weight:800; }
         .stat-sub { font-size:11px; color:#555; margin-top:2px; }
-        .up { color:#7bff7b; }
+        .up { color:#ffffff; }
         .down { color:#ff4d4d; }
 
         /* Bonding bar */
         .bonding-section { padding:16px; border-bottom:1px solid #1e1e1e; }
         .bonding-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px; }
-        .bonding-label .pct { font-weight:700; color:#7bff7b; }
+        .bonding-label .pct { font-weight:700; color:#ffffff; }
         .bonding-bar { height:8px; background:#222; border-radius:4px; overflow:hidden; }
-        .bonding-fill { height:100%; background:linear-gradient(90deg,#7bff7b,#00cc66); border-radius:4px; transition:width 0.5s; }
+        .bonding-fill { height:100%; background:linear-gradient(90deg,#ffffff,#00cc66); border-radius:4px; transition:width 0.5s; }
         .bonding-note { font-size:11px; color:#555; margin-top:6px; }
 
         /* Orderbook */
         .ob-section { border-bottom:1px solid #1e1e1e; }
         .section-title { padding:10px 16px; font-size:11px; font-weight:700; color:#555; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #1e1e1e; display:flex; justify-content:space-between; align-items:center; }
         .section-title .refresh { font-size:11px; color:#444; cursor:pointer; font-weight:400; text-transform:none; letter-spacing:0; }
-        .section-title .refresh:hover { color:#7bff7b; }
+        .section-title .refresh:hover { color:#ffffff; }
         .ob-header { display:grid; grid-template-columns:1fr 1fr 1fr; padding:6px 16px; font-size:10px; color:#444; font-weight:600; text-transform:uppercase; }
         .ob-row { display:grid; grid-template-columns:1fr 1fr 1fr; padding:4px 16px; font-size:12px; cursor:pointer; position:relative; }
         .ob-row:hover { background:#1a1a1a; }
         .ob-row.ask .price { color:#ff4d4d; }
-        .ob-row.bid .price { color:#7bff7b; }
+        .ob-row.bid .price { color:#ffffff; }
         .ob-bar-bg { position:absolute; top:0; bottom:0; right:0; opacity:0.07; border-radius:2px; }
         .ob-row.ask .ob-bar-bg { background:#ff4d4d; }
-        .ob-row.bid .ob-bar-bg { background:#7bff7b; }
+        .ob-row.bid .ob-bar-bg { background:#ffffff; }
         .ob-spread { padding:5px 16px; text-align:center; font-size:11px; color:#444; background:#0a0a0a; border-top:1px solid #1e1e1e; border-bottom:1px solid #1e1e1e; }
         .ob-loading { padding:20px 16px; text-align:center; color:#444; font-size:12px; }
 
         /* Trades */
         .trades-section { }
         .trade-row { display:grid; grid-template-columns:1fr 1fr 1fr; padding:4px 16px; font-size:12px; border-bottom:1px solid #0e0e0e; }
-        .trade-buy { color:#7bff7b; }
+        .trade-buy { color:#ffffff; }
         .trade-sell { color:#ff4d4d; }
         .trade-time { color:#444; text-align:right; }
 
@@ -97,18 +97,18 @@
         .right { padding:16px; }
         .tab-row { display:flex; gap:4px; margin-bottom:16px; }
         .tab { flex:1; padding:10px; text-align:center; font-size:13px; font-weight:700; border-radius:8px; cursor:pointer; border:1px solid #2a2a2a; background:transparent; color:#777; font-family:inherit; }
-        .tab.buy.active { background:#7bff7b; color:#000; border-color:#7bff7b; }
+        .tab.buy.active { background:#ffffff; color:#000; border-color:#ffffff; }
         .tab.sell.active { background:#ff4d4d; color:#fff; border-color:#ff4d4d; }
         .tab:not(.active):hover { border-color:#444; color:#ccc; }
 
         .form-label { font-size:10px; font-weight:600; color:#555; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:flex; justify-content:space-between; }
         .form-input { width:100%; padding:10px 12px; background:#0a0a0a; border:1px solid #2a2a2a; border-radius:8px; color:#e0e0e0; font-size:13px; font-family:inherit; outline:none; margin-bottom:12px; }
-        .form-input:focus { border-color:#7bff7b; }
+        .form-input:focus { border-color:#ffffff; }
         .form-input::placeholder { color:#333; }
 
         .pct-row { display:flex; gap:4px; margin-bottom:12px; }
         .pct-btn { flex:1; padding:5px; font-size:11px; font-weight:600; border-radius:5px; cursor:pointer; border:1px solid #2a2a2a; background:transparent; color:#666; font-family:inherit; }
-        .pct-btn:hover { border-color:#7bff7b; color:#7bff7b; }
+        .pct-btn:hover { border-color:#ffffff; color:#ffffff; }
 
         .total-row { display:flex; justify-content:space-between; font-size:12px; padding:4px 0; }
         .total-row .k { color:#666; }
@@ -116,8 +116,8 @@
         .divider { height:1px; background:#1e1e1e; margin:8px 0; }
 
         .btn-trade { width:100%; padding:13px; border:none; border-radius:8px; font-weight:800; font-size:14px; cursor:pointer; font-family:inherit; margin-top:12px; }
-        .btn-trade.buy { background:#7bff7b; color:#000; }
-        .btn-trade.buy:hover { background:#5de05d; }
+        .btn-trade.buy { background:#ffffff; color:#000; }
+        .btn-trade.buy:hover { background:#cccccc; }
         .btn-trade.sell { background:#ff4d4d; color:#fff; }
         .btn-trade.sell:hover { background:#e03030; }
         .btn-trade:disabled { background:#2a2a2a; color:#555; cursor:not-allowed; }
@@ -126,26 +126,26 @@
         .connect-prompt { text-align:center; padding:20px 0; }
         .connect-prompt .icon { font-size:32px; margin-bottom:10px; }
         .connect-prompt p { font-size:12px; color:#555; margin-bottom:14px; }
-        .btn-connect-trade { width:100%; padding:11px; background:#7bff7b; color:#000; border:none; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit; }
-        .btn-connect-trade:hover { background:#5de05d; }
+        .btn-connect-trade { width:100%; padding:11px; background:#ffffff; color:#000; border:none; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit; }
+        .btn-connect-trade:hover { background:#cccccc; }
 
         .balance-info { background:#0a0a0a; border:1px solid #1e1e1e; border-radius:8px; padding:12px; margin-bottom:14px; }
         .bal-row { display:flex; justify-content:space-between; font-size:12px; padding:2px 0; }
         .bal-row .k { color:#555; }
         .bal-row .v { font-weight:600; }
-        .bal-row .v.green { color:#7bff7b; }
+        .bal-row .v.green { color:#ffffff; }
 
         /* TX msg */
         .tx-msg { margin-top:10px; padding:10px 12px; border-radius:8px; font-size:12px; display:none; }
         .tx-msg.show { display:block; }
-        .tx-msg.success { background:#1a2e1a; color:#7bff7b; }
+        .tx-msg.success { background:#1a1a1a; color:#ffffff; }
         .tx-msg.error { background:#2e1a1a; color:#ff4d4d; }
-        .tx-msg.loading { background:#1a1a2e; color:#7b9fff; }
+        .tx-msg.loading { background:#1a1a1a; color:#aaaaaa; }
 
         /* Token links */
         .token-links { padding:12px 16px; display:flex; gap:8px; flex-wrap:wrap; border-bottom:1px solid #1e1e1e; }
         .token-link { padding:5px 10px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:6px; font-size:11px; color:#777; display:flex; align-items:center; gap:4px; }
-        .token-link:hover { border-color:#7bff7b; color:#7bff7b; }
+        .token-link:hover { border-color:#ffffff; color:#ffffff; }
 
         /* Wallet modal */
         .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; align-items:center; justify-content:center; }
@@ -156,11 +156,11 @@
         .modal-x { background:none; border:none; color:#555; font-size:20px; cursor:pointer; }
         .modal-x:hover { color:#fff; }
         .wo { display:flex; align-items:center; gap:14px; padding:13px; border:1px solid #2a2a2a; border-radius:10px; cursor:pointer; margin-bottom:10px; background:#0e0e0e; }
-        .wo:hover { border-color:#7bff7b; background:#1a1a1a; }
+        .wo:hover { border-color:#ffffff; background:#1a1a1a; }
         .wo-ico { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
         .wo-name { font-weight:700; font-size:14px; }
         .wo-desc { font-size:11px; color:#555; }
-        .wo-tag { font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; background:#1a2e1a; color:#7bff7b; margin-left:6px; }
+        .wo-tag { font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; background:#1a1a1a; color:#ffffff; margin-left:6px; }
 
         /* Mobile */
         @media (max-width:768px) {
@@ -334,7 +334,7 @@
         <div style="margin-top:16px;background:#0a0a0a;border:1px solid #1e1e1e;border-radius:8px;padding:12px;font-size:11px;color:#555;">
             <div style="font-weight:600;color:#777;margin-bottom:8px;">Token Contract</div>
             <div style="margin-bottom:4px;">Issuer: <span style="font-family:monospace;color:#aaa;font-size:10px;" id="issuerAddr">—</span></div>
-            <div>Network: <span style="color:#7bff7b;">XRPL Testnet</span></div>
+            <div>Network: <span style="color:#ffffff;">XRPL Testnet</span></div>
         </div>
     </div>
 </div>
@@ -347,11 +347,11 @@
             <button class="modal-x" onclick="closeWalletModal()">×</button>
         </div>
         <div class="wo" onclick="alert('Xaman integration coming soon!')">
-            <div class="wo-ico" style="background:#1a1f3a;">🔷</div>
+            <div class="wo-ico" style="background:#141414;">🔷</div>
             <div><div class="wo-name">Xaman <span class="wo-tag">Popular</span></div><div class="wo-desc">Scan QR with Xaman app</div></div>
         </div>
         <div class="wo" onclick="connectGem()">
-            <div class="wo-ico" style="background:#1a2e1a;">💎</div>
+            <div class="wo-ico" style="background:#1a1a1a;">💎</div>
             <div><div class="wo-name">GemWallet</div><div class="wo-desc">Browser extension wallet</div></div>
         </div>
         <p style="font-size:11px;color:#444;text-align:center;margin-top:10px;">More wallets coming soon</p>
@@ -443,7 +443,7 @@ async function loadOrderBook() {
         renderOrderBook(asksRes.result.offers, bidsRes.result.offers);
     } catch(e) {
         document.getElementById('obAsks').innerHTML = '<div class="ob-loading" style="color:#ff4d4d">No asks on XRPL DEX yet</div>';
-        document.getElementById('obBids').innerHTML = '<div class="ob-loading" style="color:#7bff7b">No bids on XRPL DEX yet</div>';
+        document.getElementById('obBids').innerHTML = '<div class="ob-loading" style="color:#ffffff">No bids on XRPL DEX yet</div>';
         document.getElementById('obSpread').textContent = 'No orders yet — be the first to trade!';
     }
 }
