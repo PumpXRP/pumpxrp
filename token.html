@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Token — PumpXRP</title>
+    <title>Token — PumpOnXRP</title>
     <link rel="icon" type="image/jpeg" href="logo.jpg">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LK6KEFE1LQ"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-LK6KEFE1LQ');</script>
@@ -222,7 +222,7 @@
         <div class="token-links">
             <span class="token-link">🌐 XRPL Testnet</span>
             <a class="token-link" id="explorerLink" href="#" target="_blank">🔍 Explorer</a>
-            <span class="token-link">🚀 PumpXRP</span>
+            <span class="token-link">🚀 PumpOnXRP</span>
         </div>
 
         <!-- Stats -->
@@ -384,7 +384,7 @@ async function loadToken() {
 }
 
 function renderToken(t) {
-    document.title = `$${t.symbol} — PumpXRP`;
+    document.title = `$${t.symbol} — PumpOnXRP`;
     document.getElementById('breadToken').textContent = `$${t.symbol}`;
     document.getElementById('tokenName').textContent = t.name;
     document.getElementById('tokenSymbol').textContent = `$${t.symbol}`;
