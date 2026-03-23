@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Litepaper — PumpOnXRP</title>
+    <title>Litepaper — PumpOnXRP | XRP Ledger & Flare Network</title>
+    <meta name="description" content="PumpOnXRP litepaper — the first token launchpad on XRP Ledger and Flare Network. One-click launch, EVM smart contracts, multichain trading.">
     <link rel="icon" type="image/jpeg" href="logo.jpg">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LK6KEFE1LQ"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-LK6KEFE1LQ');</script>
@@ -100,6 +101,70 @@
         .fee-table tr:last-child td { border-bottom:none; }
         .fee-table .green { color:#ffffff; font-weight:600; }
 
+        /* Flare Section */
+        .flare-section {
+            border: 1px solid #2a1015;
+            border-radius: 12px;
+            padding: 28px;
+            background: linear-gradient(135deg, #0e0508 0%, #0e0e0e 100%);
+            margin: 24px 0;
+        }
+
+        .flare-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: #1a0008;
+            border: 1px solid #E62058;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #E62058;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+
+        .flare-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .flare-feat {
+            background: #0e0e0e;
+            border: 1px solid #1e1e1e;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .flare-feat .ff-label {
+            font-size: 11px;
+            color: #E62058;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .flare-feat .ff-value {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .flare-feat .ff-desc {
+            font-size: 12px;
+            color: #555;
+            margin-top: 3px;
+        }
+
+        @media (max-width: 480px) {
+            .flare-features { grid-template-columns: 1fr; }
+        }
+
         /* CTA */
         .cta-box { background:linear-gradient(135deg, #0a0a0a, #1a1a1a); border:1px solid #2a2a2a; border-radius:16px; padding:36px; text-align:center; margin-top:48px; }
         .cta-box h3 { font-size:24px; font-weight:800; margin-bottom:10px; }
@@ -133,8 +198,8 @@
 <!-- Hero -->
 <div class="hero">
     <div class="hero-badge">📄 Litepaper v0.1</div>
-    <h1>The First Token Launchpad<br>on <span>XRP Ledger</span></h1>
-    <p>PumpOnXRP makes launching tokens on XRPL as easy as filling out a form. One click, instant listing, real on-chain trading — no smart contracts needed.</p>
+    <h1>The First Token Launchpad<br>on <span>XRP Ledger & Flare Network</span></h1>
+    <p>PumpOnXRP makes launching tokens on XRPL and Flare as easy as filling out a form. One click, instant listing, real on-chain trading — native DEX on XRPL, EVM smart contracts on Flare.</p>
     <div class="hero-btns">
         <a href="create.html"><button class="btn-primary">🚀 Launch a Token</button></a>
         <a href="/"><button class="btn-secondary">View Token Board</button></a>
@@ -226,6 +291,51 @@
             <li style="display:flex;gap:8px;font-size:14px;color:#888;"><span style="color:#ffffff;">✓</span> Fully non-custodial</li>
             <li style="display:flex;gap:8px;font-size:14px;color:#888;"><span style="color:#ffffff;">✓</span> Works with all XRPL wallets</li>
         </ul>
+    </div>
+
+    <!-- 3b. Flare Network Integration -->
+    <div class="section">
+        <div class="section-num">03b — Phase 2: Flare Network Integration</div>
+        <h2>Expanding to Flare Network</h2>
+        <p>While XRPL's native DEX powers our Phase 1 launchpad, <strong>Phase 2 brings full EVM smart contract support via Flare Network</strong> — enabling more advanced tokenomics, automated bonding curves, and MetaMask-native trading.</p>
+
+        <div class="flare-section">
+            <div class="flare-badge">🔥 Flare Network — Coming Soon</div>
+
+            <p style="font-size:14px;color:#888;line-height:1.7;margin-bottom:4px;">
+                Flare is an EVM-compatible Layer 1 blockchain with native data and interoperability protocols. PumpOnXRP will deploy Solidity smart contracts on Flare, unlocking programmable bonding curves, creator royalties, and on-chain governance — all from the same familiar interface.
+            </p>
+
+            <div class="flare-features">
+                <div class="flare-feat">
+                    <div class="ff-label">EVM Compatible</div>
+                    <div class="ff-value">Solidity Contracts</div>
+                    <div class="ff-desc">Deploy token launches via audited smart contracts. Fully programmable mechanics.</div>
+                </div>
+                <div class="flare-feat">
+                    <div class="ff-label">Wallet Support</div>
+                    <div class="ff-value">MetaMask Ready</div>
+                    <div class="ff-desc">Use MetaMask or any EVM wallet. No new wallet installs needed for Ethereum users.</div>
+                </div>
+                <div class="flare-feat">
+                    <div class="ff-label">Testnet</div>
+                    <div class="ff-value">Coston2</div>
+                    <div class="ff-desc">Development active on Coston2 testnet. Free test tokens available from Flare faucet.</div>
+                </div>
+                <div class="flare-feat">
+                    <div class="ff-label">Bonding Curve</div>
+                    <div class="ff-value">On-Chain Logic</div>
+                    <div class="ff-desc">Smart contract-enforced bonding curves replace off-chain logic for trustless launches.</div>
+                </div>
+            </div>
+
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                <li style="display:flex;gap:8px;font-size:13px;color:#888;"><span style="color:#E62058;">✦</span> Same PumpOnXRP UI — network toggle switches chains seamlessly</li>
+                <li style="display:flex;gap:8px;font-size:13px;color:#888;"><span style="color:#E62058;">✦</span> Tokens on Flare are ERC-20 compatible, listable on any EVM DEX</li>
+                <li style="display:flex;gap:8px;font-size:13px;color:#888;"><span style="color:#E62058;">✦</span> Cross-chain bridge between XRPL tokens and Flare ERC-20s planned for Phase 3</li>
+                <li style="display:flex;gap:8px;font-size:13px;color:#888;"><span style="color:#E62058;">✦</span> Flare's native FTSO price feeds enable USD-denominated bonding targets</li>
+            </ul>
+        </div>
     </div>
 
     <!-- 4. Fees -->

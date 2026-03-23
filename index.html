@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PumpOnXRP — Token Launchpad on XRP Ledger</title>
-    <meta name="description" content="Launch and trade tokens on XRP Ledger. The first PumpFun-style launchpad for XRPL.">
-    <meta property="og:title" content="PumpOnXRP">
-    <meta property="og:description" content="Launch tokens on XRP Ledger in one click.">
+    <title>PumpOnXRP — Token Launchpad on XRP Ledger & Flare Network</title>
+    <meta name="description" content="Launch and trade tokens on XRP Ledger & Flare Network. The first PumpFun-style launchpad for XRPL and Flare.">
+    <meta property="og:title" content="PumpOnXRP — XRP Ledger & Flare Network">
+    <meta property="og:description" content="Launch tokens on XRP Ledger & Flare Network in one click.">
     <meta property="og:image" content="logo.jpg">
     <meta property="og:url" content="https://pumponxrp.fun">
     <meta name="twitter:card" content="summary_large_image">
@@ -84,6 +84,55 @@
             align-items: center;
             gap: 8px;
         }
+
+        /* Network Switcher */
+        .network-switcher {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .net-pill {
+            padding: 5px 11px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid #2a2a2a;
+            background: #141414;
+            color: #555;
+            font-family: inherit;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .net-pill:hover { color: #ccc; border-color: #444; }
+
+        .net-pill.active-xrp {
+            background: #ffffff;
+            color: #000;
+            border-color: #ffffff;
+        }
+
+        .net-pill.active-flare {
+            background: #E62058;
+            color: #ffffff;
+            border-color: #E62058;
+        }
+
+        /* Flare Coming Soon Banner */
+        .flare-banner {
+            display: none;
+            background: linear-gradient(90deg, #1a0008 0%, #200010 50%, #1a0008 100%);
+            border-bottom: 1px solid #E62058;
+            padding: 10px 16px;
+            text-align: center;
+            font-size: 13px;
+            color: #E62058;
+            font-weight: 600;
+        }
+
+        .flare-banner.show { display: block; }
 
         .btn-wallet {
             background: #ffffff;
@@ -740,6 +789,10 @@
             </div>
         </div>
         <div class="header-right">
+            <div class="network-switcher">
+                <button class="net-pill active-xrp" id="pillXRP" onclick="switchNetwork('xrp')">⚡ XRP Ledger</button>
+                <button class="net-pill" id="pillFlare" onclick="switchNetwork('flare')">🔥 Flare Network</button>
+            </div>
             <div class="wallet-connected-bar" id="connectedBar" onclick="showWalletModal()">
                 <span class="dot-green"></span>
                 <span class="addr" id="connectedAddr">—</span>
@@ -747,6 +800,11 @@
             </div>
             <button class="btn-wallet" id="connectBtn" onclick="showWalletModal()">connect wallet</button>
         </div>
+    </div>
+
+    <!-- Flare Network Banner -->
+    <div class="flare-banner" id="flareBanner">
+        🔥 Flare Network (Coston2 Testnet) — Coming Soon! Smart contract deployment in progress.
     </div>
 
     <!-- Wallet Modal -->
@@ -809,9 +867,9 @@
 
     <!-- Hero Section -->
     <div style="background:radial-gradient(ellipse at 50% 0%, #0a1f0a 0%, #0e0e0e 65%);border-bottom:1px solid #1e1e1e;padding:40px 20px 32px;text-align:center;">
-        <div style="display:inline-block;padding:4px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;font-size:11px;font-weight:700;color:#ffffff;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">🌐 Live on XRPL Testnet</div>
-        <h1 style="font-size:clamp(24px,5vw,38px);font-weight:800;line-height:1.2;margin-bottom:12px;">Launch your token on<br><span style="background:linear-gradient(90deg,#ffffff,#00ddaa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">XRP Ledger</span> in 60 seconds</h1>
-        <p style="font-size:14px;color:#666;max-width:460px;margin:0 auto 24px;line-height:1.6;">The first Pump.fun-style launchpad on XRPL. One-click launch, native DEX trading, instant board listing.</p>
+        <div style="display:inline-block;padding:4px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;font-size:11px;font-weight:700;color:#ffffff;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">🌐 Live on XRPL Testnet · Flare Coming Soon</div>
+        <h1 style="font-size:clamp(24px,5vw,38px);font-weight:800;line-height:1.2;margin-bottom:12px;">Launch your token on<br><span style="background:linear-gradient(90deg,#ffffff,#00ddaa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">XRP Ledger & Flare Network</span></h1>
+        <p style="font-size:14px;color:#666;max-width:480px;margin:0 auto 24px;line-height:1.6;">The first Pump.fun-style launchpad on XRPL and Flare Network. One-click launch, native DEX trading, and EVM smart contracts — multichain from day one.</p>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
             <a href="create.html"><button style="padding:11px 24px;background:#ffffff;color:#000;border:none;border-radius:8px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;">🚀 Launch a Token</button></a>
             <a href="litepaper.html"><button style="padding:11px 24px;background:transparent;color:#e0e0e0;border:1px solid #2a2a2a;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;">📄 Litepaper</button></a>
@@ -822,7 +880,7 @@
     <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #1e1e1e;background:#0a0a0a;">
         <div style="padding:12px 8px;text-align:center;border-right:1px solid #1e1e1e;">
             <div style="font-size:18px;font-weight:800;color:#ffffff;" id="statTokens">—</div>
-            <div style="font-size:9px;color:#555;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;">Tokens</div>
+            <div style="font-size:9px;color:#555;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;">Tokens · XRPL</div>
         </div>
         <div style="padding:12px 8px;text-align:center;border-right:1px solid #1e1e1e;">
             <div style="font-size:18px;font-weight:800;color:#ffffff;">$0</div>
@@ -836,6 +894,10 @@
             <div style="font-size:18px;font-weight:800;color:#ffffff;">3-5s</div>
             <div style="font-size:9px;color:#555;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;">Finality</div>
         </div>
+    </div>
+    <!-- Flare Network Stats Note -->
+    <div style="background:#0a0a0a;border-bottom:1px solid #1e1e1e;padding:8px 16px;text-align:center;font-size:11px;color:#555;">
+        🔥 <span style="color:#E62058;font-weight:700;">Flare Network</span>: EVM Compatible | Smart Contract Launchpad | <span style="color:#444;">Coming Soon</span>
     </div>
 
     <!-- Quick Access -->
@@ -1239,6 +1301,23 @@
         }
     }
 
+    // ====== NETWORK SWITCHER ======
+    function switchNetwork(net) {
+        const pillXRP = document.getElementById('pillXRP');
+        const pillFlare = document.getElementById('pillFlare');
+        const flareBanner = document.getElementById('flareBanner');
+
+        if (net === 'xrp') {
+            pillXRP.className = 'net-pill active-xrp';
+            pillFlare.className = 'net-pill';
+            flareBanner.classList.remove('show');
+        } else {
+            pillXRP.className = 'net-pill';
+            pillFlare.className = 'net-pill active-flare';
+            flareBanner.classList.add('show');
+        }
+    }
+
     async function connectWithSeedMain() {
         const seed = document.getElementById('seedInputMain').value.trim();
         if (!seed) return;
@@ -1311,7 +1390,7 @@
         <a href="#">docs</a>
         <a href="#">terms</a>
         <br><br>
-        pumponxrp.fun — the first token launchpad on XRP ledger
+        pumponxrp.fun — the first token launchpad on XRP Ledger & Flare Network
     </div>
 
 </body>
