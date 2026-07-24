@@ -521,7 +521,7 @@ function closeWalletModal() { document.getElementById('walletModal').classList.r
 
 async function connectXamanToken() {
     try {
-        const xumm = new Xumm('YOUR_XAMAN_API_KEY');
+        const xumm = new Xumm('37731505-94e6-40cb-99f1-8151342d5c1b');
         const payload = await xumm.payload.createAndSubscribe({ TransactionType: 'SignIn' }, event => {
             if (event.data.signed !== undefined) return event.data;
         });
