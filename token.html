@@ -519,28 +519,20 @@ async function loadTrades() {
 function openWalletModal() { document.getElementById('walletModal').classList.add('show'); }
 function closeWalletModal() { document.getElementById('walletModal').classList.remove('show'); }
 
-async function connectXamanToken() {
-    try {
-        const xumm = new Xumm('37731505-94e6-40cb-99f1-8151342d5c1b');
-        const payload = await xumm.payload.createAndSubscribe({ TransactionType: 'SignIn' }, event => {
-            if (event.data.signed !== undefined) return event.data;
-        });
-        if (payload.created) {
-            const qrUrl = payload.created.refs.qr_png;
-            document.querySelector('#walletModal .modal').innerHTML = `
-                <div class="modal-hdr"><h3>Scan with Xaman</h3><button class="modal-x" onclick="closeWalletModal()">×</button></div>
-                <div style="text-align:center;padding:20px;">
-                    <img src="${qrUrl}" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;" alt="QR">
-                    <p style="font-size:12px;color:#666;margin-top:10px;">Open Xaman app and scan</p>
-                </div>`;
-        }
-        const result = await payload.resolved;
-        if (result.signed) {
-            const address = result.payload.response.account;
-            localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'xaman' }));
-            setupWallet(address, null);
-        } else { location.reload(); }
-    } catch(e) { alert('Xaman error: ' + e.message); }
+// Xaman SDK - global instance
+window.xamanSDK = new Xumm('37731505-94e6-40cb-99f1-8151342d5c1b');
+xamanSDK.on('success', async () => {
+    const address = await xamanSDK.user.account;
+    if (address) {
+        localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'xaman' }));
+        setupWallet(address, null);
+        closeWalletModal();
+    }
+});
+xamanSDK.on('logout', () => { location.reload(); });
+
+function connectXamanToken() {
+    xamanSDK.authorize();
 }
 
 async function connectCrossmarkToken() {

@@ -1277,52 +1277,30 @@
         closeModal();
     }
 
-    async function connectXaman() {
-        try {
-            const xumm = new Xumm('37731505-94e6-40cb-99f1-8151342d5c1b');
-            const payload = await xumm.payload.createAndSubscribe({
-                TransactionType: 'SignIn'
-            }, event => {
-                if (event.data.signed !== undefined) return event.data;
-            });
-
-            if (payload.created) {
-                const qrUrl = payload.created.refs.qr_png;
-                const modalContent = document.querySelector('#walletModal .modal');
-                modalContent.innerHTML = `
-                    <div class="modal-header">
-                        <h3>Scan with Xaman</h3>
-                        <button class="modal-close" onclick="closeModal()">×</button>
-                    </div>
-                    <div style="text-align:center;padding:20px;">
-                        <img src="${qrUrl}" style="width:220px;height:220px;border-radius:12px;background:#fff;padding:10px;" alt="QR Code">
-                        <p style="font-size:12px;color:#666;margin-top:12px;">Open Xaman app and scan this QR code</p>
-                        <div style="margin-top:10px;"><span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:#ffffff;border-radius:50%;animation:spin 0.8s linear infinite;"></span> <span style="font-size:12px;color:#555;">Waiting for approval...</span></div>
-                    </div>
-                `;
+    // Xaman SDK - global instance
+    window.xamanSDK = new Xumm('37731505-94e6-40cb-99f1-8151342d5c1b');
+    xamanSDK.on('success', async () => {
+        const address = await xamanSDK.user.account;
+        if (address) {
+            if (!xrplClient) {
+                xrplClient = new xrpl.Client('wss://xrplcluster.com');
+                await xrplClient.connect();
             }
-
-            const result = await payload.resolved;
-            if (result.signed) {
-                const address = result.payload.response.account;
-                if (!xrplClient) {
-                    xrplClient = new xrpl.Client('wss://xrplcluster.com');
-                    await xrplClient.connect();
-                }
-                let bal = '0';
-                try {
-                    const info = await xrplClient.request({ command: 'account_info', account: address, ledger_index: 'validated' });
-                    bal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(2);
-                } catch(e) {}
-                connectedWallet = { address };
-                localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'xaman' }));
-                await setConnected(address, bal);
-            } else {
-                location.reload();
-            }
-        } catch(e) {
-            alert('Xaman connection error: ' + e.message);
+            let bal = '0';
+            try {
+                const info = await xrplClient.request({ command: 'account_info', account: address, ledger_index: 'validated' });
+                bal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(2);
+            } catch(e) {}
+            connectedWallet = { address };
+            localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'xaman' }));
+            await setConnected(address, bal);
+            closeModal();
         }
+    });
+    xamanSDK.on('logout', () => { location.reload(); });
+
+    function connectXaman() {
+        xamanSDK.authorize();
     }
 
     async function connectCrossmark() {
