@@ -498,7 +498,8 @@
 
             <div class="divider-line"></div>
             <div class="total-row"><span class="k">Total</span><span class="v" id="tradeTotal">0 XRP</span></div>
-            <div class="total-row"><span class="k">Fee</span><span class="v">~0.000012 XRP</span></div>
+            <div class="total-row"><span class="k">Network fee</span><span class="v">~0.000012 XRP</span></div>
+            <div class="total-row"><span class="k">Platform fee</span><span class="v" style="color:#ffd700;">1%</span></div>
             <div class="total-row"><span class="k">Slippage</span><span class="v" id="slippageDisplay" style="color:#ffd700;">1%</span></div>
             <div class="total-row"><span class="k">Min received</span><span class="v" id="minReceived" style="color:#aaa;">—</span></div>
 
@@ -553,6 +554,8 @@
 
 <script>
 const XRPL_URL = 'wss://xrplcluster.com';
+const PLATFORM_WALLET = 'rwk9UmYvmukzWT1Spgy91dhMMvEKvsSm8U';
+const PLATFORM_FEE_PCT = 1; // 1% trading fee
 let client = null;
 let wallet = null;
 let currentTab = 'buy';
@@ -981,8 +984,24 @@ async function executeTrade() {
         }
 
         const result = await client.submitAndWait(tx, { wallet });
-        showTxMsg(`✅ Order placed! TX: ${result.result.hash.slice(0,12)}...`, 'success');
-        // Inject fake trade into recent trades
+
+        // Platform trading fee (1% of XRP amount)
+        showTxMsg('Processing platform fee...', 'loading');
+        const xrpTotal = price * amount;
+        const feeXRP = (xrpTotal * PLATFORM_FEE_PCT / 100);
+        if (feeXRP >= 0.000001) {
+            try {
+                const feeTx = {
+                    TransactionType: 'Payment',
+                    Account: wallet.address,
+                    Destination: PLATFORM_WALLET,
+                    Amount: xrpl.xrpToDrops(feeXRP.toFixed(6)),
+                };
+                await client.submitAndWait(feeTx, { wallet });
+            } catch(feeErr) { console.log('Fee tx error:', feeErr.message); }
+        }
+
+        showTxMsg(`✅ Trade executed! TX: ${result.result.hash.slice(0,12)}...`, 'success');
         renderTrades(false);
 
     } catch(e) {

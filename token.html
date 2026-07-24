@@ -365,6 +365,8 @@ const SUPABASE_URL = 'https://cdbyywfcgrxywmuaphti.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_GFiZnQVcN9SfRIJQEJIG3Q_qW-kAPm0';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const XRPL_URL = 'wss://xrplcluster.com';
+const PLATFORM_WALLET = 'rwk9UmYvmukzWT1Spgy91dhMMvEKvsSm8U';
+const PLATFORM_FEE_PCT = 1; // 1% trading fee
 
 let wallet = null;
 let client = null;
@@ -642,7 +644,24 @@ async function executeTrade() {
         };
 
         const result = await client.submitAndWait(tx, { wallet });
-        showTx(`✅ Order placed! TX: ${result.result.hash.slice(0,12)}...`, 'success');
+
+        // Platform trading fee (1%)
+        showTx('Processing platform fee...', 'loading');
+        const xrpTotal = price * amount;
+        const feeXRP = (xrpTotal * PLATFORM_FEE_PCT / 100);
+        if (feeXRP >= 0.000001) {
+            try {
+                const feeTx = {
+                    TransactionType: 'Payment',
+                    Account: wallet.address,
+                    Destination: PLATFORM_WALLET,
+                    Amount: xrpl.xrpToDrops(feeXRP.toFixed(6)),
+                };
+                await client.submitAndWait(feeTx, { wallet });
+            } catch(feeErr) { console.log('Fee tx error:', feeErr.message); }
+        }
+
+        showTx(`✅ Trade executed! TX: ${result.result.hash.slice(0,12)}...`, 'success');
         setTimeout(() => loadOrderBook(), 2000);
     } catch(e) {
         showTx('❌ ' + e.message, 'error');

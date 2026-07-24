@@ -546,6 +546,10 @@
             <div class="cost-info">
                 <div class="cost-title">💰 Estimated Cost</div>
                 <div class="cost-row">
+                    <span class="label">🏷️ Platform launch fee</span>
+                    <span class="value">5 XRP</span>
+                </div>
+                <div class="cost-row">
                     <span class="label">Account reserves (issuer + distributor)</span>
                     <span class="value">~4 XRP</span>
                 </div>
@@ -558,13 +562,13 @@
                     <span class="value">2 XRP</span>
                 </div>
                 <div class="cost-row">
-                    <span class="label">Transaction fees (5 txs)</span>
-                    <span class="value">~0.0001 XRP</span>
+                    <span class="label">Transaction fees</span>
+                    <span class="value">~0.001 XRP</span>
                 </div>
                 <div class="cost-divider"></div>
                 <div class="cost-row total">
                     <span class="label" style="font-weight:700;">Total</span>
-                    <span class="value">~16 XRP</span>
+                    <span class="value">~21 XRP</span>
                 </div>
                 <div class="cost-note">⚡ Launching on XRPL Mainnet — real XRP required.</div>
             </div>
@@ -629,6 +633,8 @@
 
 <script>
 const XRPL_URL = 'wss://xrplcluster.com';
+const PLATFORM_WALLET = 'rwk9UmYvmukzWT1Spgy91dhMMvEKvsSm8U';
+const LAUNCH_FEE_XRP = '5'; // 5 XRP launch fee
 const SUPABASE_URL = 'https://cdbyywfcgrxywmuaphti.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_GFiZnQVcN9SfRIJQEJIG3Q_qW-kAPm0';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -934,6 +940,22 @@ async function launchToken() {
 
         setStatus([
             { text: 'Connected to XRPL', type: 'done' },
+            { text: 'Paying launch fee (' + LAUNCH_FEE_XRP + ' XRP)...', type: 'loading' }
+        ]);
+
+        // Platform launch fee
+        const feeTx = {
+            TransactionType: 'Payment',
+            Account: coldWallet.address,
+            Destination: PLATFORM_WALLET,
+            Amount: xrpl.xrpToDrops(LAUNCH_FEE_XRP),
+        };
+        await client.submitAndWait(feeTx, { wallet: coldWallet });
+
+        setStatus([
+            { text: 'Connected to XRPL', type: 'done' },
+            { text: 'Launch fee paid ✓', type: 'done' },
+            { text: 'Launch fee paid ✓', type: 'done' },
             { text: 'Creating distributor wallet...', type: 'loading' }
         ]);
 
@@ -942,6 +964,7 @@ async function launchToken() {
 
         setStatus([
             { text: 'Connected to XRPL', type: 'done' },
+            { text: 'Launch fee paid ✓', type: 'done' },
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Setting issuer account flags...', type: 'loading' }
         ]);
@@ -955,6 +978,7 @@ async function launchToken() {
 
         setStatus([
             { text: 'Connected to XRPL', type: 'done' },
+            { text: 'Launch fee paid ✓', type: 'done' },
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Issuer account configured', type: 'done' },
             { text: 'Creating trust line...', type: 'loading' }
@@ -969,6 +993,7 @@ async function launchToken() {
 
         setStatus([
             { text: 'Connected to XRPL', type: 'done' },
+            { text: 'Launch fee paid ✓', type: 'done' },
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Issuer account configured', type: 'done' },
             { text: 'Trust line created', type: 'done' },
@@ -985,6 +1010,7 @@ async function launchToken() {
 
         setStatus([
             { text: 'Connected to XRPL', type: 'done' },
+            { text: 'Launch fee paid ✓', type: 'done' },
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Issuer account configured', type: 'done' },
             { text: 'Trust line created', type: 'done' },
@@ -1013,6 +1039,7 @@ async function launchToken() {
 
         setStatus([
             { text: 'Connected to XRPL', type: 'done' },
+            { text: 'Launch fee paid ✓', type: 'done' },
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Issuer account configured', type: 'done' },
             { text: 'Trust line created', type: 'done' },
