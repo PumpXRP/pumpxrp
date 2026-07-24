@@ -14,6 +14,7 @@
         gtag('config', 'G-LK6KEFE1LQ');
     </script>
     <script src="https://unpkg.com/xrpl@3.0.0/build/xrpl-latest-min.js"></script>
+    <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -514,7 +515,7 @@
             <h3>Connect Wallet</h3>
             <button class="modal-close" onclick="closeWalletModal()">×</button>
         </div>
-        <div class="wallet-option" onclick="alert('Xaman integration coming soon with mainnet launch! Use Seed Phrase for testnet.')">
+        <div class="wallet-option" onclick="connectXamanTrade()">
             <div class="wo-icon" style="background:#141414;">🔷</div>
             <div>
                 <div class="wo-name">Xaman <span class="wo-tag">Popular</span></div>
@@ -528,7 +529,13 @@
                 <div class="wo-desc">Browser extension wallet</div>
             </div>
         </div>
-        <p style="font-size:11px;color:#444;text-align:center;margin-top:10px;">More wallets coming soon</p>
+        <div class="wallet-option" onclick="connectCrossmarkTrade()">
+            <div class="wo-icon" style="background:#1a1a1a;">✖️</div>
+            <div>
+                <div class="wo-name">Crossmark</div>
+                <div class="wo-desc">Browser extension wallet</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -545,7 +552,7 @@
 </div>
 
 <script>
-const TESTNET_URL = 'wss://s.altnet.rippletest.net:51233';
+const XRPL_URL = 'wss://xrplcluster.com';
 let client = null;
 let wallet = null;
 let currentTab = 'buy';
@@ -679,7 +686,7 @@ async function renderOrderBook() {
     bidsEl.innerHTML = '';
 
     try {
-        if (!client) { client = new xrpl.Client(TESTNET_URL); await client.connect(); }
+        if (!client) { client = new xrpl.Client(XRPL_URL); await client.connect(); }
 
         const sym = currentToken.symbol;
         const currency = sym.length > 3 ? xrpl.convertStringToHex(sym).padEnd(40,'0').toUpperCase() : sym.toUpperCase();
@@ -784,6 +791,45 @@ function closeWalletModal() {
     document.getElementById('walletModal').classList.remove('show');
 }
 
+async function connectXamanTrade() {
+    try {
+        const xumm = new Xumm('YOUR_XAMAN_API_KEY');
+        const payload = await xumm.payload.createAndSubscribe({ TransactionType: 'SignIn' }, event => {
+            if (event.data.signed !== undefined) return event.data;
+        });
+        if (payload.created) {
+            const qrUrl = payload.created.refs.qr_png;
+            document.querySelector('#walletModal .modal').innerHTML = `
+                <div class="modal-header"><h3>Scan with Xaman</h3><button class="modal-close" onclick="closeWalletModal()">×</button></div>
+                <div style="text-align:center;padding:20px;">
+                    <img src="${qrUrl}" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;" alt="QR">
+                    <p style="font-size:12px;color:#666;margin-top:10px;">Open Xaman app and scan</p>
+                    <div style="margin-top:8px;"><span style="display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;"></span> <span style="font-size:12px;color:#555;">Waiting...</span></div>
+                </div>`;
+        }
+        const result = await payload.resolved;
+        if (result.signed) {
+            const address = result.payload.response.account;
+            localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'xaman' }));
+            await setupConnected(address, null);
+        } else { location.reload(); }
+    } catch(e) { alert('Xaman error: ' + e.message); }
+}
+
+async function connectCrossmarkTrade() {
+    if (typeof window.crossmark === 'undefined' && typeof window.sdk === 'undefined') {
+        alert('Crossmark not found! Install at crossmark.io');
+        return;
+    }
+    try {
+        const xsdk = window.crossmark || window.sdk;
+        const result = await xsdk.signIn();
+        const address = result.response.data.address;
+        localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'crossmark' }));
+        await setupConnected(address, null);
+    } catch(e) { alert('Crossmark error: ' + e.message); }
+}
+
 async function connectGemTrade() {
     if (typeof window.gemWallet === 'undefined') {
         alert('GemWallet not found! Install at gemwallet.app');
@@ -799,7 +845,7 @@ async function connectGemTrade() {
 
 async function setupConnected(address, w) {
     if (!client) {
-        client = new xrpl.Client(TESTNET_URL);
+        client = new xrpl.Client(XRPL_URL);
         await client.connect();
     }
     let xrpBal = '0';
@@ -903,7 +949,7 @@ async function executeTrade() {
 
     try {
         if (!client || !client.isConnected()) {
-            client = new xrpl.Client(TESTNET_URL);
+            client = new xrpl.Client(XRPL_URL);
             await client.connect();
         }
 
@@ -972,6 +1018,17 @@ renderHolders();
 // Init orderbook
 renderOrderBook();
 document.getElementById('tradePrice').placeholder = currentToken.price || '0.00001';
+
+// Wallet persistence
+window.addEventListener('load', () => {
+    const saved = localStorage.getItem('pumpxrp_wallet');
+    if (saved) {
+        try {
+            const { address } = JSON.parse(saved);
+            setupConnected(address, null);
+        } catch(e) { localStorage.removeItem('pumpxrp_wallet'); }
+    }
+});
 
 // Refresh orderbook every 15s
 setInterval(() => renderOrderBook(), 15000);

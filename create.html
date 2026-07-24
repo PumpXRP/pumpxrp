@@ -17,6 +17,7 @@
     <!-- XRPL.js + Supabase -->
     <script src="https://unpkg.com/xrpl@3.0.0/build/xrpl-latest-min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -401,11 +402,6 @@
     </style>
 </head>
 <body>
-    <!-- Testnet Banner -->
-    <div style="background:#1a1a00;border-bottom:1px solid #333300;padding:7px 16px;text-align:center;font-size:12px;color:#ffdd00;">
-        🧪 <strong>Testnet Mode</strong> — Using XRPL Testnet. No real XRP needed. <a href="https://faucet.altnet.rippletest.net/accounts" target="_blank" style="color:#ffdd00;text-decoration:underline;">Get free testnet XRP →</a>
-    </div>
-
 <div class="header">
     <a href="/" class="logo">
         <img src="logo.jpg" alt="">
@@ -423,7 +419,7 @@
     <div class="form-col">
         <div class="network-badge">
             <span class="dot"></span>
-            XRPL Testnet
+            XRPL Mainnet
         </div>
 
         <!-- Step Indicator -->
@@ -451,18 +447,26 @@
         <div class="wallet-section">
             <div class="section-title"><span class="step-badge">1</span> Connect Wallet</div>
 
-            <div class="wallet-options">
+            <div class="wallet-options" style="grid-template-columns:1fr 1fr 1fr;">
+                <button class="wallet-btn" onclick="connectXamanCreate()">
+                    🔷 Xaman
+                </button>
                 <button class="wallet-btn" onclick="connectGemWallet()">
                     💎 GemWallet
                 </button>
-                <button class="wallet-btn" onclick="showSeedInput()">
-                    🔑 Seed Phrase
+                <button class="wallet-btn" onclick="connectCrossmarkCreate()">
+                    ✖️ Crossmark
+                </button>
+            </div>
+            <div style="text-align:center;margin-bottom:8px;">
+                <button class="wallet-btn" onclick="showSeedInput()" style="width:auto;padding:8px 16px;font-size:12px;color:#555;">
+                    🔑 Use Seed Phrase
                 </button>
             </div>
 
             <div id="seedInputArea" style="display:none">
-                <div class="divider">or use seed phrase / testnet wallet</div>
-                <button onclick="generateNewWallet()" style="width:100%;padding:9px;background:transparent;border:1px dashed #2a2a2a;border-radius:8px;color:#ffffff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;">✨ Generate New Testnet Wallet</button>
+                <div class="divider">or use seed phrase</div>
+                <div style="background:#2e1a00;border:1px solid #663300;border-radius:8px;padding:10px;font-size:11px;color:#ffaa00;margin-bottom:8px;">⚠️ <strong>Mainnet Mode</strong> — This uses real XRP. Keep your seed phrase safe!</div>
                 <div class="seed-input-wrap">
                     <input type="password" id="seedInput" class="seed-input" placeholder="sXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
                     <button class="seed-toggle" onclick="toggleSeed()">👁</button>
@@ -566,7 +570,7 @@
                     <span class="label" style="font-weight:700;">Total</span>
                     <span class="value">~4 XRP + 0.001 XRP fees</span>
                 </div>
-                <div class="cost-note">⚡ On testnet, XRP is free. <a href="https://faucet.altnet.rippletest.net/accounts" target="_blank" style="color:#ffffff;">Get testnet XRP →</a></div>
+                <div class="cost-note">⚡ Launching on XRPL Mainnet — real XRP required.</div>
             </div>
 
             <button class="btn-launch" id="launchBtn" onclick="launchToken()" disabled>🚀 Launch Token</button>
@@ -578,7 +582,7 @@
         <div class="success-card" id="successCard">
             <div class="success-icon">🎉</div>
             <h2>Token Launched!</h2>
-            <p>Your token is live on XRP Ledger Testnet</p>
+            <p>Your token is live on XRP Ledger Mainnet</p>
             <div class="token-detail" id="tokenDetails"></div>
             <div>
                 <a href="#" id="explorerLink" class="btn-view" target="_blank">View on Explorer</a>
@@ -628,7 +632,7 @@
 </div>
 
 <script>
-const TESTNET = 'wss://s.altnet.rippletest.net:51233';
+const XRPL_URL = 'wss://xrplcluster.com';
 const SUPABASE_URL = 'https://cdbyywfcgrxywmuaphti.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_GFiZnQVcN9SfRIJQEJIG3Q_qW-kAPm0';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -795,6 +799,49 @@ function toggleSeed() {
     input.type = input.type === 'password' ? 'text' : 'password';
 }
 
+async function connectXamanCreate() {
+    try {
+        const xumm = new Xumm('YOUR_XAMAN_API_KEY');
+        const payload = await xumm.payload.createAndSubscribe({ TransactionType: 'SignIn' }, event => {
+            if (event.data.signed !== undefined) return event.data;
+        });
+        if (payload.created) {
+            const qrUrl = payload.created.refs.qr_png;
+            document.getElementById('seedInputArea').style.display = 'none';
+            const area = document.querySelector('.wallet-options');
+            area.parentNode.insertAdjacentHTML('beforeend', `
+                <div id="xamanQR" style="text-align:center;padding:16px;">
+                    <img src="${qrUrl}" style="width:180px;height:180px;border-radius:12px;background:#fff;padding:8px;" alt="QR">
+                    <p style="font-size:12px;color:#666;margin-top:10px;">Scan with Xaman app</p>
+                    <div style="margin-top:8px;"><span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;"></span> <span style="font-size:12px;color:#555;">Waiting...</span></div>
+                </div>
+            `);
+        }
+        const result = await payload.resolved;
+        const qrEl = document.getElementById('xamanQR');
+        if (qrEl) qrEl.remove();
+        if (result.signed) {
+            const address = result.payload.response.account;
+            localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'xaman' }));
+            await setupWalletFromAddress(address);
+        }
+    } catch(e) { alert('Xaman error: ' + e.message); }
+}
+
+async function connectCrossmarkCreate() {
+    if (typeof window.crossmark === 'undefined' && typeof window.sdk === 'undefined') {
+        alert('Crossmark wallet not found!\n\nInstall at crossmark.io then refresh.');
+        return;
+    }
+    try {
+        const xsdk = window.crossmark || window.sdk;
+        const result = await xsdk.signIn();
+        const address = result.response.data.address;
+        localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'crossmark' }));
+        await setupWalletFromAddress(address);
+    } catch(e) { alert('Crossmark error: ' + e.message); }
+}
+
 async function connectGemWallet() {
     if (typeof window.gemWallet === 'undefined') {
         alert('GemWallet extension not found!\n\nInstall GemWallet at gemwallet.app then refresh.\n\nOr use "Seed Phrase" option.');
@@ -808,19 +855,6 @@ async function connectGemWallet() {
     } catch (e) {
         alert('GemWallet connection failed: ' + e.message);
     }
-}
-
-function generateNewWallet() {
-    const newWallet = xrpl.Wallet.generate();
-    document.getElementById('seedInput').value = newWallet.seed;
-    document.getElementById('seedInput').type = 'text';
-    const existing = document.getElementById('walletWarn');
-    if (existing) existing.remove();
-    const warn = document.createElement('div');
-    warn.style.cssText = 'background:#2e1a00;border:1px solid #663300;border-radius:8px;padding:12px;font-size:11px;color:#ffaa00;margin-bottom:8px;';
-    warn.innerHTML = `⚠️ <strong>Save your seed phrase!</strong><br><code style="font-family:monospace;color:#fff;word-break:break-all;font-size:10px;">${newWallet.seed}</code><br><br>Address: <code style="color:#ffffff;font-size:10px;">${newWallet.address}</code><br><br>Get testnet XRP: <a href="https://faucet.altnet.rippletest.net/accounts" target="_blank" style="color:#ffaa00;text-decoration:underline;">faucet.altnet.rippletest.net</a>`;
-    warn.id = 'walletWarn';
-    document.getElementById('seedInput').parentNode.before(warn);
 }
 
 async function connectWithSeed() {
@@ -838,7 +872,7 @@ async function connectWithSeed() {
 async function setupWalletFromAddress(address, wallet = null) {
     try {
         if (!client) {
-            client = new xrpl.Client(TESTNET);
+            client = new xrpl.Client(XRPL_URL);
             await client.connect();
         }
 
@@ -908,16 +942,16 @@ async function launchToken() {
     document.getElementById('launchBtn').disabled = true;
 
     try {
-        setStatus([{ text: 'Connecting to XRPL Testnet...', type: 'loading' }]);
+        setStatus([{ text: 'Connecting to XRPL...', type: 'loading' }]);
         if (!client || !client.isConnected()) {
-            client = new xrpl.Client(TESTNET);
+            client = new xrpl.Client(XRPL_URL);
             await client.connect();
         }
 
         const coldWallet = issuerWallet;
 
         setStatus([
-            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Connected to XRPL', type: 'done' },
             { text: 'Creating distributor wallet...', type: 'loading' }
         ]);
 
@@ -925,7 +959,7 @@ async function launchToken() {
         await client.fundWallet(hotWallet);
 
         setStatus([
-            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Connected to XRPL', type: 'done' },
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Setting issuer account flags...', type: 'loading' }
         ]);
@@ -938,7 +972,7 @@ async function launchToken() {
         await client.submitAndWait(coldSettings, { wallet: coldWallet });
 
         setStatus([
-            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Connected to XRPL', type: 'done' },
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Issuer account configured', type: 'done' },
             { text: 'Creating trust line...', type: 'loading' }
@@ -952,7 +986,7 @@ async function launchToken() {
         await client.submitAndWait(trustSet, { wallet: hotWallet });
 
         setStatus([
-            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Connected to XRPL', type: 'done' },
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Issuer account configured', type: 'done' },
             { text: 'Trust line created', type: 'done' },
@@ -968,7 +1002,7 @@ async function launchToken() {
         const result = await client.submitAndWait(payment, { wallet: coldWallet });
 
         setStatus([
-            { text: 'Connected to XRPL Testnet', type: 'done' },
+            { text: 'Connected to XRPL', type: 'done' },
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Issuer account configured', type: 'done' },
             { text: 'Trust line created', type: 'done' },
@@ -993,9 +1027,9 @@ async function launchToken() {
                 <div class="token-detail-row"><span class="k">Supply</span><span class="v">${supply.toLocaleString()}</span></div>
                 <div class="token-detail-row"><span class="k">Issuer</span><span class="v">${coldWallet.address.slice(0,8)}...${coldWallet.address.slice(-6)}</span></div>
                 <div class="token-detail-row"><span class="k">TX Hash</span><span class="v">${result.result.hash.slice(0,12)}...</span></div>
-                <div class="token-detail-row"><span class="k">Network</span><span class="v">XRPL Testnet ✅</span></div>
+                <div class="token-detail-row"><span class="k">Network</span><span class="v">XRPL Mainnet ✅</span></div>
             `;
-            document.getElementById('explorerLink').href = `https://testnet.xrpl.org/accounts/${coldWallet.address}`;
+            document.getElementById('explorerLink').href = `https://xrpl.org/accounts/${coldWallet.address}`;
             document.getElementById('successCard').classList.add('show');
             document.getElementById('statusBox').classList.remove('show');
             setStep(3);
@@ -1012,6 +1046,17 @@ async function launchToken() {
 
 // Init emoji grid on page load
 initEmojiGrid();
+
+// Wallet persistence
+window.addEventListener('load', () => {
+    const saved = localStorage.getItem('pumpxrp_wallet');
+    if (saved) {
+        try {
+            const { address } = JSON.parse(saved);
+            setupWalletFromAddress(address);
+        } catch(e) { localStorage.removeItem('pumpxrp_wallet'); }
+    }
+});
 </script>
 </body>
 </html>

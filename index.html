@@ -831,6 +831,14 @@
                 </div>
             </div>
 
+            <div class="wallet-option" onclick="connectCrossmark()">
+                <div class="wallet-option-icon" style="background:#1a1a1a;">✖️</div>
+                <div class="wallet-option-info">
+                    <div class="wallet-option-name">Crossmark</div>
+                    <div class="wallet-option-desc">Browser extension wallet</div>
+                </div>
+            </div>
+
             <p style="font-size:11px;color:#444;text-align:center;margin-top:14px;">
                 More wallets coming soon
             </p>
@@ -860,16 +868,11 @@
         </div>
     </div>
 
-    <!-- Testnet Banner -->
-    <div style="background:#1a1a00;border-bottom:1px solid #333300;padding:8px 16px;text-align:center;font-size:12px;color:#ffdd00;">
-        🧪 <strong>Testnet Mode</strong> — All tokens are on XRPL Testnet. No real XRP needed. <a href="https://faucet.altnet.rippletest.net/accounts" target="_blank" style="color:#ffdd00;text-decoration:underline;">Get free testnet XRP →</a>
-    </div>
-
     <!-- Hero Section -->
     <div style="background:radial-gradient(ellipse at 50% 0%, #0a1f0a 0%, #0e0e0e 65%);border-bottom:1px solid #1e1e1e;padding:40px 20px 32px;text-align:center;">
-        <div style="display:inline-block;padding:4px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;font-size:11px;font-weight:700;color:#ffffff;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">🌐 Live on XRPL Testnet · Flare Coming Soon</div>
+        <div style="display:inline-block;padding:4px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;font-size:11px;font-weight:700;color:#ffffff;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">🌐 Live on XRPL Mainnet · Flare Coming Soon</div>
         <h1 style="font-size:clamp(24px,5vw,38px);font-weight:800;line-height:1.2;margin-bottom:12px;">Launch your token on<br><span style="background:linear-gradient(90deg,#ffffff,#00ddaa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">XRP Ledger & Flare Network</span></h1>
-        <p style="font-size:14px;color:#666;max-width:480px;margin:0 auto 24px;line-height:1.6;">The first Pump.fun-style launchpad on XRPL and Flare Network. One-click launch, native DEX trading, and EVM smart contracts — multichain from day one.</p>
+        <p style="font-size:14px;color:#666;max-width:480px;margin:0 auto 24px;line-height:1.6;">The first Pump.fun-style launchpad on XRPL Mainnet and Flare Network. One-click launch, native DEX trading, and EVM smart contracts — multichain from day one.</p>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
             <a href="create.html"><button style="padding:11px 24px;background:#ffffff;color:#000;border:none;border-radius:8px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;">🚀 Launch a Token</button></a>
             <a href="litepaper.html"><button style="padding:11px 24px;background:transparent;color:#e0e0e0;border:1px solid #2a2a2a;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;">📄 Litepaper</button></a>
@@ -1057,6 +1060,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <!-- XRPL.js -->
     <script src="https://unpkg.com/xrpl@3.0.0/build/xrpl-latest-min.js"></script>
+    <!-- Xaman (XUMM) SDK -->
+    <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
     <script>
     const SUPABASE_URL = 'https://cdbyywfcgrxywmuaphti.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_GFiZnQVcN9SfRIJQEJIG3Q_qW-kAPm0';
@@ -1273,7 +1278,77 @@
     }
 
     async function connectXaman() {
-        alert('Xaman integration coming soon!\n\nFor now, use Seed Phrase (testnet) or GemWallet extension.\n\nXaman API requires backend — launching with mainnet.');
+        try {
+            const xumm = new Xumm('YOUR_XAMAN_API_KEY');
+            const payload = await xumm.payload.createAndSubscribe({
+                TransactionType: 'SignIn'
+            }, event => {
+                if (event.data.signed !== undefined) return event.data;
+            });
+
+            if (payload.created) {
+                const qrUrl = payload.created.refs.qr_png;
+                const modalContent = document.querySelector('#walletModal .modal');
+                modalContent.innerHTML = `
+                    <div class="modal-header">
+                        <h3>Scan with Xaman</h3>
+                        <button class="modal-close" onclick="closeModal()">×</button>
+                    </div>
+                    <div style="text-align:center;padding:20px;">
+                        <img src="${qrUrl}" style="width:220px;height:220px;border-radius:12px;background:#fff;padding:10px;" alt="QR Code">
+                        <p style="font-size:12px;color:#666;margin-top:12px;">Open Xaman app and scan this QR code</p>
+                        <div style="margin-top:10px;"><span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:#ffffff;border-radius:50%;animation:spin 0.8s linear infinite;"></span> <span style="font-size:12px;color:#555;">Waiting for approval...</span></div>
+                    </div>
+                `;
+            }
+
+            const result = await payload.resolved;
+            if (result.signed) {
+                const address = result.payload.response.account;
+                if (!xrplClient) {
+                    xrplClient = new xrpl.Client('wss://xrplcluster.com');
+                    await xrplClient.connect();
+                }
+                let bal = '0';
+                try {
+                    const info = await xrplClient.request({ command: 'account_info', account: address, ledger_index: 'validated' });
+                    bal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(2);
+                } catch(e) {}
+                connectedWallet = { address };
+                localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'xaman' }));
+                await setConnected(address, bal);
+            } else {
+                location.reload();
+            }
+        } catch(e) {
+            alert('Xaman connection error: ' + e.message);
+        }
+    }
+
+    async function connectCrossmark() {
+        if (typeof window.crossmark === 'undefined' && typeof window.sdk === 'undefined') {
+            alert('Crossmark wallet not found!\n\nInstall at crossmark.io then refresh.');
+            return;
+        }
+        try {
+            const sdk = window.crossmark || window.sdk;
+            const result = await sdk.signIn();
+            const address = result.response.data.address;
+            if (!xrplClient) {
+                xrplClient = new xrpl.Client('wss://xrplcluster.com');
+                await xrplClient.connect();
+            }
+            let bal = '0';
+            try {
+                const info = await xrplClient.request({ command: 'account_info', account: address, ledger_index: 'validated' });
+                bal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(2);
+            } catch(e) {}
+            connectedWallet = { address };
+            localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'crossmark' }));
+            await setConnected(address, bal);
+        } catch(e) {
+            alert('Crossmark error: ' + e.message);
+        }
     }
 
     async function connectGem() {
@@ -1294,6 +1369,8 @@
                     const info = await xrplClient.request({ command: 'account_info', account: addr, ledger_index: 'validated' });
                     bal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(2);
                 } catch(e) {}
+                connectedWallet = { address: addr };
+                localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address: addr, method: 'gem' }));
                 await setConnected(addr, bal);
             }
         } catch(e) {
@@ -1325,7 +1402,7 @@
             const wallet = xrpl.Wallet.fromSeed(seed);
             connectedWallet = wallet;
             if (!xrplClient) {
-                xrplClient = new xrpl.Client('wss://s.altnet.rippletest.net:51233');
+                xrplClient = new xrpl.Client('wss://xrplcluster.com');
                 await xrplClient.connect();
             }
             let bal = '?';
@@ -1333,56 +1410,50 @@
                 const info = await xrplClient.request({ command: 'account_info', account: wallet.address, ledger_index: 'validated' });
                 bal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(2);
             } catch(e) { bal = '0'; }
+            localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address: wallet.address, method: 'seed' }));
             await setConnected(wallet.address, bal);
         } catch(e) {
             alert('Invalid seed: ' + e.message);
         }
     }
-    </script>
 
-    <!-- Waitlist Section -->
-    <div style="background:#0a0a0a;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;padding:40px 16px;text-align:center;">
-        <div style="max-width:480px;margin:0 auto;">
-            <div style="font-size:11px;font-weight:700;color:#ffffff;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">🚀 Mainnet Coming Soon</div>
-            <h2 style="font-size:22px;font-weight:800;margin-bottom:8px;">Get Early Access</h2>
-            <p style="font-size:13px;color:#666;margin-bottom:20px;">Be the first to launch tokens on XRP Ledger mainnet. Join the waitlist.</p>
-            <form id="waitlistForm" action="https://forminit.com/f/b5u8vnbu4h9" method="POST" style="display:flex;gap:8px;max-width:400px;margin:0 auto;">
-                <input type="email" name="email" placeholder="your@email.com" required
-                    style="flex:1;padding:10px 14px;background:#0e0e0e;border:1px solid #2a2a2a;border-radius:8px;color:#e0e0e0;font-size:13px;font-family:inherit;outline:none;">
-                <input type="hidden" name="source" value="pumponxrp.fun">
-                <button type="submit"
-                    style="padding:10px 20px;background:#ffffff;color:#000;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;font-family:inherit;">
-                    Join Waitlist
-                </button>
-            </form>
-            <p style="font-size:11px;color:#333;margin-top:10px;">No spam. Just launch day notification.</p>
-            <div id="waitlistSuccess" style="display:none;margin-top:14px;padding:10px;background:#1a1a1a;border-radius:8px;color:#ffffff;font-size:13px;font-weight:600;">
-                ✅ You're on the list! We'll notify you at launch.
-            </div>
-        </div>
-    </div>
-
-    <script>
-    document.getElementById('waitlistForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const form = e.target;
-        const btn = form.querySelector('button');
-        btn.textContent = 'Joining...';
-        btn.disabled = true;
+    // Wallet persistence - reconnect on page load
+    async function reconnectWallet(address) {
+        if (!xrplClient) {
+            xrplClient = new xrpl.Client('wss://xrplcluster.com');
+            await xrplClient.connect();
+        }
+        let bal = '0';
         try {
-            await fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                mode: 'no-cors'
-            });
-            form.style.display = 'none';
-            document.getElementById('waitlistSuccess').style.display = 'block';
-        } catch(e) {
-            btn.textContent = 'Join Waitlist';
-            btn.disabled = false;
+            const info = await xrplClient.request({ command: 'account_info', account: address, ledger_index: 'validated' });
+            bal = (parseFloat(info.result.account_data.Balance) / 1e6).toFixed(2);
+        } catch(e) {}
+        connectedWallet = { address };
+        await setConnected(address, bal);
+    }
+
+    window.addEventListener('load', () => {
+        const saved = localStorage.getItem('pumpxrp_wallet');
+        if (saved) {
+            try {
+                const { address, method } = JSON.parse(saved);
+                reconnectWallet(address);
+            } catch(e) { localStorage.removeItem('pumpxrp_wallet'); }
         }
     });
     </script>
+
+    <!-- Community Section -->
+    <div style="background:#0a0a0a;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;padding:40px 16px;text-align:center;">
+        <div style="max-width:480px;margin:0 auto;">
+            <div style="font-size:11px;font-weight:700;color:#ffffff;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">🚀 Join Our Community</div>
+            <h2 style="font-size:22px;font-weight:800;margin-bottom:8px;">Stay Connected</h2>
+            <p style="font-size:13px;color:#666;margin-bottom:20px;">Follow us for the latest token launches, updates, and community events on XRPL Mainnet.</p>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+                <a href="https://x.com/pumponxrp" target="_blank" style="padding:10px 20px;background:#ffffff;color:#000;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;font-family:inherit;display:inline-block;">Follow on X →</a>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <div class="footer">
