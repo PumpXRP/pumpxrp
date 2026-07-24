@@ -845,26 +845,10 @@
         </div>
     </div>
 
-    <!-- Ticker -->
+    <!-- Ticker (populated by real data) -->
     <div class="ticker">
-        <div class="ticker-track">
-            <div class="tick"><span class="emoji">🟢</span> <b>$XFROG</b> created by <span class="green">rXqF…4k2m</span> <span style="font-size:10px;color:#444">2m ago</span></div>
-            <div class="tick"><span class="emoji">💰</span> <b>rH7d…9pLx</b> bought 500 XRP of <span class="green">$MOON</span></div>
-            <div class="tick"><span class="emoji">📈</span> <b>$XDOGE</b> hit <span class="green">$50K</span> market cap</div>
-            <div class="tick"><span class="emoji">🔴</span> <b>rM5x…2bJk</b> sold 200 XRP of <span class="red">$RCAT</span></div>
-            <div class="tick"><span class="emoji">🟢</span> <b>$WAGMI</b> created by <span class="green">rPq2…7mNk</span> <span style="font-size:10px;color:#444">5m ago</span></div>
-            <div class="tick"><span class="emoji">🚀</span> <b>$PUMP</b> bonding complete → DEX listed</div>
-            <div class="tick"><span class="emoji">💰</span> <b>rK9w…3vPm</b> bought 1.2K XRP of <span class="green">$DXRP</span></div>
-            <div class="tick"><span class="emoji">🟢</span> <b>$NEKO</b> created by <span class="green">rT3n…8qWz</span> <span style="font-size:10px;color:#444">8m ago</span></div>
-            <!-- duplicate for seamless loop -->
-            <div class="tick"><span class="emoji">🟢</span> <b>$XFROG</b> created by <span class="green">rXqF…4k2m</span> <span style="font-size:10px;color:#444">2m ago</span></div>
-            <div class="tick"><span class="emoji">💰</span> <b>rH7d…9pLx</b> bought 500 XRP of <span class="green">$MOON</span></div>
-            <div class="tick"><span class="emoji">📈</span> <b>$XDOGE</b> hit <span class="green">$50K</span> market cap</div>
-            <div class="tick"><span class="emoji">🔴</span> <b>rM5x…2bJk</b> sold 200 XRP of <span class="red">$RCAT</span></div>
-            <div class="tick"><span class="emoji">🟢</span> <b>$WAGMI</b> created by <span class="green">rPq2…7mNk</span> <span style="font-size:10px;color:#444">5m ago</span></div>
-            <div class="tick"><span class="emoji">🚀</span> <b>$PUMP</b> bonding complete → DEX listed</div>
-            <div class="tick"><span class="emoji">💰</span> <b>rK9w…3vPm</b> bought 1.2K XRP of <span class="green">$DXRP</span></div>
-            <div class="tick"><span class="emoji">🟢</span> <b>$NEKO</b> created by <span class="green">rT3n…8qWz</span> <span style="font-size:10px;color:#444">8m ago</span></div>
+        <div class="ticker-track" id="tickerTrack">
+            <div class="tick"><span class="emoji">🚀</span> <b>PumpOnXRP</b> — Launch your token on <span class="green">XRPL Mainnet</span></div>
         </div>
     </div>
 
@@ -921,111 +905,16 @@
         </a>
     </div>
 
-    <!-- ====== KING OF THE HILL ====== -->
-    <div class="koth-section">
-        <div class="koth-label">
-            👑 King of the Hill
-        </div>
-        <div class="koth-card" onclick="window.location.href='token.html?id=xrpepe'">
-            <div class="koth-img">
-                🐸
-                <span class="koth-crown">👑</span>
-            </div>
-            <div class="koth-info">
-                <div class="koth-badge">👑 #1 Trending Token</div>
-                <div class="koth-name">XRPepe</div>
-                <div class="koth-ticker">$XPEPE · by rXqF…4k2m · 2h ago</div>
-                <div class="koth-desc">the most based frog on the XRP ledger. no utility, just vibes. ribbit ribbit 🐸</div>
-                <div class="koth-stats">
-                    <div class="koth-stat">
-                        <div class="koth-stat-val">$67.2K</div>
-                        <div class="koth-stat-label">Market Cap</div>
-                    </div>
-                    <div class="koth-stat">
-                        <div class="koth-stat-val" style="color:#ffd700;">+142%</div>
-                        <div class="koth-stat-label">24h Change</div>
-                    </div>
-                    <div class="koth-stat">
-                        <div class="koth-stat-val">💬 47</div>
-                        <div class="koth-stat-label">Replies</div>
-                    </div>
-                    <div class="koth-stat">
-                        <div class="koth-stat-val">89%</div>
-                        <div class="koth-stat-label">Bonding</div>
-                    </div>
-                </div>
-                <div class="koth-bar" style="margin-top:12px;">
-                    <div class="koth-bar-fill" style="width:89%"></div>
-                </div>
-                <div style="font-size:9px;color:#555;margin-top:3px;">89% bonded — $67.2K / $75K to DEX</div>
-            </div>
-            <div class="koth-chart">
-                <!-- Sparkline SVG fake price chart -->
-                <svg width="120" height="60" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#ffd700" stop-opacity="0.3"/>
-                            <stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
-                        </linearGradient>
-                    </defs>
-                    <path d="M0,52 L10,46 L20,48 L30,38 L40,35 L50,28 L55,32 L65,20 L70,22 L80,14 L90,10 L100,6 L110,4 L120,2" stroke="#ffd700" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M0,52 L10,46 L20,48 L30,38 L40,35 L50,28 L55,32 L65,20 L70,22 L80,14 L90,10 L100,6 L110,4 L120,2 L120,60 L0,60 Z" fill="url(#sparkGrad)"/>
-                    <circle cx="120" cy="2" r="3" fill="#ffd700"/>
-                </svg>
-                <div style="font-size:10px;color:#ffd700;text-align:center;margin-top:4px;">0.0000842 XRP</div>
-            </div>
-        </div>
+    <!-- ====== KING OF THE HILL (dynamic) ====== -->
+    <div class="koth-section" id="kothSection" style="display:none;">
+        <div class="koth-label">👑 King of the Hill</div>
+        <div class="koth-card" id="kothCard"></div>
     </div>
 
-    <!-- ====== RECENTLY GRADUATED ====== -->
-    <div class="graduated-section">
-        <div class="graduated-label">
-            🎓 Recently Graduated
-        </div>
-        <div class="graduated-strip">
-            <div class="grad-card" onclick="window.location.href='token.html?id=xdoge'">
-                <div class="grad-icon">🐕</div>
-                <div class="grad-name">XDoge</div>
-                <div class="grad-ticker">$XDOGE</div>
-                <div class="grad-mcap">$134.5K</div>
-                <div class="grad-badge">✅ DEX Listed</div>
-            </div>
-            <div class="grad-card" onclick="window.location.href='token.html?id=pump'">
-                <div class="grad-icon">🚀</div>
-                <div class="grad-name">PumpToken</div>
-                <div class="grad-ticker">$PUMP</div>
-                <div class="grad-mcap">$112.8K</div>
-                <div class="grad-badge">✅ DEX Listed</div>
-            </div>
-            <div class="grad-card" onclick="window.location.href='token.html?id=wagmi'">
-                <div class="grad-icon">🤝</div>
-                <div class="grad-name">WAGMI</div>
-                <div class="grad-ticker">$WAGMI</div>
-                <div class="grad-mcap">$98.3K</div>
-                <div class="grad-badge">✅ DEX Listed</div>
-            </div>
-            <div class="grad-card" onclick="window.location.href='token.html?id=moon2'">
-                <div class="grad-icon">🌕</div>
-                <div class="grad-name">Moon2</div>
-                <div class="grad-ticker">$MON2</div>
-                <div class="grad-mcap">$87.1K</div>
-                <div class="grad-badge">✅ DEX Listed</div>
-            </div>
-            <div class="grad-card" onclick="window.location.href='token.html?id=xbull'">
-                <div class="grad-icon">🐂</div>
-                <div class="grad-name">XBull</div>
-                <div class="grad-ticker">$XBUL</div>
-                <div class="grad-mcap">$76.4K</div>
-                <div class="grad-badge">✅ DEX Listed</div>
-            </div>
-            <div class="grad-card" onclick="window.location.href='token.html?id=neko'">
-                <div class="grad-icon">🐱</div>
-                <div class="grad-name">NekoXRP</div>
-                <div class="grad-ticker">$NEKO</div>
-                <div class="grad-mcap">$75.2K</div>
-                <div class="grad-badge">✅ DEX Listed</div>
-            </div>
-        </div>
+    <!-- ====== RECENTLY GRADUATED (dynamic) ====== -->
+    <div class="graduated-section" id="graduatedSection" style="display:none;">
+        <div class="graduated-label">🎓 Recently Graduated</div>
+        <div class="graduated-strip" id="graduatedStrip"></div>
     </div>
 
     <!-- Toolbar -->
@@ -1070,96 +959,57 @@
     let xrplClient = null;
     let connectedWallet = null;
 
-    // ====== DUMMY TOKEN DATA ======
-    const DUMMY_TOKENS = [
-        { id: 'xrpepe', name: 'XRPepe', ticker: 'XPEPE', emoji: '🐸', mcap: 67200, mcapStr: '$67.2K', change: 142, changeStr: '+142%', up: true, bonding: 89, bondingStr: '89%', bondFill: '89', bondTarget: '67.2K / 75K', replies: 47, badge: 'king', badgeLabel: '👑 king', creator: 'rXqF…4k2m', ago: '2h ago', desc: 'the most based frog on the XRP ledger. no utility, just vibes. ribbit ribbit 🐸', status: 'bonding' },
-        { id: 'mxrp', name: 'MoonXRP', ticker: 'MXRP', emoji: '🌙', mcap: 23800, mcapStr: '$23.8K', change: 89, changeStr: '+89%', up: true, bonding: 52, bondingStr: '52%', bondFill: '52', bondTarget: '23.8K / 45K', replies: 23, badge: 'hot', badgeLabel: '🔥 hot', creator: 'rH7d…9pLx', ago: '45m ago', desc: 'to the moon with XRP. community driven, fair launch. LFG 🚀🌙', status: 'bonding' },
-        { id: 'xdoge', name: 'XDoge', ticker: 'XDOGE', emoji: '🐕', mcap: 134500, mcapStr: '$134.5K', change: 567, changeStr: '+567%', up: true, bonding: 100, bondingStr: '100%', bondFill: '100', bondTarget: 'listed on DEX', replies: 156, badge: 'king', badgeLabel: '👑 king', creator: 'rPq2…7mNk', ago: '6h ago', desc: 'first doge on XRPL. much wow. very fast. such cheap fees. to the moon!', status: 'graduated' },
-        { id: 'rcat', name: 'RippleCat', ticker: 'RCAT', emoji: '⚡', mcap: 4200, mcapStr: '$4.2K', change: 34, changeStr: '+34%', up: true, bonding: 14, bondingStr: '14%', bondFill: '14', bondTarget: '4.2K / 30K', replies: 8, badge: 'new', badgeLabel: 'new', creator: 'rM5x…2bJk', ago: '12m ago', desc: 'meow on the ledger. cats > dogs. fast and furry-ous. 😸⚡', status: 'bonding' },
-        { id: 'dxrp', name: 'DiamondHands', ticker: 'DXRP', emoji: '💎', mcap: 41300, mcapStr: '$41.3K', change: 213, changeStr: '+213%', up: true, bonding: 71, bondingStr: '71%', bondFill: '71', bondTarget: '41.3K / 58K', replies: 31, badge: '', badgeLabel: '', creator: 'rK9w…3vPm', ago: '1h ago', desc: 'diamond hands only. no paper hands allowed. hold or get rekt 💎🙌', status: 'bonding' },
-        { id: 'gxrp', name: 'GameXRP', ticker: 'GXRP', emoji: '🎮', mcap: 890, mcapStr: '$890', change: -12, changeStr: '-12%', up: false, bonding: 3, bondingStr: '3%', bondFill: '3', bondTarget: '890 / 30K', replies: 3, badge: 'new', badgeLabel: 'new', creator: 'rT3n…8qWz', ago: '5m ago', desc: 'gaming token for the XRP community. play to earn coming soon™', status: 'bonding' },
-        { id: 'xfox', name: 'XFOX', ticker: 'XFOX', emoji: '🦊', mcap: 52100, mcapStr: '$52.1K', change: 328, changeStr: '+328%', up: true, bonding: 82, bondingStr: '82%', bondFill: '82', bondTarget: '52.1K / 63K', replies: 67, badge: 'hot', badgeLabel: '🔥 hot', creator: 'rL2a…5nQp', ago: '3h ago', desc: 'the sly fox of crypto. what does the fox say? buy buy buy 🦊', status: 'bonding' },
-        { id: 'ramen', name: 'RamenXRP', ticker: 'RAMEN', emoji: '🍜', mcap: 8400, mcapStr: '$8.4K', change: 56, changeStr: '+56%', up: true, bonding: 22, bondingStr: '22%', bondFill: '22', bondTarget: '8.4K / 38K', replies: 12, badge: 'new', badgeLabel: 'new', creator: 'rW8k…1mZx', ago: '20m ago', desc: 'we eating ramen now so we eat wagyu later. noodle gang 🍜', status: 'bonding' },
-        { id: 'alien', name: 'AlienXRP', ticker: 'ALIEN', emoji: '👽', mcap: 38700, mcapStr: '$38.7K', change: 178, changeStr: '+178%', up: true, bonding: 65, bondingStr: '65%', bondFill: '65', bondTarget: '38.7K / 60K', replies: 89, badge: '', badgeLabel: '', creator: 'rJ4m…6wRt', ago: '4h ago', desc: 'we are not alone. first contact on the XRP ledger 👽🛸', status: 'bonding' },
-        { id: 'burn', name: 'BurnXRP', ticker: 'BURN', emoji: '🔥', mcap: 2100, mcapStr: '$2.1K', change: 15, changeStr: '+15%', up: true, bonding: 7, bondingStr: '7%', bondFill: '7', bondTarget: '2.1K / 30K', replies: 5, badge: 'new', badgeLabel: 'new', creator: 'rN6p…4kHm', ago: '8m ago', desc: 'deflationary token on XRPL. every tx burns supply. watch it shrink 🔥', status: 'bonding' },
-        { id: 'whale', name: 'WhaleXRP', ticker: 'WHALE', emoji: '🐋', mcap: 29400, mcapStr: '$29.4K', change: 94, changeStr: '+94%', up: true, bonding: 58, bondingStr: '58%', bondFill: '58', bondTarget: '29.4K / 50K', replies: 42, badge: 'hot', badgeLabel: '🔥 hot', creator: 'rQ1v…8bNk', ago: '2h ago', desc: 'only whales survive. big bags, big dreams. splash splash 🐋💦', status: 'bonding' },
-        { id: 'teddy', name: 'TeddyXRP', ticker: 'TEDDY', emoji: '🧸', mcap: 320, mcapStr: '$320', change: 5, changeStr: '+5%', up: true, bonding: 1, bondingStr: '1%', bondFill: '1', bondTarget: '320 / 30K', replies: 1, badge: 'new', badgeLabel: 'new', creator: 'rA3f…2cXp', ago: '1m ago', desc: 'soft, cuddly, and going to the moon. don\'t sleep on teddy 🧸', status: 'bonding' },
-    ];
-
-    // Extended dummy tokens (for Load More)
-    const EXTRA_TOKENS = [
-        { id: 'xshib', name: 'XShib', ticker: 'XSHIB', emoji: '🐶', mcap: 15600, mcapStr: '$15.6K', change: 88, changeStr: '+88%', up: true, bonding: 31, bondingStr: '31%', bondFill: '31', bondTarget: '15.6K / 50K', replies: 19, badge: '', badgeLabel: '', creator: 'rZ9p…1mXv', ago: '3h ago', desc: 'SHIB vibes on XRPL. much speed. very green. 🐶', status: 'bonding' },
-        { id: 'xsol', name: 'SlowSol', ticker: 'XSOL', emoji: '☀️', mcap: 3400, mcapStr: '$3.4K', change: 22, changeStr: '+22%', up: true, bonding: 11, bondingStr: '11%', bondFill: '11', bondTarget: '3.4K / 30K', replies: 7, badge: 'new', badgeLabel: 'new', creator: 'rY4m…7qZn', ago: '33m ago', desc: 'joke token. XRP faster than SOL any day. ☀️', status: 'bonding' },
-        { id: 'xbird', name: 'XBird', ticker: 'XBIRD', emoji: '🐦', mcap: 9800, mcapStr: '$9.8K', change: 44, changeStr: '+44%', up: true, bonding: 26, bondingStr: '26%', bondFill: '26', bondTarget: '9.8K / 37K', replies: 14, badge: '', badgeLabel: '', creator: 'rK2n…4wVm', ago: '1h ago', desc: 'tweeting on chain. every holder is a blue bird 🐦', status: 'bonding' },
-        { id: 'xbear', name: 'XBear', ticker: 'XBEAR', emoji: '🐻', mcap: 1200, mcapStr: '$1.2K', change: -8, changeStr: '-8%', up: false, bonding: 4, bondingStr: '4%', bondFill: '4', bondTarget: '1.2K / 30K', replies: 2, badge: 'new', badgeLabel: 'new', creator: 'rP5v…9kQz', ago: '15m ago', desc: 'bear market token. the only bears here are cute 🐻', status: 'bonding' },
-    ];
-
+    let allTokens = [];
     let currentFilter = 'trending';
     let currentSearch = '';
-    let showingAll = false;
-    let visibleTokens = [...DUMMY_TOKENS];
+
+    function formatMcap(n) {
+        if (!n || n === 0) return '$0';
+        if (n >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
+        if (n >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
+        return '$' + n.toFixed(0);
+    }
 
     function getFilteredTokens() {
-        let tokens = [...DUMMY_TOKENS];
-
-        // Apply search
+        let tokens = [...allTokens];
         if (currentSearch) {
             const q = currentSearch.toLowerCase();
-            tokens = tokens.filter(t =>
-                t.name.toLowerCase().includes(q) ||
-                t.ticker.toLowerCase().includes(q)
-            );
+            tokens = tokens.filter(t => t.name.toLowerCase().includes(q) || t.symbol.toLowerCase().includes(q));
         }
-
-        // Apply filter/sort
         switch (currentFilter) {
-            case 'trending':
-                // Sort by change desc (hottest)
-                tokens.sort((a, b) => b.change - a.change);
-                break;
-            case 'new':
-                // Sort by "newness" - show newest (badge new first, then others)
-                tokens.sort((a, b) => {
-                    const aNew = a.badge === 'new' ? 1 : 0;
-                    const bNew = b.badge === 'new' ? 1 : 0;
-                    return bNew - aNew || b.mcap - a.mcap;
-                });
-                break;
-            case 'top':
-                // Sort by market cap desc
-                tokens.sort((a, b) => b.mcap - a.mcap);
-                break;
-            case 'graduating':
-                // Sort by bonding progress desc
-                tokens.sort((a, b) => b.bonding - a.bonding);
-                break;
+            case 'trending': tokens.sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0)); break;
+            case 'new': tokens.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); break;
+            case 'top': tokens.sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0)); break;
+            case 'graduating': tokens.sort((a, b) => (b.bonding_progress || 0) - (a.bonding_progress || 0)); break;
         }
-
         return tokens;
     }
 
     function renderCard(t, idx) {
         const delay = (idx % 12) * 40;
-        const badgeHtml = t.badge ? `<span class="badge badge-${t.badge}">${t.badgeLabel}</span>` : '';
-        const bondText = t.status === 'graduated'
+        const img = t.image_url ? `<img src="${t.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : '🪙';
+        const ago = timeAgo(t.created_at);
+        const bonding = t.bonding_progress || 0;
+        const graduated = bonding >= 100;
+        const bondText = graduated
             ? `<span>✅ graduated</span><span>listed on DEX</span>`
-            : `<span>bonding ${t.bondingStr}</span><span>${t.bondTarget}</span>`;
+            : `<span>bonding ${bonding}%</span><span>${t.symbol}/XRP</span>`;
+        const creator = t.creator_address ? t.creator_address.slice(0,6) + '...' + t.creator_address.slice(-4) : '—';
         return `<div class="card" style="animation-delay:${delay}ms" onclick="window.location.href='token.html?id=${t.id}'">
-            <span class="card-replies">💬 ${t.replies}</span>
             <div class="card-top">
-                <div class="card-img">${t.emoji}</div>
+                <div class="card-img">${img}</div>
                 <div class="card-meta">
-                    <div class="card-name">${t.name} ${badgeHtml}</div>
-                    <div class="card-ticker">$${t.ticker}</div>
-                    <div class="card-creator">by <span>${t.creator}</span> · ${t.ago}</div>
+                    <div class="card-name">${t.name}</div>
+                    <div class="card-ticker">$${t.symbol}</div>
+                    <div class="card-creator">by <span>${creator}</span> · ${ago}</div>
                 </div>
             </div>
-            <div class="card-desc">${t.desc}</div>
+            <div class="card-desc">${t.description || 'No description'}</div>
             <div class="card-row">
-                <div class="card-mcap">${t.mcapStr} <small>mcap</small></div>
-                <div class="card-change ${t.up ? 'up' : 'down'}">${t.changeStr}</div>
+                <div class="card-mcap">${formatMcap(t.market_cap)} <small>mcap</small></div>
+                <div class="card-change up">${graduated ? '✅ DEX' : 'live'}</div>
             </div>
-            <div class="card-bar"><div class="card-bar-fill" style="width:${t.bondFill}%"></div></div>
+            <div class="card-bar"><div class="card-bar-fill" style="width:${bonding}%"></div></div>
             <div class="card-bar-text">${bondText}</div>
         </div>`;
     }
@@ -1170,17 +1020,24 @@
         const noResults = document.getElementById('noResults');
         const loadMoreWrap = document.getElementById('loadMoreWrap');
 
-        if (tokens.length === 0) {
+        if (tokens.length === 0 && currentSearch) {
             grid.innerHTML = '';
             noResults.style.display = 'block';
             document.getElementById('noResultsQuery').textContent = currentSearch;
-            loadMoreWrap.style.display = 'none';
+            if (loadMoreWrap) loadMoreWrap.style.display = 'none';
+            return;
+        }
+
+        if (tokens.length === 0) {
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#444;"><div style="font-size:40px;margin-bottom:12px;">🚀</div><div style="font-size:16px;font-weight:700;color:#666;">No tokens yet</div><div style="font-size:13px;margin-top:6px;">Be the first to <a href="create.html" style="color:#fff;text-decoration:underline;">launch a token</a>!</div></div>';
+            noResults.style.display = 'none';
+            if (loadMoreWrap) loadMoreWrap.style.display = 'none';
             return;
         }
 
         noResults.style.display = 'none';
         grid.innerHTML = tokens.map((t, i) => renderCard(t, i)).join('');
-        loadMoreWrap.style.display = currentSearch ? 'none' : 'block';
+        if (loadMoreWrap) loadMoreWrap.style.display = 'none';
     }
 
     function handleSearch(val) {
@@ -1195,48 +1052,61 @@
         renderGrid();
     }
 
-    function loadMore() {
-        const grid = document.getElementById('tokenGrid');
-        const loadMoreWrap = document.getElementById('loadMoreWrap');
-        EXTRA_TOKENS.forEach((t, i) => {
-            const div = document.createElement('div');
-            div.innerHTML = renderCard(t, i);
-            grid.appendChild(div.firstChild);
-        });
-        loadMoreWrap.style.display = 'none';
-    }
-
-    // Initial render
-    renderGrid();
-
-    // Load real tokens from Supabase (prepend to grid)
+    // Load real tokens from Supabase
     async function loadTokens() {
         const { data, error } = await db.from('tokens').select('*').order('created_at', { ascending: false }).limit(50);
-        if (error || !data || data.length === 0) return;
-        const grid = document.getElementById('tokenGrid');
-        const realCards = data.map(t => {
-            const img = t.image_url ? `<img src="${t.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : '🪙';
-            const ago = timeAgo(t.created_at);
-            return `<div class="card" onclick="window.location.href='token.html?id=${t.id}'">
-                <span class="card-replies badge badge-new">🆕 new</span>
-                <div class="card-top">
-                    <div class="card-img">${img}</div>
-                    <div class="card-meta">
-                        <div class="card-name">${t.name}</div>
-                        <div class="card-ticker">$${t.symbol}</div>
-                        <div class="card-creator">by <span>${t.creator_address.slice(0,6)}...${t.creator_address.slice(-4)}</span> · ${ago}</div>
+        if (error || !data) { renderGrid(); return; }
+        allTokens = data;
+        renderGrid();
+
+        // Populate King of the Hill (highest mcap)
+        const sorted = [...data].sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0));
+        if (sorted.length > 0 && (sorted[0].market_cap || 0) > 0) {
+            const king = sorted[0];
+            const kothSection = document.getElementById('kothSection');
+            const kothCard = document.getElementById('kothCard');
+            const img = king.image_url ? `<img src="${king.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🪙';
+            const bp = king.bonding_progress || 0;
+            kothCard.onclick = () => window.location.href = 'token.html?id=' + king.id;
+            kothCard.innerHTML = `
+                <div class="koth-img">${img}<span class="koth-crown">👑</span></div>
+                <div class="koth-info">
+                    <div class="koth-badge">👑 #1 Top Token</div>
+                    <div class="koth-name">${king.name}</div>
+                    <div class="koth-ticker">$${king.symbol} · by ${king.creator_address.slice(0,6)}...${king.creator_address.slice(-4)} · ${timeAgo(king.created_at)}</div>
+                    <div class="koth-desc">${king.description || ''}</div>
+                    <div class="koth-stats">
+                        <div class="koth-stat"><div class="koth-stat-val">${formatMcap(king.market_cap)}</div><div class="koth-stat-label">Market Cap</div></div>
+                        <div class="koth-stat"><div class="koth-stat-val">${bp}%</div><div class="koth-stat-label">Bonding</div></div>
                     </div>
-                </div>
-                <div class="card-desc">${t.description || 'No description'}</div>
-                <div class="card-row">
-                    <div class="card-mcap">$${t.market_cap || 0} <small>mcap</small></div>
-                    <div class="card-change up">new</div>
-                </div>
-                <div class="card-bar"><div class="card-bar-fill" style="width:${t.bonding_progress || 1}%"></div></div>
-                <div class="card-bar-text"><span>bonding ${t.bonding_progress || 0}%</span><span>${t.symbol}/XRP</span></div>
-            </div>`;
-        }).join('');
-        grid.insertAdjacentHTML('afterbegin', realCards);
+                    <div class="koth-bar" style="margin-top:12px;"><div class="koth-bar-fill" style="width:${bp}%"></div></div>
+                </div>`;
+            kothSection.style.display = 'block';
+        }
+
+        // Populate Recently Graduated (bonding >= 100)
+        const graduated = data.filter(t => (t.bonding_progress || 0) >= 100);
+        if (graduated.length > 0) {
+            const strip = document.getElementById('graduatedStrip');
+            strip.innerHTML = graduated.map(t => `
+                <div class="grad-card" onclick="window.location.href='token.html?id=${t.id}'">
+                    <div class="grad-icon">${t.image_url ? '<img src="'+t.image_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">' : '🪙'}</div>
+                    <div class="grad-name">${t.name}</div>
+                    <div class="grad-ticker">$${t.symbol}</div>
+                    <div class="grad-mcap">${formatMcap(t.market_cap)}</div>
+                    <div class="grad-badge">✅ DEX Listed</div>
+                </div>`).join('');
+            document.getElementById('graduatedSection').style.display = 'block';
+        }
+
+        // Populate ticker with real recent activity
+        if (data.length > 0) {
+            const track = document.getElementById('tickerTrack');
+            const ticks = data.slice(0, 8).map(t =>
+                `<div class="tick"><span class="emoji">🟢</span> <b>$${t.symbol}</b> created by <span class="green">${t.creator_address.slice(0,6)}…${t.creator_address.slice(-4)}</span> <span style="font-size:10px;color:#444">${timeAgo(t.created_at)}</span></div>`
+            ).join('');
+            track.innerHTML = ticks + ticks; // duplicate for seamless loop
+        }
     }
 
     function timeAgo(dateStr) {
