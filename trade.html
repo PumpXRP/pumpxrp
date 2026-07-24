@@ -781,6 +781,7 @@ function selectToken(symbol) {
     renderTrades(true);
     renderHolders();
     updateTradeBtn();
+    loadAMMInfo();
 }
 
 // ===== WALLET MODAL =====
@@ -997,10 +998,53 @@ function showTxMsg(text, type) {
     el.className = `tx-msg show ${type}`;
 }
 
+// ===== AMM INFO =====
+async function loadAMMInfo() {
+    if (!currentToken || !currentToken.issuer) return;
+    try {
+        if (!client) { client = new xrpl.Client(XRPL_URL); await client.connect(); }
+        const sym = currentToken.symbol;
+        const currency = sym.length > 3 ? xrpl.convertStringToHex(sym).padEnd(40,'0').toUpperCase() : sym.toUpperCase();
+        const ammInfo = await client.request({
+            command: 'amm_info',
+            asset: { currency: 'XRP' },
+            asset2: { currency: currency, issuer: currentToken.issuer }
+        });
+        if (ammInfo.result && ammInfo.result.amm) {
+            const amm = ammInfo.result.amm;
+            // Get XRP amount in pool
+            const xrpInPool = typeof amm.amount === 'string' ? parseFloat(xrpl.dropsToXrp(amm.amount)) : 0;
+            const tokensInPool = typeof amm.amount2 === 'object' ? parseFloat(amm.amount2.value) : 0;
+            // Calculate price
+            if (tokensInPool > 0) {
+                const price = xrpInPool / tokensInPool;
+                document.getElementById('currentPrice').textContent = price.toFixed(7);
+                document.getElementById('tradePrice').placeholder = price.toFixed(7);
+            }
+            // Update bonding ring - bonding = XRP in pool relative to target (e.g., 500 XRP)
+            const bondingTarget = 500; // XRP target for "graduation"
+            const bondingPct = Math.min(100, Math.floor((xrpInPool / bondingTarget) * 100));
+            updateBondingRing(bondingPct);
+            document.getElementById('bondingFilled').textContent = `${xrpInPool.toFixed(1)} XRP`;
+            document.getElementById('bondingTarget').textContent = `${bondingTarget} XRP`;
+            // Update mcap
+            if (tokensInPool > 0) {
+                const totalSupply = 1000000000; // default
+                const mcap = (xrpInPool / tokensInPool) * totalSupply;
+                document.getElementById('mcap').textContent = mcap > 1000 ? `$${(mcap/1000).toFixed(1)}K` : `$${mcap.toFixed(0)}`;
+            }
+        }
+    } catch(e) {
+        console.log('AMM info not available:', e.message);
+    }
+}
+
 // ===== INIT =====
-// Init bonding ring
-updateBondingRing(currentToken.bonding || 89);
+// Init bonding ring (default, will be overridden by AMM data)
+updateBondingRing(currentToken.bonding || 0);
 document.getElementById('bondingFilled').textContent = currentToken.mcap;
+// Load real AMM data
+loadAMMInfo();
 
 // Init trades and holders
 renderTrades(true);

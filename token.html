@@ -664,7 +664,37 @@ function timeAgo(dateStr) {
     return Math.floor(diff/86400) + 'd ago';
 }
 
-loadToken();
+// Load real AMM data for bonding progress
+async function loadAMMInfo() {
+    if (!currentToken) return;
+    try {
+        if (!client) { client = new xrpl.Client(XRPL_URL); await client.connect(); }
+        const sym = currentToken.symbol;
+        const currency = sym.length > 3 ? xrpl.convertStringToHex(sym).padEnd(40,'0').toUpperCase() : sym.toUpperCase();
+        const ammInfo = await client.request({
+            command: 'amm_info',
+            asset: { currency: 'XRP' },
+            asset2: { currency: currency, issuer: currentToken.issuer_address }
+        });
+        if (ammInfo.result && ammInfo.result.amm) {
+            const amm = ammInfo.result.amm;
+            const xrpInPool = typeof amm.amount === 'string' ? parseFloat(xrpl.dropsToXrp(amm.amount)) : 0;
+            const tokensInPool = typeof amm.amount2 === 'object' ? parseFloat(amm.amount2.value) : 0;
+            if (tokensInPool > 0) {
+                const price = xrpInPool / tokensInPool;
+                document.getElementById('statPrice').textContent = price.toFixed(7);
+                const mcap = price * (currentToken.supply || 1000000000);
+                document.getElementById('statMcap').textContent = mcap > 1000 ? '$' + (mcap/1000).toFixed(1) + 'K' : '$' + mcap.toFixed(0);
+            }
+            const bondingTarget = 500;
+            const bondingPct = Math.min(100, Math.floor((xrpInPool / bondingTarget) * 100));
+            document.getElementById('bondingPct').textContent = bondingPct + '%';
+            document.getElementById('bondingFill').style.width = bondingPct + '%';
+        }
+    } catch(e) { console.log('AMM not found:', e.message); }
+}
+
+loadToken().then(() => { setTimeout(() => { if (currentToken) loadAMMInfo(); }, 1000); });
 
 // Wallet persistence
 window.addEventListener('load', () => {

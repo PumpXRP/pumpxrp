@@ -546,29 +546,25 @@
             <div class="cost-info">
                 <div class="cost-title">💰 Estimated Cost</div>
                 <div class="cost-row">
-                    <span class="label">Issuer account reserve</span>
+                    <span class="label">Account reserves (issuer + distributor)</span>
+                    <span class="value">~4 XRP</span>
+                </div>
+                <div class="cost-row">
+                    <span class="label">AMM pool initial liquidity</span>
+                    <span class="value">10 XRP</span>
+                </div>
+                <div class="cost-row">
+                    <span class="label">AMM creation reserve</span>
                     <span class="value">2 XRP</span>
                 </div>
                 <div class="cost-row">
-                    <span class="label">Trust line reserve</span>
-                    <span class="value">2 XRP</span>
-                </div>
-                <div class="cost-row">
-                    <span class="label">AccountSet tx fee</span>
-                    <span class="value">~0.00001 XRP</span>
-                </div>
-                <div class="cost-row">
-                    <span class="label">TrustSet tx fee</span>
-                    <span class="value">~0.00001 XRP</span>
-                </div>
-                <div class="cost-row">
-                    <span class="label">Payment tx fee</span>
-                    <span class="value">~0.00001 XRP</span>
+                    <span class="label">Transaction fees (5 txs)</span>
+                    <span class="value">~0.0001 XRP</span>
                 </div>
                 <div class="cost-divider"></div>
                 <div class="cost-row total">
                     <span class="label" style="font-weight:700;">Total</span>
-                    <span class="value">~4 XRP + 0.001 XRP fees</span>
+                    <span class="value">~16 XRP</span>
                 </div>
                 <div class="cost-note">⚡ Launching on XRPL Mainnet — real XRP required.</div>
             </div>
@@ -992,7 +988,36 @@ async function launchToken() {
             { text: 'Distributor wallet created', type: 'done' },
             { text: 'Issuer account configured', type: 'done' },
             { text: 'Trust line created', type: 'done' },
-            { text: 'Tokens issued successfully!', type: 'done' }
+            { text: 'Tokens issued', type: 'done' },
+            { text: 'Creating AMM liquidity pool...', type: 'loading' }
+        ]);
+
+        // Create AMM pool — 80% of supply + initial XRP liquidity
+        const ammSupply = Math.floor(supply * 0.8);
+        const initialXRP = '10'; // 10 XRP initial liquidity
+        const ammCreate = {
+            TransactionType: 'AMMCreate',
+            Account: hotWallet.address,
+            Amount: xrpl.xrpToDrops(initialXRP),
+            Amount2: {
+                currency: symbol,
+                issuer: coldWallet.address,
+                value: ammSupply.toString()
+            },
+            TradingFee: 500, // 0.5% fee
+        };
+        const ammResult = await client.submitAndWait(ammCreate, { wallet: hotWallet });
+
+        // Calculate initial price: XRP / tokens in pool
+        const initialPrice = parseFloat(initialXRP) / ammSupply;
+
+        setStatus([
+            { text: 'Connected to XRPL', type: 'done' },
+            { text: 'Distributor wallet created', type: 'done' },
+            { text: 'Issuer account configured', type: 'done' },
+            { text: 'Trust line created', type: 'done' },
+            { text: 'Tokens issued', type: 'done' },
+            { text: 'AMM pool created! Trading is live 🚀', type: 'done' }
         ]);
 
         try {
@@ -1001,8 +1026,13 @@ async function launchToken() {
                 image_url: (imageUrl && imageUrl.startsWith('http')) ? imageUrl : null,
                 supply, issuer_address: coldWallet.address,
                 creator_address: coldWallet.address,
+                distributor_address: hotWallet.address,
                 tx_hash: result.result.hash,
-                price: 0, market_cap: 0, bonding_progress: 0
+                amm_tx_hash: ammResult.result.hash,
+                price: initialPrice, market_cap: parseFloat(initialXRP),
+                bonding_progress: 1,
+                initial_xrp: parseFloat(initialXRP),
+                amm_active: true
             });
         } catch(e) { console.log('Supabase save error:', e); }
 
@@ -1011,6 +1041,8 @@ async function launchToken() {
                 <div class="token-detail-row"><span class="k">Token Name</span><span class="v">${name}</span></div>
                 <div class="token-detail-row"><span class="k">Symbol</span><span class="v">${symbol}</span></div>
                 <div class="token-detail-row"><span class="k">Supply</span><span class="v">${supply.toLocaleString()}</span></div>
+                <div class="token-detail-row"><span class="k">AMM Pool</span><span class="v">${ammSupply.toLocaleString()} ${symbol} + ${initialXRP} XRP</span></div>
+                <div class="token-detail-row"><span class="k">Initial Price</span><span class="v">${initialPrice.toFixed(10)} XRP</span></div>
                 <div class="token-detail-row"><span class="k">Issuer</span><span class="v">${coldWallet.address.slice(0,8)}...${coldWallet.address.slice(-6)}</span></div>
                 <div class="token-detail-row"><span class="k">TX Hash</span><span class="v">${result.result.hash.slice(0,12)}...</span></div>
                 <div class="token-detail-row"><span class="k">Network</span><span class="v">XRPL Mainnet ✅</span></div>
