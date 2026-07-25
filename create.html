@@ -496,10 +496,10 @@
                 </div>
                 <div class="form-group">
                     <label>Symbol (Ticker) *</label>
-                    <input type="text" id="tokenSymbol" placeholder="e.g. MOON" maxlength="3"
+                    <input type="text" id="tokenSymbol" placeholder="e.g. MOON" maxlength="12"
                         oninput="this.value=this.value.toUpperCase(); validateField('tokenSymbol'); updatePreview();">
-                    <div class="hint">Max 3 characters</div>
-                    <div class="field-error" id="err-tokenSymbol">Symbol required (max 3 chars)</div>
+                    <div class="hint">3-12 characters</div>
+                    <div class="field-error" id="err-tokenSymbol">Symbol required (3-12 chars)</div>
                 </div>
             </div>
 
@@ -625,7 +625,7 @@
             <h4>💡 Tips for a good launch</h4>
             <div class="tip-row"><span class="tip-icon">🎨</span> <span>Upload an eye-catching image or pick a fun emoji</span></div>
             <div class="tip-row"><span class="tip-icon">✍️</span> <span>Write a memorable description — sell the vibe</span></div>
-            <div class="tip-row"><span class="tip-icon">🎯</span> <span>Short, punchy tickers get more attention (max 3 chars)</span></div>
+            <div class="tip-row"><span class="tip-icon">🎯</span> <span>Short, punchy tickers work best (3-12 chars)</span></div>
             <div class="tip-row"><span class="tip-icon">💰</span> <span>You need ~4 XRP to launch (reserves + fees)</span></div>
         </div>
     </div>
@@ -767,7 +767,7 @@ function validateField(id) {
     if (id === 'tokenName') {
         valid = val.length > 0;
     } else if (id === 'tokenSymbol') {
-        valid = val.length > 0 && val.length <= 3;
+        valid = val.length > 0 && val.length <= 12;
     }
 
     el.classList.toggle('error', !valid && val.length > 0 || (!valid && el === document.activeElement));
@@ -970,7 +970,7 @@ async function launchToken() {
     const imageUrl = uploadedImageDataUrl || selectedEmojiVal || '';
 
     if (!name) return alert('Enter token name');
-    if (!symbol || symbol.length > 3) return alert('Enter symbol (max 3 chars)');
+    if (!symbol || symbol.length > 12) return alert('Enter symbol (max 12 chars)');
     if (!supply || supply <= 0) return alert('Enter valid supply');
     if (!connected || !connectedAddress) return alert('Connect wallet first');
 
@@ -983,6 +983,11 @@ async function launchToken() {
             client = new xrpl.Client(XRPL_URL);
             await client.connect();
         }
+
+        // Encode currency code (hex for >3 chars)
+        const currencyCode = symbol.length > 3
+            ? xrpl.convertStringToHex(symbol).padEnd(40, '0').toUpperCase()
+            : symbol.toUpperCase();
 
         // Generate new issuer (cold) and distributor (hot) wallets
         const coldWallet = xrpl.Wallet.generate();
@@ -1072,7 +1077,7 @@ async function launchToken() {
 
         await client.submitAndWait({
             TransactionType: 'TrustSet', Account: hotWallet.address,
-            LimitAmount: { currency: symbol, issuer: coldWallet.address, value: supply.toString() },
+            LimitAmount: { currency: currencyCode, issuer: coldWallet.address, value: supply.toString() },
         }, { wallet: hotWallet });
 
         // ---- STEP 6: Issue tokens ----
@@ -1087,7 +1092,7 @@ async function launchToken() {
 
         const issueTx = await client.submitAndWait({
             TransactionType: 'Payment', Account: coldWallet.address,
-            Amount: { currency: symbol, value: supply.toString(), issuer: coldWallet.address },
+            Amount: { currency: currencyCode, value: supply.toString(), issuer: coldWallet.address },
             Destination: hotWallet.address,
         }, { wallet: coldWallet });
 
@@ -1107,7 +1112,7 @@ async function launchToken() {
         const ammResult = await client.submitAndWait({
             TransactionType: 'AMMCreate', Account: hotWallet.address,
             Amount: xrpl.xrpToDrops(initialXRP),
-            Amount2: { currency: symbol, issuer: coldWallet.address, value: ammSupply.toString() },
+            Amount2: { currency: currencyCode, issuer: coldWallet.address, value: ammSupply.toString() },
             TradingFee: 500,
         }, { wallet: hotWallet });
 
