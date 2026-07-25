@@ -640,6 +640,8 @@ const SUPABASE_KEY = 'sb_publishable_GFiZnQVcN9SfRIJQEJIG3Q_qW-kAPm0';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let client = null;
 let issuerWallet = null;
+let connectedAddress = null;
+let connectedMethod = null; // 'seed', 'xaman', 'gem', 'crossmark'
 let connected = false;
 let selectedEmojiVal = '';
 let uploadedImageDataUrl = '';
@@ -806,6 +808,8 @@ window.xamanSDK = new Xumm('37731505-94e6-40cb-99f1-8151342d5c1b');
 xamanSDK.on('success', async () => {
     const address = await xamanSDK.user.account;
     if (address) {
+        connectedMethod = 'xaman';
+        connectedAddress = address;
         localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'xaman' }));
         await setupWalletFromAddress(address);
     }
@@ -825,6 +829,8 @@ async function connectCrossmarkCreate() {
         const xsdk = window.crossmark || window.sdk;
         const result = await xsdk.signIn();
         const address = result.response.data.address;
+        connectedMethod = 'crossmark';
+        connectedAddress = address;
         localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address, method: 'crossmark' }));
         await setupWalletFromAddress(address);
     } catch(e) { alert('Crossmark error: ' + e.message); }
@@ -838,6 +844,9 @@ async function connectGemWallet() {
     try {
         const result = await window.gemWallet.getAddress();
         if (result && result.result && result.result.address) {
+            connectedMethod = 'gem';
+            connectedAddress = result.result.address;
+            localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address: result.result.address, method: 'gem' }));
             await setupWalletFromAddress(result.result.address);
         }
     } catch (e) {
@@ -851,6 +860,9 @@ async function connectWithSeed() {
     try {
         const wallet = xrpl.Wallet.fromSeed(seed);
         issuerWallet = wallet;
+        connectedMethod = 'seed';
+        connectedAddress = wallet.address;
+        localStorage.setItem('pumpxrp_wallet', JSON.stringify({ address: wallet.address, method: 'seed' }));
         await setupWalletFromAddress(wallet.address, wallet);
     } catch (e) {
         alert('Invalid seed: ' + e.message);
@@ -912,6 +924,42 @@ function setStatus(lines) {
     `).join('');
 }
 
+// Helper: sign & submit via Xaman payload
+async function xamanSubmit(txJson) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const created = await xamanSDK.payload.create(txJson);
+            if (!created) throw new Error('Could not create Xaman payload');
+            // Show approval message
+            setStatus([...currentStatusLines, { text: '📱 Approve transaction in Xaman app...', type: 'loading' }]);
+            // Open deeplink on mobile
+            if (created.next && created.next.always && /Mobi|Android/i.test(navigator.userAgent)) {
+                window.open(created.next.always, '_blank');
+            }
+            // Poll for result
+            const checkInterval = setInterval(async () => {
+                try {
+                    const result = await xamanSDK.payload.get(created.uuid);
+                    if (result.meta.resolved) {
+                        clearInterval(checkInterval);
+                        if (result.meta.signed) {
+                            resolve(result);
+                        } else {
+                            reject(new Error('Transaction rejected in Xaman'));
+                        }
+                    }
+                } catch(e) { clearInterval(checkInterval); reject(e); }
+            }, 3000);
+        } catch(e) { reject(e); }
+    });
+}
+
+let currentStatusLines = [];
+function setStatusAndTrack(lines) {
+    currentStatusLines = lines;
+    setStatus(lines);
+}
+
 async function launchToken() {
     if (!validateAll()) return;
 
@@ -924,137 +972,166 @@ async function launchToken() {
     if (!name) return alert('Enter token name');
     if (!symbol || symbol.length > 3) return alert('Enter symbol (max 3 chars)');
     if (!supply || supply <= 0) return alert('Enter valid supply');
-    if (!issuerWallet) return alert('Connect wallet first with seed phrase');
+    if (!connected || !connectedAddress) return alert('Connect wallet first');
 
     setStep(3);
     document.getElementById('launchBtn').disabled = true;
 
     try {
-        setStatus([{ text: 'Connecting to XRPL...', type: 'loading' }]);
+        setStatusAndTrack([{ text: 'Connecting to XRPL...', type: 'loading' }]);
         if (!client || !client.isConnected()) {
             client = new xrpl.Client(XRPL_URL);
             await client.connect();
         }
 
-        const coldWallet = issuerWallet;
+        // Generate new issuer (cold) and distributor (hot) wallets
+        const coldWallet = xrpl.Wallet.generate();
+        const hotWallet = xrpl.Wallet.generate();
 
-        setStatus([
+        const coldFunding = '12';
+        const hotFunding = '18';
+
+        // ---- STEP 1: Pay platform fee ----
+        setStatusAndTrack([
             { text: 'Connected to XRPL', type: 'done' },
             { text: 'Paying launch fee (' + LAUNCH_FEE_XRP + ' XRP)...', type: 'loading' }
         ]);
 
-        // Platform launch fee
-        const feeTx = {
-            TransactionType: 'Payment',
-            Account: coldWallet.address,
-            Destination: PLATFORM_WALLET,
-            Amount: xrpl.xrpToDrops(LAUNCH_FEE_XRP),
-        };
-        await client.submitAndWait(feeTx, { wallet: coldWallet });
+        if (connectedMethod === 'seed' && issuerWallet) {
+            await client.submitAndWait({
+                TransactionType: 'Payment', Account: connectedAddress,
+                Destination: PLATFORM_WALLET, Amount: xrpl.xrpToDrops(LAUNCH_FEE_XRP)
+            }, { wallet: issuerWallet });
+        } else {
+            await xamanSubmit({
+                TransactionType: 'Payment', Account: connectedAddress,
+                Destination: PLATFORM_WALLET, Amount: xrpl.xrpToDrops(LAUNCH_FEE_XRP)
+            });
+        }
 
-        setStatus([
+        // ---- STEP 2: Fund cold wallet ----
+        setStatusAndTrack([
             { text: 'Connected to XRPL', type: 'done' },
             { text: 'Launch fee paid ✓', type: 'done' },
-            { text: 'Launch fee paid ✓', type: 'done' },
-            { text: 'Creating distributor wallet...', type: 'loading' }
+            { text: 'Funding issuer wallet (' + coldFunding + ' XRP)...', type: 'loading' }
         ]);
 
-        const hotWallet = xrpl.Wallet.generate();
-        await client.fundWallet(hotWallet);
+        if (connectedMethod === 'seed' && issuerWallet) {
+            await client.submitAndWait({
+                TransactionType: 'Payment', Account: connectedAddress,
+                Destination: coldWallet.address, Amount: xrpl.xrpToDrops(coldFunding)
+            }, { wallet: issuerWallet });
+        } else {
+            await xamanSubmit({
+                TransactionType: 'Payment', Account: connectedAddress,
+                Destination: coldWallet.address, Amount: xrpl.xrpToDrops(coldFunding)
+            });
+        }
 
-        setStatus([
+        // ---- STEP 3: Fund hot wallet ----
+        setStatusAndTrack([
             { text: 'Connected to XRPL', type: 'done' },
             { text: 'Launch fee paid ✓', type: 'done' },
-            { text: 'Distributor wallet created', type: 'done' },
-            { text: 'Setting issuer account flags...', type: 'loading' }
+            { text: 'Issuer wallet funded ✓', type: 'done' },
+            { text: 'Funding distributor wallet (' + hotFunding + ' XRP)...', type: 'loading' }
         ]);
 
-        const coldSettings = {
-            TransactionType: 'AccountSet',
-            Account: coldWallet.address,
+        if (connectedMethod === 'seed' && issuerWallet) {
+            await client.submitAndWait({
+                TransactionType: 'Payment', Account: connectedAddress,
+                Destination: hotWallet.address, Amount: xrpl.xrpToDrops(hotFunding)
+            }, { wallet: issuerWallet });
+        } else {
+            await xamanSubmit({
+                TransactionType: 'Payment', Account: connectedAddress,
+                Destination: hotWallet.address, Amount: xrpl.xrpToDrops(hotFunding)
+            });
+        }
+
+        // ---- STEP 4: Configure issuer (signed locally - we have the seed) ----
+        setStatusAndTrack([
+            { text: 'Connected to XRPL', type: 'done' },
+            { text: 'Launch fee paid ✓', type: 'done' },
+            { text: 'Wallets funded ✓', type: 'done' },
+            { text: 'Setting issuer flags...', type: 'loading' }
+        ]);
+
+        await client.submitAndWait({
+            TransactionType: 'AccountSet', Account: coldWallet.address,
             SetFlag: xrpl.AccountSetAsfFlags.asfDefaultRipple,
-        };
-        await client.submitAndWait(coldSettings, { wallet: coldWallet });
+        }, { wallet: coldWallet });
 
-        setStatus([
+        // ---- STEP 5: Create trust line ----
+        setStatusAndTrack([
             { text: 'Connected to XRPL', type: 'done' },
             { text: 'Launch fee paid ✓', type: 'done' },
-            { text: 'Distributor wallet created', type: 'done' },
-            { text: 'Issuer account configured', type: 'done' },
+            { text: 'Wallets funded ✓', type: 'done' },
+            { text: 'Issuer configured ✓', type: 'done' },
             { text: 'Creating trust line...', type: 'loading' }
         ]);
 
-        const trustSet = {
-            TransactionType: 'TrustSet',
-            Account: hotWallet.address,
+        await client.submitAndWait({
+            TransactionType: 'TrustSet', Account: hotWallet.address,
             LimitAmount: { currency: symbol, issuer: coldWallet.address, value: supply.toString() },
-        };
-        await client.submitAndWait(trustSet, { wallet: hotWallet });
+        }, { wallet: hotWallet });
 
-        setStatus([
+        // ---- STEP 6: Issue tokens ----
+        setStatusAndTrack([
             { text: 'Connected to XRPL', type: 'done' },
             { text: 'Launch fee paid ✓', type: 'done' },
-            { text: 'Distributor wallet created', type: 'done' },
-            { text: 'Issuer account configured', type: 'done' },
-            { text: 'Trust line created', type: 'done' },
+            { text: 'Wallets funded ✓', type: 'done' },
+            { text: 'Issuer configured ✓', type: 'done' },
+            { text: 'Trust line created ✓', type: 'done' },
             { text: 'Issuing tokens...', type: 'loading' }
         ]);
 
-        const payment = {
-            TransactionType: 'Payment',
-            Account: coldWallet.address,
+        const issueTx = await client.submitAndWait({
+            TransactionType: 'Payment', Account: coldWallet.address,
             Amount: { currency: symbol, value: supply.toString(), issuer: coldWallet.address },
             Destination: hotWallet.address,
-        };
-        const result = await client.submitAndWait(payment, { wallet: coldWallet });
+        }, { wallet: coldWallet });
 
-        setStatus([
+        // ---- STEP 7: Create AMM pool ----
+        setStatusAndTrack([
             { text: 'Connected to XRPL', type: 'done' },
             { text: 'Launch fee paid ✓', type: 'done' },
-            { text: 'Distributor wallet created', type: 'done' },
-            { text: 'Issuer account configured', type: 'done' },
-            { text: 'Trust line created', type: 'done' },
-            { text: 'Tokens issued', type: 'done' },
+            { text: 'Wallets funded ✓', type: 'done' },
+            { text: 'Issuer configured ✓', type: 'done' },
+            { text: 'Trust line created ✓', type: 'done' },
+            { text: 'Tokens issued ✓', type: 'done' },
             { text: 'Creating AMM liquidity pool...', type: 'loading' }
         ]);
 
-        // Create AMM pool — 80% of supply + initial XRP liquidity
         const ammSupply = Math.floor(supply * 0.8);
-        const initialXRP = '10'; // 10 XRP initial liquidity
-        const ammCreate = {
-            TransactionType: 'AMMCreate',
-            Account: hotWallet.address,
+        const initialXRP = '10';
+        const ammResult = await client.submitAndWait({
+            TransactionType: 'AMMCreate', Account: hotWallet.address,
             Amount: xrpl.xrpToDrops(initialXRP),
-            Amount2: {
-                currency: symbol,
-                issuer: coldWallet.address,
-                value: ammSupply.toString()
-            },
-            TradingFee: 500, // 0.5% fee
-        };
-        const ammResult = await client.submitAndWait(ammCreate, { wallet: hotWallet });
+            Amount2: { currency: symbol, issuer: coldWallet.address, value: ammSupply.toString() },
+            TradingFee: 500,
+        }, { wallet: hotWallet });
 
-        // Calculate initial price: XRP / tokens in pool
         const initialPrice = parseFloat(initialXRP) / ammSupply;
 
-        setStatus([
+        setStatusAndTrack([
             { text: 'Connected to XRPL', type: 'done' },
             { text: 'Launch fee paid ✓', type: 'done' },
-            { text: 'Distributor wallet created', type: 'done' },
-            { text: 'Issuer account configured', type: 'done' },
-            { text: 'Trust line created', type: 'done' },
-            { text: 'Tokens issued', type: 'done' },
+            { text: 'Wallets funded ✓', type: 'done' },
+            { text: 'Issuer configured ✓', type: 'done' },
+            { text: 'Trust line created ✓', type: 'done' },
+            { text: 'Tokens issued ✓', type: 'done' },
             { text: 'AMM pool created! Trading is live 🚀', type: 'done' }
         ]);
 
+        // Save to Supabase
         try {
             await db.from('tokens').insert({
                 name, symbol, description: desc,
                 image_url: (imageUrl && imageUrl.startsWith('http')) ? imageUrl : null,
                 supply, issuer_address: coldWallet.address,
-                creator_address: coldWallet.address,
+                creator_address: connectedAddress,
                 distributor_address: hotWallet.address,
-                tx_hash: result.result.hash,
+                tx_hash: issueTx.result.hash,
                 amm_tx_hash: ammResult.result.hash,
                 price: initialPrice, market_cap: parseFloat(initialXRP),
                 bonding_progress: 1,
@@ -1064,17 +1141,16 @@ async function launchToken() {
         } catch(e) { console.log('Supabase save error:', e); }
 
         setTimeout(() => {
-            document.getElementById('tokenDetails').innerHTML = `
-                <div class="token-detail-row"><span class="k">Token Name</span><span class="v">${name}</span></div>
-                <div class="token-detail-row"><span class="k">Symbol</span><span class="v">${symbol}</span></div>
-                <div class="token-detail-row"><span class="k">Supply</span><span class="v">${supply.toLocaleString()}</span></div>
-                <div class="token-detail-row"><span class="k">AMM Pool</span><span class="v">${ammSupply.toLocaleString()} ${symbol} + ${initialXRP} XRP</span></div>
-                <div class="token-detail-row"><span class="k">Initial Price</span><span class="v">${initialPrice.toFixed(10)} XRP</span></div>
-                <div class="token-detail-row"><span class="k">Issuer</span><span class="v">${coldWallet.address.slice(0,8)}...${coldWallet.address.slice(-6)}</span></div>
-                <div class="token-detail-row"><span class="k">TX Hash</span><span class="v">${result.result.hash.slice(0,12)}...</span></div>
-                <div class="token-detail-row"><span class="k">Network</span><span class="v">XRPL Mainnet ✅</span></div>
-            `;
-            document.getElementById('explorerLink').href = `https://xrpl.org/accounts/${coldWallet.address}`;
+            document.getElementById('tokenDetails').innerHTML = '\
+                <div class="token-detail-row"><span class="k">Token Name</span><span class="v">' + name + '</span></div>\
+                <div class="token-detail-row"><span class="k">Symbol</span><span class="v">' + symbol + '</span></div>\
+                <div class="token-detail-row"><span class="k">Supply</span><span class="v">' + supply.toLocaleString() + '</span></div>\
+                <div class="token-detail-row"><span class="k">AMM Pool</span><span class="v">' + ammSupply.toLocaleString() + ' ' + symbol + ' + ' + initialXRP + ' XRP</span></div>\
+                <div class="token-detail-row"><span class="k">Initial Price</span><span class="v">' + initialPrice.toFixed(10) + ' XRP</span></div>\
+                <div class="token-detail-row"><span class="k">Issuer</span><span class="v">' + coldWallet.address.slice(0,8) + '...' + coldWallet.address.slice(-6) + '</span></div>\
+                <div class="token-detail-row"><span class="k">Creator</span><span class="v">' + connectedAddress.slice(0,8) + '...' + connectedAddress.slice(-6) + '</span></div>\
+                <div class="token-detail-row"><span class="k">Network</span><span class="v">XRPL Mainnet ✅</span></div>';
+            document.getElementById('explorerLink').href = 'https://xrpl.org/accounts/' + coldWallet.address;
             document.getElementById('successCard').classList.add('show');
             document.getElementById('statusBox').classList.remove('show');
             setStep(3);
@@ -1097,7 +1173,9 @@ window.addEventListener('load', () => {
     const saved = localStorage.getItem('pumpxrp_wallet');
     if (saved) {
         try {
-            const { address } = JSON.parse(saved);
+            const { address, method } = JSON.parse(saved);
+            connectedAddress = address;
+            connectedMethod = method || 'xaman';
             setupWalletFromAddress(address);
         } catch(e) { localStorage.removeItem('pumpxrp_wallet'); }
     }
