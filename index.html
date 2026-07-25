@@ -845,9 +845,10 @@
         </div>
     </div>
 
-    <!-- Ticker (populated by real data) -->
-    <div class="ticker">
+    <!-- Ticker (populated by real mainnet data) -->
+    <div class="ticker" id="tickerBar">
         <div class="ticker-track" id="tickerTrack">
+            <div class="tick"><span class="emoji">🚀</span> <b>PumpOnXRP</b> — Launch your token on <span class="green">XRPL Mainnet</span></div>
             <div class="tick"><span class="emoji">🚀</span> <b>PumpOnXRP</b> — Launch your token on <span class="green">XRPL Mainnet</span></div>
         </div>
     </div>
@@ -1054,7 +1055,7 @@
 
     // Load real tokens from Supabase
     async function loadTokens() {
-        const { data, error } = await db.from('tokens').select('*').order('created_at', { ascending: false }).limit(50);
+        const { data, error } = await db.from('tokens').select('*').eq('amm_active', true).order('created_at', { ascending: false }).limit(50);
         if (error || !data) { renderGrid(); return; }
         allTokens = data;
         renderGrid();
@@ -1099,13 +1100,13 @@
             document.getElementById('graduatedSection').style.display = 'block';
         }
 
-        // Populate ticker with real recent activity
+        // Populate ticker with real mainnet tokens only
         if (data.length > 0) {
             const track = document.getElementById('tickerTrack');
             const ticks = data.slice(0, 8).map(t =>
-                `<div class="tick"><span class="emoji">🟢</span> <b>$${t.symbol}</b> created by <span class="green">${t.creator_address.slice(0,6)}…${t.creator_address.slice(-4)}</span> <span style="font-size:10px;color:#444">${timeAgo(t.created_at)}</span></div>`
+                `<div class="tick"><span class="emoji">🟢</span> <b>$${t.symbol}</b> launched by <span class="green">${t.creator_address.slice(0,6)}…${t.creator_address.slice(-4)}</span> <span style="font-size:10px;color:#444">${timeAgo(t.created_at)}</span></div>`
             ).join('');
-            track.innerHTML = ticks + ticks; // duplicate for seamless loop
+            track.innerHTML = ticks + ticks;
         }
     }
 
@@ -1119,7 +1120,7 @@
 
     // Load stats
     async function loadStats() {
-        const { count } = await db.from('tokens').select('*', { count: 'exact', head: true });
+        const { count } = await db.from('tokens').select('*', { count: 'exact', head: true }).eq('amm_active', true);
         if (count !== null) document.getElementById('statTokens').textContent = count;
     }
 
